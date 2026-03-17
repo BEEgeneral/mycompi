@@ -11,6 +11,19 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Log de inicio
+console.log('🚀 MyCompi starting...');
+console.log('Environment:', process.env.NODE_ENV);
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'set' : 'NOT SET');
+
+// Inicializar DB
+const { initDB } = require('./models/db');
+initDB().then(() => {
+  console.log('✅ Database initialized');
+}).catch(err => {
+  console.error('❌ Database init failed:', err.message);
+});
+
 // Rutas
 const clientesRoutes = require('./routes/clientes');
 const agentesRoutes = require('./routes/agentes');
