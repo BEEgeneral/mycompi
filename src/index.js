@@ -16,13 +16,17 @@ console.log('🚀 MyCompi starting...');
 console.log('Environment:', process.env.NODE_ENV);
 console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'set' : 'NOT SET');
 
-// Inicializar DB
-const { initDB } = require('./models/db');
-initDB().then(() => {
-  console.log('✅ Database initialized');
-}).catch(err => {
-  console.error('❌ Database init failed:', err.message);
-});
+// Inicializar DB (optional - app works without)
+if (process.env.DATABASE_URL) {
+  const { initDB } = require('./models/db');
+  initDB().then(() => {
+    console.log('✅ Database initialized');
+  }).catch(err => {
+    console.error('❌ Database init failed:', err.message);
+  });
+} else {
+  console.log('⚠️ No DATABASE_URL - running without DB');
+}
 
 // Rutas
 const clientesRoutes = require('./routes/clientes');
