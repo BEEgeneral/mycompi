@@ -58,7 +58,16 @@ npm run dev
 2. Configurar:
    - Build Command: `npm install`
    - Start Command: `node src/index.js`
-   - Environment Variables: DATABASE_URL, JWT_SECRET
+3. Environment Variables:
+   - `DATABASE_URL` = (tu connection string de Neon)
+   - `JWT_SECRET` = una clave segura
+   - `NODE_ENV` = `production`
+
+## Neon (Base de datos)
+
+Ya configurada:
+- Host: ep-mute-mud-agxfgf1q-pooler.c-2.eu-central-1.aws.neon.tech
+- DB: neondb
 
 ## Planes
 
