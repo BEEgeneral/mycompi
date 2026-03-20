@@ -36,6 +36,7 @@ const trabajosRoutes = require('./routes/trabajos');
 const pagosRoutes = require('./routes/pagos');
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
+const adminRoutes = require('./routes/admin');
 
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/agentes', agentesRoutes);
@@ -43,6 +44,7 @@ app.use('/api/trabajos', trabajosRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
