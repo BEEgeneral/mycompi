@@ -32,12 +32,20 @@ const AGENTES = {
  * 2. Si OK → construye contexto → llama al modelo
  * 3. Si no OK → devuelve error 429 con info de espera
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', async (req, res) => {
   const startTime = Date.now();
   
   try {
     const { agente: agenteKey, mensaje, complejidad } = req.body;
-    const clienteId = req.clienteId;
+    
+    // Soportar modo demo (para testing sin auth completo)
+    const isDemoMode = req.headers['x-demo-mode'] === 'true';
+    const clienteId = isDemoMode 
+      ? (req.headers['x-client-id'] || 'demo') 
+      : req.clienteId;
+    const planCliente = isDemoMode 
+      ? 'demo' 
+      : (req.clientePlan || 'demo');
 
     // ─────────────────────────────────────────
     // 1. VALIDACIONES
