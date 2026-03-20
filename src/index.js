@@ -34,12 +34,14 @@ const agentesRoutes = require('./routes/agentes');
 const trabajosRoutes = require('./routes/trabajos');
 const pagosRoutes = require('./routes/pagos');
 const authRoutes = require('./routes/auth');
+const chatRoutes = require('./routes/chat');
 
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/agentes', agentesRoutes);
 app.use('/api/trabajos', trabajosRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
