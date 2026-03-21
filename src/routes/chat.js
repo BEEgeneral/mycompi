@@ -123,7 +123,17 @@ router.post('/', async (req, res) => {
     }
 
     // ─────────────────────────────────────────
-    // 6. REGISTRAR EN MEMORIA
+    // 6. CERRAR SESIÓN DE TOKENS (genera reporte final)
+    // ─────────────────────────────────────────
+    if (solicitud.sessionId) {
+      const reporte = tokenController.cerrarSesion(solicitud.sessionId);
+      if (reporte) {
+        console.log(reporte.resumenChat);
+      }
+    }
+
+    // ─────────────────────────────────────────
+    // 7. REGISTRAR EN MEMORIA
     // ─────────────────────────────────────────
     try {
       logInteraction(clienteId, `Pregunta: ${mensaje}\nRespuesta: ${respuesta}`);
@@ -132,7 +142,7 @@ router.post('/', async (req, res) => {
     }
 
     // ─────────────────────────────────────────
-    // 7. RESPUESTA
+    // 8. RESPUESTA
     // ─────────────────────────────────────────
     const tiempoRespuesta = Date.now() - startTime;
 
