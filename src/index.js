@@ -42,7 +42,7 @@ app.use('/api/clientes', clientesRoutes);
 app.use('/api/agentes', agentesRoutes);
 app.use('/api/trabajos', trabajosRoutes);
 app.use('/api/pagos', pagosRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes.router);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 
