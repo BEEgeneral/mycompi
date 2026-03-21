@@ -327,4 +327,109 @@ router.put('/agentes/:id/clientes/:clienteId', ownerOnly, (req, res) => {
   }
 });
 
+// ─────────────────────────────────────────
+// DASHBOARD DE COSTOS Y MÉTRICAS
+// GET /api/admin/metrics/dashboard
+// ─────────────────────────────────────────
+
+router.get('/metrics/dashboard', ownerOnly, (req, res) => {
+  try {
+    const tokenController = require('../services/tokenController');
+    const dashboard = tokenController.dashboard();
+    res.json({ ok: true, ...dashboard });
+  } catch (err) {
+    console.error('Error obteniendo dashboard:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// MÉTRICAS DE UN CLIENTE
+// GET /api/admin/metrics/cliente/:id
+// ─────────────────────────────────────────
+
+router.get('/metrics/cliente/:id', ownerOnly, (req, res) => {
+  try {
+    const { id } = req.params;
+    const tokenController = require('../services/tokenController');
+    const metricas = tokenController.metricasCliente(id);
+    res.json({ ok: true, ...metricas });
+  } catch (err) {
+    console.error('Error obteniendo metricas cliente:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// ESTADO DEL TOKEN CONTROLLER
+// GET /api/admin/metrics/estado
+// ─────────────────────────────────────────
+
+router.get('/metrics/estado', ownerOnly, (req, res) => {
+  try {
+    const tokenController = require('../services/tokenController');
+    const estado = tokenController.estado();
+    res.json({ ok: true, ...estado });
+  } catch (err) {
+    console.error('Error obteniendo estado:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// HISTORIAL DE LOGS (últimos)
+// GET /api/admin/metrics/logs
+// ─────────────────────────────────────────
+
+router.get('/metrics/logs', ownerOnly, (req, res) => {
+  try {
+    const { limit = 50 } = req.query;
+    const fs = require('fs');
+    const path = require('path');
+    const logsFile = path.join(__dirname, '../../data/token-logs.json');
+
+    if (!fs.existsSync(logsFile)) {
+      return res.json({ ok: true, logs: [] });
+    }
+
+    const logs = JSON.parse(fs.readFileSync(logsFile, 'utf8'));
+    const recientes = logs.slice(-Math.min(parseInt(limit), 500)).reverse();
+
+    res.json({ ok: true, total: logs.length, logs: recientes });
+  } catch (err) {
+    console.error('Error obteniendo logs:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// MODELOS DISPONIBLES Y SUS COSTOS
+// GET /api/admin/metricos/modelos
+// ─────────────────────────────────────────
+
+router.get('/metrics/modelos', ownerOnly, (req, res) => {
+  try {
+    const { MODELOS } = require('../services/tokenController');
+    res.json({ ok: true, modelos: MODELOS });
+  } catch (err) {
+    console.error('Error obteniendo modelos:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// PLANES DISPONIBLES
+// GET /api/admin/metricos/planes
+// ─────────────────────────────────────────
+
+router.get('/metrics/planes', ownerOnly, (req, res) => {
+  try {
+    const { PLANES } = require('../services/tokenController');
+    res.json({ ok: true, planes: PLANES });
+  } catch (err) {
+    console.error('Error obteniendo planes:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 module.exports = router;

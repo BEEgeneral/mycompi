@@ -140,12 +140,16 @@ router.post('/', async (req, res) => {
       ok: true,
       agente: agenteKey,
       respuesta,
+      sessionId: solicitud.sessionId,
       modeloUsado: modelo,
       metadata: {
         tiempoMs: tiempoRespuesta,
         plan: planCliente,
+        turno: solicitud.metadata.turnoActual,
         tokensEstimados: solicitud.metadata.estimacionTokens,
         bucketRestante: solicitud.metadata.remainingBucket,
+        // Reporte resumido para mostrar al usuario si quiere
+        reporteConsumo: `📊 ${modelo} | In: ${solicitud.metadata.estimacionTokens.input} Out: ${solicitud.metadata.estimacionTokens.output}`,
       },
     });
 
