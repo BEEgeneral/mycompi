@@ -62,13 +62,7 @@ router.post('/', async (req, res) => {
     }
 
     // ─────────────────────────────────────────
-    // 2. OBTENER PLAN DEL CLIENTE
-    // Por ahora hardcodeado, luego vendrá de DB
-    // ─────────────────────────────────────────
-    const planCliente = req.clientePlan || 'demo'; // demo, basico, equipo, direccion
-
-    // ─────────────────────────────────────────
-    // 3. TOKEN CONTROLLER — ¿podemos procesar?
+    // 2. TOKEN CONTROLLER — ¿podemos procesar?
     // ─────────────────────────────────────────
     const solicitud = await tokenController.solicitar(
       clienteId, 
