@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyCompi — Equipos de Agentes IA para tu negocio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      color: #f0f0f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+      background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0f 70%);
+    }
+    .logo {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tagline {
+      font-size: 1.5rem;
+      color: #888;
+      margin-bottom: 3rem;
+      max-width: 600px;
+    }
+    .tagline span { color: #a29bfe; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 900px;
+      width: 100%;
+    }
+    .card {
+      background: #12121a;
+      border: 1px solid #2a2a3a;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: left;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s;
+    }
+    .card:hover {
+      border-color: #6c5ce7;
+      transform: translateY(-4px);
+    }
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .card p {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .card.cta {
+      background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+      border: none;
+      text-align: center;
+    }
+    .card.cta:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(108, 92, 231, 0.3);
+    }
+    .card.cta p { color: rgba(255,255,255,0.8); }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #444;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="logo">MyCompi 😎</div>
+    <p class="tagline">
+      Equipos de <span>agentes IA especializados</span> trabajando 24/7 para tu empresa.
+      Marketing, Ventas, Atención al Cliente, Operaciones y Data — en un solo equipo.
+    </p>
+
+    <div class="cards">
+      <a href="/admin.html" class="card">
+        <div class="card-icon">⚙️</div>
+        <h2>Panel de Control</h2>
+        <p>Administra agentes, consulta trabajos y analiza métricas de tu equipo.</p>
+      </a>
+
+      <a href="/chat.html" class="card">
+        <div class="card-icon">💬</div>
+        <h2>Chat con Agentes</h2>
+        <p>Habla directamente con tu agente de atención al cliente o soporte.</p>
+      </a>
+
+      <a href="/demo-chat.html" class="card cta">
+        <div class="card-icon">🚀</div>
+        <h2>Demo Gratuita</h2>
+        <p>Prueba MyCompi sin configurar nada. Ideal para ver cómo funciona.</p>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    MyCompi — Potenciado por agentes IA especializados para PYMES españolas
+  </footer>
+</body>
+</html>
