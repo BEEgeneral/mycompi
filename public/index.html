@@ -3,599 +3,420 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyCompi — Equipos de Profesionales Agénticos para tu negocio</title>
-  <link rel="icon" type="image/png" href="https://res.cloudinary.com/dtyqexija/image/upload/v1774165189/asset_12_wqaip6.png">
+  <title>MyCompi — Equipos de Agentes IA para tu negocio</title>
+  <meta name="description" content="Despliega equipos de agentes de IA que trabajan juntos para resolver tus tareas diarias con MyCompi.">
+  <meta property="og:title" content="MyCompi — Equipos de Agentes IA para tu negocio">
+  <meta property="og:description" content="Despliega equipos de agentes de IA que trabajan juntos.">
+  <meta property="og:image" content="/assets/logo.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500;600;700;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Satoshi:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #32386A;
-      --primary-hover: #262a56;
-      --accent: #FFD152;
-      --text-main: #32386A;
-      --text-muted: rgba(50, 56, 106, 0.7);
-      --bg-light: #F5F5F7;
-      --bg-hero: #C6D8F2;
       --white: #FFFFFF;
-      --border: rgba(50, 56, 106, 0.08);
-      --shadow: 0 10px 30px rgba(50, 56, 106, 0.06);
+      --navy: #090F45;
+      --orange: #FF860D;
+      --orange-light: #FF8613;
+      --yellow: #FDC23;
+      --blue-light: #5C95DC;
+      --cream: #F8F8F5;
+      --gray: #4D4D4D;
+      --text-main: var(--navy);
+      --text-muted: var(--gray);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
-
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--white);
-      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--navy);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* ─── SCROLL REVEAL ─── */
+    h1, h2, h3, .unbounded { font-family: 'Unbounded', sans-serif; }
+    .satoshi { font-family: 'Satoshi', sans-serif; }
+
+    /* ─── REVEAL ANIMATION ─── */
     .reveal {
       opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: perspective(1200px) translateY(32px);
+      will-change: transform, opacity;
+      transition: opacity 0.7s cubic-bezier(0.27, 0, 0.51, 1), transform 0.7s cubic-bezier(0.27, 0, 0.51, 1);
     }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
-    .reveal-delay-4 { transition-delay: 0.4s; }
-    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+    .reveal-delay-4 { transition-delay: 0.32s; }
+    .reveal-delay-5 { transition-delay: 0.40s; }
 
-    /* ─── FLOAT ANIMATION ─── */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-12px); }
-    }
-    .float { animation: float 4s ease-in-out infinite; }
-    .float-delay-1 { animation-delay: 0.5s; }
-    .float-delay-2 { animation-delay: 1s; }
-    .float-delay-3 { animation-delay: 1.5s; }
+    /* ─── CONTAINER ─── */
+    .container { max-width: 1440px; margin: 0 auto; padding: 0 80px; }
+    @media (max-width: 1200px) { .container { padding: 0 80px; } }
+    @media (max-width: 810px) { .container { padding: 0 24px; } }
 
-    /* ─── HERO SPECIFIC ─── */
-    .hero-card {
-      animation: heroEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes heroEntrance {
-      from { opacity: 0; transform: translateY(30px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .hero-img {
-      animation: float 5s ease-in-out infinite;
-      animation-delay: 0.8s;
-    }
-
-    /* ─── CARD HOVER ─── */
-    .card, .agent-card, .pricing-card, .challenge-card, .testimonial {
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.3s ease;
-    }
-    .card:hover, .agent-card:hover, .pricing-card:hover, .challenge-card:hover, .testimonial:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 24px 48px rgba(50, 56, 106, 0.12);
-    }
-
-    /* ─── BUTTON ANIMATIONS ─── */
-    .btn-cta {
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background-color 0.2s ease;
-    }
-    .btn-cta:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px rgba(50, 56, 106, 0.25);
-    }
-    .btn-cta:active { transform: translateY(-1px); }
-
-    .btn-outline {
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .btn-outline:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-2px);
-    }
-
-    /* ─── NAV LINKS ─── */
-    .nav-links a {
-      position: relative;
-      transition: color 0.2s ease;
-    }
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--primary);
-      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-links a:hover { color: var(--primary); }
-
-    /* ─── PRICING FEATURED PULSE ─── */
-    @keyframes subtlePulse {
-      0%, 100% { box-shadow: 0 20px 40px rgba(50, 56, 106, 0.12); }
-      50% { box-shadow: 0 24px 50px rgba(50, 56, 106, 0.18); }
-    }
-    .pricing-card.featured { animation: subtlePulse 3s ease-in-out infinite; }
-
-    /* ─── FAQ ITEMS ─── */
-    .faq-item {
-      transition: background 0.2s ease;
-    }
-    .faq-item:hover { background: rgba(50, 56, 106, 0.02); }
-
-    /* ─── CTA SECTION ─── */
-    .cta-section { position: relative; overflow: hidden; }
-    .cta-section::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(ellipse at center, rgba(255, 209, 82, 0.08) 0%, transparent 60%);
-      animation: rotateSlow 20s linear infinite;
-    }
-    @keyframes rotateSlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-
-    /* === NAVBAR === */
+    /* ─── NAVBAR ─── */
     .navbar {
-      height: 72px;
-      display: flex;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 0px;
     }
-
     .navbar .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      max-width: 1000px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
     }
-
-    .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.02em; color: var(--primary); }
-    .logo-img { height: 36px; }
-    .footer-logo-img { height: 48px; margin-bottom: 16px; }
-
-    .nav-links { display: flex; gap: 2rem; }
+    .navbar-logo { height: 40px; cursor: pointer; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
     .nav-links a {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      font-weight: 500;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700; font-size: 14px;
+      color: var(--navy); text-decoration: none;
       transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--primary); }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-cta {
+      background: var(--orange); color: white;
+      padding: 10px 24px; border-radius: 10px;
+      font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 14px;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .nav-cta:hover { background: var(--orange-light); transform: translateY(-1px); }
 
-    /* buttons use .btn-cta now */
-
-    /* === HERO === */
+    /* ─── HERO ─── */
     .hero {
-      text-align: center;
-      background: var(--bg-hero);
-      color: var(--primary);
-      padding: 0;
-    }
-
-    .hero-card {
-      max-width: 1000px;
-      margin: 0 auto;
+      min-height: 100vh;
       background: var(--white);
+      display: flex; align-items: center;
+      padding-top: 72px;
+    }
+    .hero-cream {
+      background: var(--cream);
       border-radius: 60px;
-      padding: 80px 60px;
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
     }
-
-    .badge {
-      background: var(--bg-hero);
-      color: var(--primary);
-      padding: 6px 16px;
-      border-radius: 100px;
-      font-size: 14px;
-      font-weight: 600;
-      display: inline-block;
-      margin-bottom: 24px;
+    .hero-content {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center;
     }
-
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
+    .hero-heading {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(48px, 5vw, 80px);
+      font-weight: 700;
+      color: rgba(9,16,69,0.8);
+      letter-spacing: -0.02em;
       line-height: 1.1;
       margin-bottom: 24px;
-      color: var(--primary);
+    }
+    .hero-sub {
+      font-size: 18px; color: var(--gray);
+      max-width: 500px; margin-bottom: 40px;
+      line-height: 1.6;
+    }
+    .hero-img-wrap {
+      position: relative;
+      border-radius: 60px;
+      overflow: visible;
+    }
+    .hero-img-wrap img {
+      width: 100%; border-radius: 60px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.1);
     }
 
-    .hero h1 .highlight {
-      background: var(--accent);
-      padding: 4px 12px;
-      border-radius: 8px;
+    /* ─── STATS ─── */
+    .stats-bar {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 30px;
+      padding: 32px 40px;
+      margin-top: 60px;
+      display: flex; gap: 60px; flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 48px; font-weight: 700;
+      color: var(--navy);
+    }
+    .stat-label {
+      font-size: 14px; color: var(--gray);
+      margin-top: 4px;
     }
 
-    .hero p {
-      font-size: 20px;
-      font-weight: 500;
-      color: var(--text-muted);
-      max-width: 600px;
-      margin: 0 auto 40px;
-    }
-
-    .btn-cta {
-      background-color: var(--primary);
-      color: white;
-      padding: 14px 32px;
-      border-radius: 100px;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 600;
-      font-size: 1rem;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-    .btn-cta:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
-
-    .btn-icon {
-      background-color: var(--accent);
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      font-size: 14px;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1.5px solid var(--border);
-      color: var(--text-main);
-      padding: 14px 32px;
-      border-radius: 100px;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-
-    .hero-img {
-      max-width: 900px;
-      margin: 60px auto 0;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    /* === SECTIONS === */
+    /* ─── SECTION SPACING ─── */
     section { padding: 100px 0; }
-    section.alt { background: var(--bg-light); }
+    .section-cream { background: var(--cream); }
 
-    .section-label {
-      text-align: center;
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 12px;
+    /* ─── SECTION HEADINGS ─── */
+    .section-eyebrow {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 12px;
     }
-
     .section-title {
-      text-align: center;
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 800;
-      letter-spacing: -1px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(32px, 4vw, 56px);
+      font-weight: 700; color: rgba(9,16,69,0.8);
+      letter-spacing: -0.02em; line-height: 1.2;
       margin-bottom: 16px;
     }
-
+    .section-title span { color: var(--orange); }
     .section-sub {
-      text-align: center;
-      color: var(--text-muted);
+      font-size: 16px; color: var(--gray);
       max-width: 600px;
-      margin: 0 auto 60px;
-      font-size: 1.1rem;
     }
 
-    .divider {
-      width: 40px; height: 4px;
-      background: var(--primary);
-      border-radius: 2px;
-      margin: 0 auto 20px;
-    }
-
-    /* === GRIDS === */
-    .grid {
+    /* ─── SERVICES GRID ─── */
+    .services-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
+      margin-top: 60px;
     }
-
-    .card {
+    .service-card {
       background: var(--white);
-      padding: 40px;
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
+      border-radius: 30px;
+      padding: 36px 28px;
+      box-shadow: 0 0.602px 1.566px -1.5px rgba(0,0,0,0.17),
+                  0 2.289px 5.95px -3px rgba(0,0,0,0.14),
+                  0 10px 26px -4.5px rgba(0,0,0,0.02);
+      transition: transform 0.3s cubic-bezier(0.27, 0, 0.51, 1), box-shadow 0.3s;
     }
-
-    .card:hover {
-      border-color: var(--primary);
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.12);
     }
-
-    .icon-box {
-      font-size: 32px;
+    .service-icon {
+      width: 56px; height: 56px;
+      background: var(--cream);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
       margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .service-card h3 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: var(--navy); margin-bottom: 10px;
+    }
+    .service-card p {
+      font-size: 14px; color: var(--gray); line-height: 1.6;
     }
 
-    .card h3 {
-      font-size: 22px;
-      margin-bottom: 12px;
-      font-weight: 700;
+    /* ─── TEAM ─── */
+    .team-row {
+      display: flex; gap: 16px; margin-top: 60px; align-items: flex-end;
+    }
+    .team-member {
+      flex: 1; text-align: center;
+    }
+    .team-member img {
+      width: 100%; object-fit: cover;
+      margin-bottom: 16px;
+    }
+    .team-member:nth-child(1) img { border-radius: 70px; }
+    .team-member:nth-child(2) img { border-radius: 100px; }
+    .team-member:nth-child(3) img { border-radius: 130px; }
+    .team-member:nth-child(4) img { border-radius: 140px; }
+    .team-member:nth-child(5) img { border-radius: 140px; }
+    .team-member h4 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: var(--navy);
+    }
+    .team-member p {
+      font-size: 12px; color: var(--gray); margin-top: 4px;
     }
 
-    .card p { color: var(--text-muted); line-height: 1.7; }
-
-    /* === AGENTS GRID === */
+    /* ─── AGENTS GRID ─── */
     .agents-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 20px;
       margin-top: 60px;
     }
-
     .agent-card {
       background: var(--white);
-      padding: 32px 24px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+      border-radius: 30px;
+      padding: 32px 20px;
       text-align: center;
-      transition: all 0.3s ease;
+      box-shadow: 0 0.602px 1.566px -1.5px rgba(0,0,0,0.17),
+                  0 2.289px 5.95px -3px rgba(0,0,0,0.14),
+                  0 10px 26px -4.5px rgba(0,0,0,0.02);
+      transition: transform 0.3s cubic-bezier(0.27, 0, 0.51, 1);
     }
-
-    .agent-card:hover {
-      border-color: var(--primary);
-      transform: translateY(-6px);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
-    }
-
-    .agent-icon { font-size: 2.5rem; margin-bottom: 16px; }
-    .agent-photo { width: 100%; max-width: 180px; border-radius: 16px; margin: 0 auto 16px; display: block; }
-    .agent-team { color: var(--text-muted); font-size: 0.8rem; margin-top: 8px; }
-    .agent-dept {
-      color: var(--primary);
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
-    }
-    .agent-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .agent-role { color: var(--text-muted); font-size: 0.85rem; }
-
-    /* === STATS === */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 40px;
-      margin-top: 60px;
-    }
-
-    .stat { text-align: center; }
-    .stat-number {
-      font-size: 3.5rem;
-      font-weight: 900;
-      color: var(--primary);
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-    .stat-label { color: var(--text-muted); margin-top: 8px; font-size: 0.9rem; }
-
-    /* === PRICING === */
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-      margin-top: 60px;
-    }
-
-    .pricing-card {
-      background: var(--white);
-      padding: 40px;
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
-    .pricing-card.featured {
-      border-color: var(--accent);
-      box-shadow: 0 20px 40px rgba(50, 56, 106, 0.12);
-    }
-
-    .pricing-badge {
-      position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: var(--primary);
-      padding: 6px 20px;
-      border-radius: 100px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .pricing-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
-    .pricing-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 24px; }
-    .pricing-amount { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; color: var(--primary); }
-    .pricing-currency { font-size: 1.5rem; color: var(--text-muted); }
-    .pricing-period { color: var(--text-muted); font-size: 0.9rem; }
-
-    .pricing-features { list-style: none; margin-bottom: 32px; }
-    .pricing-features li {
-      padding: 8px 0;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .pricing-features li::before {
-      content: "✓";
-      color: var(--primary);
-      font-weight: 700;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1.5px solid var(--border);
-      color: var(--text-main);
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: all 0.2s;
+    .agent-card:hover { transform: translateY(-6px); }
+    .agent-photo {
+      width: 100%; max-width: 160px;
+      border-radius: 30px;
+      margin: 0 auto 16px;
       display: block;
-      text-align: center;
-      cursor: pointer;
     }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-
-    /* === CHALLENGES === */
-    .challenges-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-      margin-top: 40px;
+    .agent-dept {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 6px;
     }
-
-    .challenge-card {
-      background: var(--white);
-      padding: 28px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+    .agent-name {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: var(--navy); margin-bottom: 4px;
     }
-    .challenge-year { color: var(--primary); font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; }
-    .challenge-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
-    .challenge-card p { color: var(--text-muted); font-size: 0.9rem; }
+    .agent-role { font-size: 12px; color: var(--gray); }
 
-    /* === TESTIMONIALS === */
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-      margin-top: 40px;
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-wrap {
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 20px;
     }
-
-    .testimonial {
-      background: var(--white);
+    .testimonials-wrap::-webkit-scrollbar { display: none; }
+    .testimonials-track {
+      display: flex; gap: 50px;
+      padding: 10px 0;
+    }
+    .testimonial-card {
+      flex-shrink: 0; width: 340px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 39px;
       padding: 32px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
     }
-
-    .testimonial-text {
-      font-size: 0.95rem;
-      line-height: 1.7;
-      margin-bottom: 20px;
-      color: var(--text-main);
-      font-style: italic;
+    .testimonial-card blockquote {
+      font-size: 15px; line-height: 1.6;
+      color: var(--navy); margin-bottom: 20px;
+      font-style: normal;
     }
-
     .testimonial-author { display: flex; align-items: center; gap: 12px; }
     .testimonial-avatar {
       width: 44px; height: 44px;
       border-radius: 50%;
-      background: var(--primary);
+      background: var(--orange);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.9rem;
-      color: white;
+      font-weight: 700; font-size: 14px; color: white;
     }
-    .testimonial-name { font-weight: 700; font-size: 0.9rem; }
-    .testimonial-role { color: var(--text-muted); font-size: 0.8rem; }
+    .testimonial-name {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700; font-size: 14px; color: var(--navy);
+    }
+    .testimonial-role { font-size: 12px; color: var(--gray); }
 
-    /* === FAQ === */
-    .faq-list { max-width: 700px; margin: 40px auto 0; }
-    .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
-    .faq-question { font-weight: 600; font-size: 1rem; margin-bottom: 8px; cursor: pointer; }
-    .faq-answer { color: var(--text-muted); font-size: 0.9rem; display: none; line-height: 1.7; }
+    /* ─── FAQ ─── */
+    .faq-list { margin-top: 60px; }
+    .faq-item {
+      border: 1px solid var(--yellow);
+      border-radius: 30px;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .faq-question {
+      padding: 20px 28px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 16px; font-weight: 700;
+      color: var(--navy);
+    }
+    .faq-question::after {
+      content: '+';
+      font-size: 20px; color: var(--orange);
+      transition: transform 0.2s;
+    }
+    .faq-item.open .faq-question::after { transform: rotate(45deg); }
+    .faq-answer {
+      padding: 0 28px 20px;
+      font-size: 15px; color: var(--gray);
+      display: none; line-height: 1.7;
+    }
     .faq-item.open .faq-answer { display: block; }
 
-    /* === CTA === */
+    /* ─── CTA / CONTACT ─── */
     .cta-section {
-      background: var(--bg-hero);
-      color: var(--primary);
-      text-align: center;
-      padding: 100px 24px;
+      background: var(--blue-light);
+      border-radius: 30px;
+      padding: 80px;
     }
     .cta-section h2 {
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 800;
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(28px, 3vw, 48px);
+      font-weight: 700;
+      color: var(--orange);
       margin-bottom: 16px;
-      letter-spacing: -0.03em;
     }
-    .cta-section p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .cta-section p {
+      font-size: 16px; color: var(--white);
+      margin-bottom: 32px;
+    }
+    .cta-section .btn-primary {
+      background: var(--orange); color: white;
+      padding: 14px 32px; border-radius: 10px;
+      font-family: 'Satoshi', sans-serif; font-weight: 700;
+      font-size: 15px; border: none; cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .cta-section .btn-primary:hover { background: var(--orange-light); }
 
-    /* === FOOTER === */
+    /* ─── FOOTER ─── */
     footer {
-      background: var(--bg-light);
-      padding: 60px 0 40px;
+      background: var(--blue-light);
+      border-radius: 30px 30px 0 0;
+      padding: 60px 80px;
+    }
+    .footer-links {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px; margin-bottom: 60px;
+    }
+    .footer-col h4 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: var(--orange); margin-bottom: 16px;
+    }
+    .footer-col a {
+      display: block;
+      color: var(--white); font-size: 14px;
+      text-decoration: none; margin-bottom: 10px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .footer-col a:hover { opacity: 1; }
+    footer > p {
       text-align: center;
-      border-top: 1px solid var(--border);
-    }
-    .footer-logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; margin-bottom: 16px; }
-    .footer-logo span { color: var(--primary); }
-    footer p { color: var(--text-muted); font-size: 0.85rem; }
-    footer a { color: var(--primary); }
-
-    /* === CTA ROW === */
-    .cta-row {
-      display: flex; gap: 12px; justify-content: center; align-items: center;
-      margin-top: 32px; flex-wrap: wrap;
+      color: var(--white); font-size: 13px;
+      opacity: 0.6;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      padding-top: 30px;
     }
 
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .hero { padding: 100px 0 60px; }
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1000px) {
+      .hero-content { grid-template-columns: 1fr; }
+      .hero-img-wrap { order: -1; }
+      .team-row { flex-wrap: wrap; }
+    }
+    @media (max-width: 810px) {
+      .container { padding: 0 24px; }
       section { padding: 60px 0; }
-      .hero h1 { font-size: 2.2rem; }
-      .hero p { font-size: 17px; }
+      .stats-bar { flex-direction: column; gap: 24px; }
+      .footer-links { grid-template-columns: 1fr; gap: 30px; }
+      footer { padding: 40px 24px; }
+      .cta-section { padding: 48px 24px; }
+      .team-row { gap: 12px; }
     }
   </style>
 </head>
@@ -604,190 +425,93 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="container">
-      <a href="/"><img src="/assets/logo.png" alt="MyCompi" class="logo-img"></a>
+      <a href="/"><img src="/assets/logo.png" alt="MyCompi" class="navbar-logo"></a>
       <div class="nav-links">
         <a href="#servicios">Servicios</a>
-        <a href="#agentes">Profesionales Agénticos</a>
-        <a href="#precios">Precios</a>
+        <a href="#equipos">Equipos</a>
+        <a href="#testimonios">Testimonios</a>
         <a href="#faq">FAQ</a>
       </div>
+      <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="nav-cta" target="_blank">Hablamos?</a>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
-    <div class="hero-card">
-      <div class="badge reveal">Profesionales Agénticos especializados para PYMES</div>
-      <h1 class="reveal">Tu compañero digital para tu <span class="highlight">día a día</span></h1>
-      <p class="reveal">Con una persona en tu empresa, puedes contratar a 5 Profesionales Agénticos expertos para optimizar tu trabajo y reducir costos en un 80%.</p>
-      <div class="cta-row reveal">
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">
-          Comenzar ahora
-          <span class="btn-icon"></span>
-        </a>
-        <a href="#servicios" class="btn-outline">Saber más</a>
-      </div>
-
-      <div class="hero-img reveal">
-        <img src="/assets/dashboard.jpg" alt="MyCompi Dashboard">
+  <section class="hero" id="home">
+    <div class="hero-cream">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <div class="section-eyebrow reveal">Profesionales Agénticos especializados para PYMES</div>
+            <h1 class="hero-heading reveal reveal-delay-1">Tu compañero digital para tu <span>día a día</span></h1>
+            <p class="hero-sub reveal reveal-delay-2">Con una persona en tu empresa, puedes contratar a 5 Profesionales Agénticos expertos para optimizar tu trabajo y reducir costos en un 80%.</p>
+            <div class="reveal reveal-delay-3">
+              <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank" style="display:inline-block;background:var(--orange);color:white;padding:14px 32px;border-radius:10px;font-family:'Satoshi',sans-serif;font-weight:700;font-size:15px;text-decoration:none;">Comenzar ahora</a>
+            </div>
+            <div class="stats-bar reveal reveal-delay-4">
+              <div class="stat-item">
+                <div class="stat-num">62%</div>
+                <div class="stat-label">Mejora en procesos</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-num">200+</div>
+                <div class="stat-label">Casos de éxito</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-num">150+</div>
+                <div class="stat-label">Clientes recurrentes</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-num">1349+</div>
+                <div class="stat-label">5 Star Reviews</div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-img-wrap reveal reveal-delay-2">
+            <img src="/assets/dashboard.jpg" alt="MyCompi Dashboard">
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- CONTRATA TU EQUIPO -->
-  <section id="servicios" class="alt">
+  <!-- SERVICIOS -->
+  <section class="section-cream" id="servicios">
     <div class="container">
-      <div class="section-label reveal">Contrata a tu equipo</div>
-      <div class="divider"></div>
-      <h2 class="section-title reveal">Despliega equipos de Profesionales Agénticos<br>que trabajan juntos</h2>
-      <p class="section-sub">Equipos de Profesionales Agénticos de IA que trabajan juntos para resolver tus tareas diarias con MyCompi.</p>
+      <div class="section-eyebrow reveal">Nuestra Especialidad</div>
+      <h2 class="section-title reveal reveal-delay-1">Ahorra 80% en costes</h2>
+      <p class="section-sub reveal reveal-delay-2">Potenciamos a 1 persona con un equipo de 6 agentes IA especializados.</p>
 
-      <div class="agents-grid">
-        <div class="agent-card reveal reveal-delay-1">
-          <img src="/assets/mia.jpg" alt="Enzo Herrera" class="agent-photo">
-          <div class="agent-dept">Marketing</div>
-          <div Class="agent-name">Enzo Herrera</div>
-          <div class="agent-role">Manager de Marketing</div>
-          <div class="agent-team">Equipo de 5 Profesionales Agénticos</div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-icon">🎯</div>
+          <h3>Especialización de Agentes</h3>
+          <p>Crea agentes de IA especializados con capacidades únicas que destacan en diferentes tareas dentro de tu flujo de trabajo.</p>
         </div>
-        <div class="agent-card">
-          <img src="/assets/victor.jpg" alt="Carlos Mendoza" class="agent-photo">
-          <div class="agent-dept">Ventas</div>
-          <div class="agent-name">Carlos Mendoza</div>
-          <div class="agent-role">Manager de Ventas</div>
-          <div class="agent-team">Equipo de 5 Profesionales Agénticos</div>
-        </div>
-        <div class="agent-card">
-          <img src="/assets/alex.jpg" alt="Luna Vidal" class="agent-photo">
-          <div class="agent-dept">Att. Cliente</div>
-          <div class="agent-name">Luna Vidal</div>
-          <div class="agent-role">Manager de Att Cliente</div>
-          <div class="agent-team">Equipo de 5 Profesionales Agénticos</div>
-        </div>
-        <div class="agent-card">
-          <img src="/assets/marta.jpg" alt="Elena Ortega" class="agent-photo">
-          <div class="agent-dept">Operaciones</div>
-          <div class="agent-name">Elena Ortega</div>
-          <div class="agent-role">Manager de Operaciones</div>
-          <div class="agent-team">Equipo de 5 Profesionales Agénticos</div>
-        </div>
-        <div class="agent-card">
-          <img src="/assets/alan.jpg" alt="Diana Palau" class="agent-photo">
-          <div class="agent-dept">Data Growth</div>
-          <div class="agent-name">Diana Palau</div>
-          <div class="agent-role">Manager Datos</div>
-          <div class="agent-team">Equipo de 5 Profesionales Agénticos</div>
-        </div>
-      </div>
-
-      <div class="cta-row">
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">Tu Equipo de Profesionales Agénticos →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- VALUE PROPS -->
-  <section>
-    <div class="container">
-      <div class="section-label reveal">Características</div>
-      <div class="divider"></div>
-      <h2 class="section-title reveal">Todo lo que necesitas</h2>
-      <div class="grid">
-        <div class="card reveal">
-          <div class="icon-box"></div>
-          <h3>Especialización de Profesionales Agénticos</h3>
-          <p>Crea Profesionales Agénticos de IA especializados con capacidades únicas que destacan en diferentes tareas dentro de tu flujo de trabajo.</p>
-        </div>
-        <div class="card reveal reveal-delay-1">
-          <div class="icon-box"></div>
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-icon">🤝</div>
           <h3>Colaboración en Equipo</h3>
-          <p>Permite que los Profesionales Agénticos trabajen juntos, compartan información y coordinen tareas complejas con objetivos unificados.</p>
+          <p>Permite que los agentes trabajen juntos, compartan información y coordinen tareas complejas con objetivos unificados.</p>
         </div>
-        <div class="card reveal reveal-delay-2">
-          <div class="icon-box"></div>
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-icon">🚀</div>
           <h3>Sin Despidos</h3>
           <p>Redefine y potencia el papel de los empleados: se centran en actividades estratégicas y de alto valor.</p>
         </div>
-        <div class="card reveal reveal-delay-3">
-          <div class="icon-box"></div>
+        <div class="service-card reveal reveal-delay-3">
+          <div class="service-icon">⚡</div>
           <h3>Implementación Rápida</h3>
-          <p>Despliega equipos de Profesionales Agénticos en minutos con nuestra interfaz intuitiva y plantillas prediseñadas.</p>
+          <p>Despliega equipos de agentes en minutos con nuestra interfaz intuitiva y plantillas prediseñadas.</p>
         </div>
-        <div class="card reveal reveal-delay-4">
-          <div class="icon-box"></div>
+        <div class="service-card reveal reveal-delay-4">
+          <div class="service-icon">🔗</div>
           <h3>Flujos de Trabajo Integrados</h3>
-          <p>Conecta tus equipos de Profesionales Agénticos con tus herramientas existentes, APIs y fuentes de datos sin problemas.</p>
+          <p>Conecta tus equipos de agentes con tus herramientas existentes, APIs y fuentes de datos sin problemas.</p>
         </div>
-        <div class="card reveal reveal-delay-5">
-          <div class="icon-box"></div>
+        <div class="service-card reveal reveal-delay-5">
+          <div class="service-icon">🌍</div>
           <h3>Escalabilidad Global</h3>
-          <p>Escala tus operaciones de Profesionales Agénticos a nivel global con infraestructura de alta disponibilidad diseñada para empresas.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- RETOS PYMES -->
-  <section class="alt">
-    <div class="container">
-      <div class="section-label reveal">2026.</div>
-      <div class="divider"></div>
-      <h2 class="section-title reveal">Retos de las PYMES sin IA</h2>
-      <div class="challenges-grid">
-        <div class="challenge-card reveal">
-          <div class="challenge-year">2026.</div>
-          <h4>Gestión de Ventas Ineficiente</h4>
-          <p>Muchas PYMES luchan con sistemas de ventas complicados y poco intuitivos. Esto resulta en oportunidades perdidas y frustración.</p>
-        </div>
-        <div class="challenge-card reveal reveal-delay-1">
-          <div class="challenge-year">2026.</div>
-          <h4>Atención al Cliente Deficiente</h4>
-          <p>La falta de recursos dificulta proporcionar un servicio al cliente de calidad. Esto puede llevar a la pérdida de clientes.</p>
-        </div>
-        <div class="challenge-card reveal reveal-delay-2">
-          <div class="challenge-year">2026.</div>
-          <h4>Procesos Manuales Tediosos</h4>
-          <p>El tiempo valioso se desperdicia en tareas administrativas repetitivas. Esto reduce la productividad y el crecimiento del negocio.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- VALUE PROPS 2 -->
-  <section>
-    <div class="container">
-      <div class="section-label reveal">Por qué MyCompi</div>
-      <div class="divider"></div>
-      <div class="grid">
-        <div class="card">
-          <div class="icon-box"></div>
-          <h3>Experiencia Demostrada</h3>
-          <p>Nos hemos forjado una reputación como socio fiable y de confianza para lograr el éxito empresarial.</p>
-        </div>
-        <div class="card">
-          <div class="icon-box"></div>
-          <h3>IA en tu equipo hoy</h3>
-          <p>Ofrecemos soluciones personalizadas adaptadas a sus objetivos específicos, su público y su sector.</p>
-        </div>
-        <div class="card">
-          <div class="icon-box"></div>
-          <h3>Enfoque Centrado en el Cliente</h3>
-          <p>Tu éxito es nuestra prioridad. Nuestra prioridad es comprender sus objetivos empresariales.</p>
-        </div>
-        <div class="card">
-          <div class="icon-box"></div>
-          <h3>Innovación Continua</h3>
-          <p>Mejoramos constantemente nuestras soluciones para mantenerte a la vanguardia de la IA Agéntica.</p>
-        </div>
-        <div class="card">
-          <div class="icon-box"></div>
-          <h3>Asistencia Dedicada</h3>
-          <p>Soporte directo incluido en todos los planes con técnicos especializados disponibles.</p>
-        </div>
-        <div class="card">
-          <div class="icon-box"></div>
-          <h3>Positive Client Experiences</h3>
-          <p>Más de 200 empresas ya han transformado sus operaciones con MyCompi.</p>
+          <p>Escala tus operaciones de agentes a nivel global con infraestructura de alta disponibilidad diseñada para empresas.</p>
         </div>
       </div>
     </div>
@@ -796,97 +520,162 @@
   <!-- EQUIPOS -->
   <section id="equipos">
     <div class="container">
-      <div class="section-label reveal">Equipos especializados</div>
-      <div class="divider"></div>
-      <h2 class="section-title reveal">Tu equipo de Profesionales Agénticos<br>listo para trabajar</h2>
-      <p class="section-sub">Cada equipo con un líder humano y 5 Profesionales Agénticos especializados trabajando 24/7.</p>
+      <div class="section-eyebrow reveal">Equipos especializados</div>
+      <h2 class="section-title reveal reveal-delay-1">Tu equipo de Agentes IA listo para trabajar</h2>
+      <p class="section-sub reveal reveal-delay-2">Cada equipo con un líder humano y 5 agentes especializados trabajando 24/7.</p>
 
-      <div class="grid">
-        <div class="card" style="text-align:center;">
-          <div class="icon-box"></div>
-          <h3>Equipo Marketing</h3>
-          <p style="margin-top: 8px;">Líder: <strong>Alex Torres</strong> (Manager). Equipo de 5 Profesionales Agénticos especializados en contenido, ads y SEO.</p>
+      <div class="agents-grid">
+        <div class="agent-card reveal">
+          <img src="/assets/mia.jpg" alt="Enzo Herrera" class="agent-photo">
+          <div class="agent-dept">Marketing</div>
+          <div class="agent-name">Enzo Herrera</div>
+          <div class="agent-role">Manager de Marketing</div>
         </div>
-        <div class="card" style="text-align:center;">
-          <div class="icon-box"></div>
-          <h3>Equipo Ventas</h3>
-          <p style="margin-top: 8px;">Líder: <strong>Carlos Mendoza</strong> (Manager). Equipo de 5 Profesionales Agénticos gestionando leads y closing.</p>
+        <div class="agent-card reveal reveal-delay-1">
+          <img src="/assets/victor.jpg" alt="Carlos Mendoza" class="agent-photo">
+          <div class="agent-dept">Ventas</div>
+          <div class="agent-name">Carlos Mendoza</div>
+          <div class="agent-role">Manager de Ventas</div>
         </div>
-        <div class="card" style="text-align:center;">
-          <div class="icon-box"></div>
-          <h3>Equipo Atención al Cliente</h3>
-          <p style="margin-top: 8px;">Líder: <strong>Alex Torres</strong> (Manager). Equipo de 5 Profesionales Agénticos dando soporte 24/7.</p>
+        <div class="agent-card reveal reveal-delay-2">
+          <img src="/assets/alex.jpg" alt="Luna Vidal" class="agent-photo">
+          <div class="agent-dept">Att. Cliente</div>
+          <div class="agent-name">Luna Vidal</div>
+          <div class="agent-role">Manager de Att Cliente</div>
         </div>
-        <div class="card" style="text-align:center;">
-          <div class="icon-box"></div>
-          <h3>Equipo Operaciones</h3>
-          <p style="margin-top: 8px;">Líder: <strong>Elena Ortega</strong> (Manager). Equipo de 5 Profesionales Agénticos automatizando procesos.</p>
+        <div class="agent-card reveal reveal-delay-3">
+          <img src="/assets/marta.jpg" alt="Elena Ortega" class="agent-photo">
+          <div class="agent-dept">Operaciones</div>
+          <div class="agent-name">Elena Ortega</div>
+          <div class="agent-role">Manager de Operaciones</div>
+        </div>
+        <div class="agent-card reveal reveal-delay-4">
+          <img src="/assets/alan.jpg" alt="Diana Palau" class="agent-photo">
+          <div class="agent-dept">Data Growth</div>
+          <div class="agent-name">Diana Palau</div>
+          <div class="agent-role">Manager Datos</div>
+        </div>
+      </div>
+
+      <!-- TEAM ROW -->
+      <div class="team-row">
+        <div class="team-member reveal">
+          <img src="/assets/mia.jpg" alt="Enzo Herrera">
+          <h4>Enzo Herrera</h4>
+          <p>Marketing</p>
+        </div>
+        <div class="team-member reveal reveal-delay-1">
+          <img src="/assets/victor.jpg" alt="Carlos Mendoza">
+          <h4>Carlos Mendoza</h4>
+          <p>Ventas</p>
+        </div>
+        <div class="team-member reveal reveal-delay-2">
+          <img src="/assets/alex.jpg" alt="Luna Vidal">
+          <h4>Luna Vidal</h4>
+          <p>Att. Cliente</p>
+        </div>
+        <div class="team-member reveal reveal-delay-3">
+          <img src="/assets/marta.jpg" alt="Elena Ortega">
+          <h4>Elena Ortega</h4>
+          <p>Operaciones</p>
+        </div>
+        <div class="team-member reveal reveal-delay-4">
+          <img src="/assets/alan.jpg" alt="Diana Palau">
+          <h4>Diana Palau</h4>
+          <p>Data Growth</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PRICING -->
-  <section id="precios" class="alt">
+  <!-- TESTIMONIALS -->
+  <section class="section-cream" id="testimonios">
     <div class="container">
-      <div class="section-label reveal">La inversión se paga sola</div>
-      <div class="divider"></div>
-      <h2 class="section-title reveal">Planes para cada etapa</h2>
-      <p class="section-sub">Sin sorpresas. Sin costes ocultos. Solo resultados.</p>
+      <div class="section-eyebrow reveal">Testimonios</div>
+      <h2 class="section-title reveal reveal-delay-1">Lo que dicen nuestros clientes</h2>
 
-      <div class="pricing-grid">
-        <div class="pricing-card reveal">
-          <div class="pricing-name">ED Básico</div>
-          <div class="pricing-price">
-            <span class="pricing-currency">€</span>
-            <span class="pricing-amount">147</span>
-            <span class="pricing-period">/mes</span>
+      <div class="testimonials-wrap reveal reveal-delay-2">
+        <div class="testimonials-track">
+          <div class="testimonial-card">
+            <blockquote>"Gracias a MyCompi, hemos automatizado nuestros procesos internos, resulting in un aumento del 35% en productividad."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">LM</div>
+              <div>
+                <div class="testimonial-name">Laura Martínez</div>
+                <div class="testimonial-role">Científica de Datos en DataFlow</div>
+              </div>
+            </div>
           </div>
-          <ul class="pricing-features">
-            <li>Hasta 2 Profesionales Agénticos</li>
-            <li>Automatización de tareas esenciales</li>
-            <li>Asistencia en atención al cliente</li>
-            <li>Generación de informes básicos</li>
-            <li>Soporte Directo 3 meses</li>
-          </ul>
-          <a href="https://buy.stripe.com/14kbJU5q2bCw9gI8wE" class="btn-outline" target="_blank">Empezar</a>
-        </div>
-
-        <div class="pricing-card featured">
-          <div class="pricing-badge">POPULAR</div>
-          <div class="pricing-name">ED Premium</div>
-          <div class="pricing-price">
-            <span class="pricing-currency">€</span>
-            <span class="pricing-amount">497</span>
-            <span class="pricing-period">/mes</span>
+          <div class="testimonial-card">
+            <blockquote>"La implementación de agentes ha mejorado significativamente la experiencia de nuestros clientes. Tasa de conversión +25%."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">CG</div>
+              <div>
+                <div class="testimonial-name">Carlos Gómez</div>
+                <div class="testimonial-role">Gerente de Marketing en TechWorld</div>
+              </div>
+            </div>
           </div>
-          <ul class="pricing-features">
-            <li>Hasta 5 Profesionales Agénticos</li>
-            <li>Todas las funcionalidades del Plan Básico</li>
-            <li>Automatización avanzada de procesos</li>
-            <li>Integración con sistemas existentes</li>
-            <li>Análisis de datos e informes detallados</li>
-            <li>Soporte Directo 6 meses</li>
-          </ul>
-          <a href="https://buy.stripe.com/8wM29kbOqgWQ50s9AJ" class="btn-cta" style="display:block;text-align:center;" target="_blank">Empezar</a>
-        </div>
-
-        <div class="pricing-card reveal reveal-delay-1">
-          <div class="pricing-name">ED ROI</div>
-          <div class="pricing-price">
-            <span class="pricing-currency">€</span>
-            <span class="pricing-amount">1320</span>
-            <span class="pricing-period">/mes</span>
+          <div class="testimonial-card">
+            <blockquote>"BeeNoCode transformó la forma en que interactuamos con nuestros clientes. Servicio más eficiente y personalizado."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">AB</div>
+              <div>
+                <div class="testimonial-name">Ana Beltrán</div>
+                <div class="testimonial-role">Responsable de Atención al Cliente en ServiPlus</div>
+              </div>
+            </div>
           </div>
-          <ul class="pricing-features">
-            <li>Profesionales Agénticos ILIMITADOS</li>
-            <li>Todas las funcionalidades Premium</li>
-            <li>Automatización avanzada total</li>
-            <li>Integración total con sistemas</li>
-            <li>Análisis de datos completo</li>
-            <li>Soporte Directo 12 meses</li>
-          </ul>
-          <a href="https://buy.stripe.com/8wM29kbOqgWQ50s9AJ" class="btn-outline" target="_blank">Empezar</a>
+          <div class="testimonial-card">
+            <blockquote>"La integración de las soluciones de BeeNoCode ha sido un cambio de juego. Hemos reducido costos operativos significativamente."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">JR</div>
+              <div>
+                <div class="testimonial-name">Javier Ruiz</div>
+                <div class="testimonial-role">CEO de MarketLeaders</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <blockquote>"Trabajar con MyCompi ha sido una experiencia excepcional. Su equipo es profesional y las soluciones implementadas han optimizado nuestros procesos."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">MF</div>
+              <div>
+                <div class="testimonial-name">María Fernández</div>
+                <div class="testimonial-role">Directiva General en EcoSolutions</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <blockquote>"Desde que incorporamos las herramientas de inteligencia artificial de MyCompi, nuestra empresa ha visto una mejora notable en eficiencia y satisfacción de clientes."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">RS</div>
+              <div>
+                <div class="testimonial-name">Roberto Sánchez</div>
+                <div class="testimonial-role">Director de Tecnología en InnovaCorp</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <blockquote>"MyCompi nos ha permitido escalar nuestro negocio sin incrementar los costos operativos. Las soluciones de automatización han optimizado nuestros procesos."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">EL</div>
+              <div>
+                <div class="testimonial-name">Elena López</div>
+                <div class="testimonial-role">Gerente de Proyectos en TechSolutions</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <blockquote>"La colaboración con MyCompi ha sido fundamental para nuestra transformación digital. Mejora en productividad y servicio al cliente."</blockquote>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">MT</div>
+              <div>
+                <div class="testimonial-name">Miguel Torres</div>
+                <div class="testimonial-role">Director de Operaciones en DigitalWave</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -895,74 +684,89 @@
   <!-- FAQ -->
   <section id="faq">
     <div class="container">
-      <div class="section-label reveal">FAQ</div>
-      <div class="divider"></div>
-      <h2 class="section-title reveal">¿Tienes preguntas?<br>Tenemos respuestas.</h2>
+      <div class="section-eyebrow reveal">FAQ</div>
+      <h2 class="section-title reveal reveal-delay-1">Tenemos respuestas.</h2>
 
       <div class="faq-list">
         <div class="faq-item reveal">
-          <div class="faq-question reveal">¿Por qué automatizar tareas en mi empresa con MyCompi?</div>
+          <div class="faq-question">¿Por qué automatizar tareas en mi empresa con MyCompi?</div>
           <div class="faq-answer">MyCompi permite que tu empresa opere con una fracción del costo mientras tus empleados se enfocan en tareas de alto valor estratégico.</div>
         </div>
         <div class="faq-item reveal reveal-delay-1">
-          <div class="faq-question reveal reveal-delay-1">¿Cómo funciona MyCompi?</div>
-          <div class="faq-answer">Contratas un equipo de Profesionales Agénticos especializados que trabajan 24/7. Cada Profesional Agéntico tiene un rol definido (Marketing, Ventas, Atención al Cliente, etc.) y se coordina con el resto.</div>
+          <div class="faq-question">¿Cómo funciona MyCompi?</div>
+          <div class="faq-answer">Contratas un equipo de agentes IA especializados que trabajan 24/7. Cada agente tiene un rol definido (Marketing, Ventas, Atención al Cliente, etc.) y se coordina con el resto.</div>
         </div>
         <div class="faq-item reveal reveal-delay-2">
-          <div class="faq-question reveal reveal-delay-2">¿Cuál es el costo de usar MyCompi?</div>
-          <div class="faq-answer">Plans desde 147€/mes (ED Básico, hasta 2 agentes) hasta 1.320€/mes (ED ROI, Profesionales Agénticos ilimitados). La inversión se paga sola con el ahorro en costes operativos.</div>
+          <div class="faq-question">¿Cuál es el costo de usar MyCompi?</div>
+          <div class="faq-answer">Planes desde 147€/mes (ED Básico, hasta 2 agentes) hasta 1.320€/mes (ED ROI, agentes ilimitados). La inversión se paga sola con el ahorro en costes operativos.</div>
         </div>
         <div class="faq-item reveal reveal-delay-3">
-          <div class="faq-question reveal reveal-delay-3">¿Cuánto tiempo toma implementar MyCompi?</div>
-          <div class="faq-answer">Puedes tener tu primer agente funcionando en menos de 24 horas. La configuración completa de un equipo de 5 Profesionales Agénticos toma entre 1-3 días.</div>
+          <div class="faq-question">¿Cuánto tiempo toma implementar MyCompi?</div>
+          <div class="faq-answer">Puedes tener tu primer agente funcionando en menos de 24 horas. La configuración completa de un equipo de 5 agentes toma entre 1-3 días.</div>
         </div>
         <div class="faq-item reveal reveal-delay-4">
-          <div class="faq-question reveal reveal-delay-4">¿Qué tipos de tareas puede automatizar MyCompi?</div>
+          <div class="faq-question">¿Qué tipos de tareas puede automatizar MyCompi?</div>
           <div class="faq-answer">Desde atención al cliente y gestión de leads, hasta reporting, análisis de datos, gestión de redes sociales, facturación y mucho más.</div>
         </div>
         <div class="faq-item reveal reveal-delay-5">
-          <div class="faq-question reveal reveal-delay-5">¿Cómo garantiza MyCompi la integración con mis herramientas actuales?</div>
-          <div class="faq-answer">Conecta tus equipos de Profesionales Agénticos con tus herramientas existentes, APIs y fuentes de datos sin problemas. Flujos de trabajo integrados desde el primer día.</div>
+          <div class="faq-question">¿Cómo garantiza MyCompi la integración con mis herramientas actuales?</div>
+          <div class="faq-answer">Conecta tus equipos de agentes con tus herramientas existentes, APIs y fuentes de datos sin problemas. Flujos de trabajo integrados desde el primer día.</div>
         </div>
         <div class="faq-item reveal reveal-delay-6">
-          <div class="faq-question reveal reveal-delay-6">¿Es MyCompi adecuado para empresas de todos los tamaños?</div>
+          <div class="faq-question">¿Es MyCompi adecuado para empresas de todos los tamaños?</div>
           <div class="faq-answer">Sí. Empezamos con el Plan Básico para PYMEs y escalamos hasta equipos ilimitados para empresas en crecimiento.</div>
         </div>
         <div class="faq-item reveal reveal-delay-7">
-          <div class="faq-question reveal reveal-delay-7">¿Puedo personalizar los Profesionales Agénticos de MyCompi?</div>
-          <div class="faq-answer">Sí. Cada Profesional Agéntico se configura con el contexto de tu negocio, productos, tono de comunicación y procesos específicos.</div>
+          <div class="faq-question">¿Puedo personalizar los agentes IA de MyCompi?</div>
+          <div class="faq-answer">Sí. Cada agente se configura con el contexto de tu negocio, productos, tono de comunicación y procesos específicos.</div>
         </div>
         <div class="faq-item reveal reveal-delay-8">
-          <div class="faq-question reveal reveal-delay-8">¿Qué soporte ofrece MyCompi durante el uso de sus servicios?</div>
+          <div class="faq-question">¿Qué soporte ofrece MyCompi durante el uso de sus servicios?</div>
           <div class="faq-answer">Soporte directo incluido en todos los planes: 3 meses en Básico, 6 meses en Premium y 12 meses en ROI. Además, cada cliente tiene un Account Manager dedicado.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA FINAL -->
-  <section class="cta-section">
-    <h2>No reemplaces, complementa</h2>
-    <p>Profesionales Agénticos que elevan el potencial de tu equipo. Empieza hoy.</p>
-    <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">Hablar con un Profesional Agéntico →</a>
+  <!-- CTA / CONTACT -->
+  <section>
+    <div class="container">
+      <div class="cta-section reveal">
+        <h2>No reemplaces, complementa</h2>
+        <p>Profesionales Agénticos que elevan el potencial de tu equipo. Habla con nosotros hoy.</p>
+        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-primary" target="_blank">Hablar con un Agente →</a>
+      </div>
+    </div>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <img src="/assets/logo.png" alt="MyCompi" class="footer-logo-img">
-    <p>Mi futuro es Hoy</p>
-    <p style="margin-top: 0.5rem;">Ubicación: Worldwide</p>
-    <p style="margin-top: 0.5rem;"><a href="mailto:hola@mycompi.com">hola@mycompi.com</a></p>
-    <p style="margin-top: 2rem; opacity: 0.5;">© 2026 MyCompi</p>
+    <div class="container">
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>MYCOMPI</h4>
+          <a href="#home">Home</a>
+          <a href="#servicios">Servicios</a>
+          <a href="#equipos">Equipos</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <h4>EMPRESA</h4>
+          <a href="#">Sobre nosotros</a>
+          <a href="#">Proyectos</a>
+          <a href="#">Contacto</a>
+        </div>
+        <div class="footer-col">
+          <h4>LEGAL</h4>
+          <a href="#">Privacidad</a>
+          <a href="#">Términos</a>
+        </div>
+      </div>
+      <p>Mi futuro es Hoy — MyCompi 2026</p>
+    </div>
   </footer>
 
   <script>
-    document.querySelectorAll('.faq-question').forEach(q => {
-      q.addEventListener('click', () => {
-        q.parentElement.classList.toggle('open');
-      });
-    });
-
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -971,8 +775,15 @@
           entry.target.classList.add('visible');
         }
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
     reveals.forEach(el => observer.observe(el));
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        q.parentElement.classList.toggle('open');
+      });
+    });
   </script>
 </body>
 </html>
