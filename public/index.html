@@ -7,48 +7,40 @@
   <meta name="description" content="Despliega equipos de agentes de IA que trabajan juntos para resolver tus tareas diarias con MyCompi.">
   <link rel="icon" type="image/png" href="/assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0B0D17;
-      --surface: #111827;
-      --surface-2: #1a2035;
-      --border: rgba(255,255,255,0.07);
-      --cyan: #00E5FF;
-      --purple: #A855F7;
-      --orange: #FF6B2B;
-      --pink: #F472B6;
-      --green: #34D399;
-      --text: #F1F5F9;
-      --text-muted: #94A3B8;
-      --text-dim: #64748B;
+      --bg-main: #ffffff;
+      --bg-section: #f7f8f9;
+      --border-color: #e5e7eb;
+      --accent-green: #c5ff4a;
+      --accent-text: #000000;
+      --text-primary: #000000;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+      --radius-lg: 16px;
+      --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
+      --shadow-md: 0 10px 24px -4px rgba(0,0,0,0.08);
+      --shadow-lg: 0 20px 40px -8px rgba(0,0,0,0.12);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-secondary);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
-    h1,h2,h3,h4,h5 { font-family: 'Unbounded', sans-serif; }
-
-    /* ── REVEAL ── */
-    .reveal { opacity: 1; transform: none; }
-
-    /* ── GLOW UTILS ── */
-    .glow-cyan { box-shadow: 0 0 20px rgba(0,229,255,0.15); }
-    .glow-purple { box-shadow: 0 0 20px rgba(168,85,247,0.15); }
-    .glow-orange { box-shadow: 0 0 20px rgba(255,107,43,0.15); }
+    h1,h2,h3,h4,h5 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; color: var(--text-primary); }
 
     /* ── NAVBAR ── */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       height: 68px;
-      background: rgba(11,13,23,0.92);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
       display: flex; align-items: center;
     }
     .nav-inner {
@@ -59,83 +51,69 @@
     .nav-links { display: flex; gap: 2rem; }
     .nav-links a {
       font-size: 14px; font-weight: 600;
-      color: var(--text-muted); text-decoration: none;
+      color: var(--text-secondary); text-decoration: none;
       transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--cyan); }
+    .nav-links a:hover { color: var(--text-primary); }
     .nav-cta {
       font-size: 14px; font-weight: 700;
-      background: var(--orange); color: white; text-decoration: none;
+      background: var(--accent-green); color: var(--accent-text); text-decoration: none;
       padding: 10px 24px; border-radius: 10px;
       transition: all 0.2s;
     }
-    .nav-cta:hover { background: #ff7a3d; transform: translateY(-1px); }
+    .nav-cta:hover { background: #d0ff70; }
 
     /* ── HERO ── */
     .hero {
-      background: var(--bg);
+      background: var(--bg-main);
       padding: 130px 0 80px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -200px; left: 50%; transform: translateX(-50%);
-      width: 800px; height: 800px;
-      background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%);
-      pointer-events: none;
     }
     .hero-grid {
       max-width: 1200px; margin: 0 auto; padding: 0 40px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-      position: relative; z-index: 1;
     }
     .hero-eyebrow {
-      font-family: 'Unbounded', sans-serif;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--cyan); margin-bottom: 16px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 16px;
     }
     .hero-title {
-      font-family: 'Unbounded', sans-serif;
-      font-size: clamp(36px, 4vw, 58px); font-weight: 700;
-      color: var(--text); letter-spacing: -0.02em; line-height: 1.15;
-      margin-bottom: 20px;
+      font-size: clamp(40px, 5vw, 64px); font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.1;
+      color: var(--text-primary); margin-bottom: 20px;
     }
-    .hero-title span { color: var(--cyan); }
+    .hero-title span { color: var(--accent-green); }
     .hero-sub {
-      font-size: 17px; color: var(--text-muted); line-height: 1.7; margin-bottom: 36px;
+      font-size: 17px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 36px;
     }
     .hero-btns { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
     .btn-primary {
-      background: var(--orange); color: white;
-      padding: 14px 32px; border-radius: 10px;
-      font-weight: 700; font-size: 15px;
+      background: var(--accent-green); color: var(--accent-text);
+      padding: 14px 32px; border-radius: 12px;
+      font-size: 15px; font-weight: 700;
       text-decoration: none; display: inline-block;
       transition: all 0.2s; border: none; cursor: pointer;
     }
-    .btn-primary:hover { background: #ff7a3d; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,43,0.3); }
+    .btn-primary:hover { background: #d0ff70; transform: translateY(-2px); box-shadow: var(--shadow-md); }
     .btn-outline {
-      border: 1.5px solid rgba(255,255,255,0.15); color: var(--text-muted);
-      padding: 14px 32px; border-radius: 10px;
-      font-weight: 700; font-size: 15px;
+      border: 1.5px solid var(--border-color); color: var(--text-secondary);
+      padding: 14px 32px; border-radius: 12px;
+      font-size: 15px; font-weight: 600;
       text-decoration: none; display: inline-block;
       transition: all 0.2s;
     }
-    .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+    .btn-outline:hover { border-color: var(--text-primary); color: var(--text-primary); }
     .hero-img {
       border-radius: 20px;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+      box-shadow: var(--shadow-lg);
       width: 100%; display: block;
-      border: 1px solid var(--border);
     }
 
     /* ── STATS ── */
     .stats-section {
-      background: var(--surface);
+      background: var(--bg-section);
       padding: 60px 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
     }
     .stats-grid {
       max-width: 1200px; margin: 0 auto; padding: 0 40px;
@@ -143,61 +121,61 @@
     }
     .stat-box { text-align: center; }
     .stat-num {
-      font-family: 'Unbounded', sans-serif;
-      font-size: 48px; font-weight: 700;
-      line-height: 1;
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-size: 52px; font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1;
+      color: var(--text-primary);
     }
-    .stat-label { font-size: 14px; color: var(--text-muted); margin-top: 8px; }
+    .stat-label { font-size: 14px; color: var(--text-muted); margin-top: 8px; font-weight: 500; }
 
     /* ── SERVICES ── */
-    .services { background: var(--bg); padding: 100px 0; }
+    .services { background: var(--bg-main); padding: 100px 0; }
     .services-header { text-align: center; margin-bottom: 60px; }
     .section-eyebrow {
-      font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--cyan); margin-bottom: 12px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 12px;
     }
     .section-title {
-      font-family: 'Unbounded', sans-serif;
       font-size: clamp(28px, 3vw, 40px); font-weight: 700;
-      color: var(--text); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px;
+      letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 12px;
+      color: var(--text-primary);
     }
-    .section-sub { font-size: 16px; color: var(--text-muted); max-width: 560px; margin: 0 auto; }
+    .section-sub { font-size: 16px; color: var(--text-secondary); max-width: 560px; margin: 0 auto; }
     .services-grid {
       max-width: 1200px; margin: 0 auto; padding: 0 40px;
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
     }
     .service-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      background: var(--bg-section);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
       padding: 32px 28px;
-      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-      position: relative; overflow: hidden;
-    }
-    .service-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-      opacity: 0; transition: opacity 0.3s;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .service-card:hover {
       transform: translateY(-6px);
-      border-color: rgba(0,229,255,0.3);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+      box-shadow: var(--shadow-md);
     }
-    .service-card:hover::before { opacity: 1; }
-    .service-icon { font-size: 36px; margin-bottom: 16px; }
+    .service-icon {
+      width: 52px; height: 52px;
+      background: var(--accent-green);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 20px;
+    }
     .service-card h3 {
-      font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700;
-      color: var(--text); margin-bottom: 10px;
+      font-size: 18px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 10px;
     }
-    .service-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+    .service-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
 
     /* ── TEAM ── */
-    .team { background: var(--surface); padding: 100px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .team {
+      background: var(--bg-section);
+      padding: 100px 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
     .team-header { text-align: center; margin-bottom: 60px; }
     .team-grid {
       max-width: 1200px; margin: 0 auto; padding: 0 40px;
@@ -206,93 +184,83 @@
     .team-card { text-align: center; }
     .team-card img {
       width: 100%; aspect-ratio: 1; object-fit: cover; margin-bottom: 14px;
-      border: 2px solid var(--border);
+      border: 2px solid var(--border-color);
       transition: border-color 0.3s;
     }
-    .team-card:hover img { border-color: var(--cyan); }
+    .team-card:hover img { border-color: var(--accent-green); }
     .team-card:nth-child(1) img { border-radius: 70px 70px 70px 70px; }
     .team-card:nth-child(2) img { border-radius: 100px 100px 100px 100px; }
     .team-card:nth-child(3) img { border-radius: 130px 130px 130px 130px; }
     .team-card:nth-child(4) img { border-radius: 140px 140px 140px 140px; }
     .team-card:nth-child(5) img { border-radius: 140px 140px 140px 140px; }
-    .team-card h4 {
-      font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700;
-      color: var(--text);
-    }
-    .team-card p { font-size: 11px; color: var(--cyan); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .team-card h4 { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .team-card p { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 
     /* ── PRICING ── */
-    .pricing { background: var(--bg); padding: 100px 0; }
+    .pricing { background: var(--bg-main); padding: 100px 0; }
     .pricing-header { text-align: center; margin-bottom: 60px; }
     .pricing-grid {
       max-width: 1200px; margin: 0 auto; padding: 0 40px;
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start;
     }
     .price-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
       padding: 36px 28px;
-      transition: transform 0.3s ease, border-color 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .price-card:hover { transform: translateY(-4px); }
+    .price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
     .price-card.popular {
-      background: var(--surface-2);
-      border-color: var(--purple);
-      transform: scale(1.04);
-      box-shadow: 0 0 40px rgba(168,85,247,0.15);
+      border: 2px solid var(--accent-green);
+      box-shadow: var(--shadow-lg);
     }
-    .price-card.popular:hover { transform: scale(1.04) translateY(-4px); }
     .price-badge {
-      font-family: 'Unbounded', sans-serif; font-size: 10px; font-weight: 700;
+      font-size: 10px; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
-      background: linear-gradient(135deg, var(--purple), var(--pink));
-      color: white;
+      background: var(--accent-green); color: var(--accent-text);
       padding: 4px 12px; border-radius: 20px;
       display: inline-block; margin-bottom: 16px;
     }
-    .price-name {
-      font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 700;
-      color: var(--text); margin-bottom: 8px;
-    }
-    .price-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; min-height: 36px; }
+    .price-name { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .price-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; min-height: 36px; }
     .price-amount {
-      font-family: 'Unbounded', sans-serif; font-size: 40px; font-weight: 700;
-      color: var(--text); line-height: 1;
+      font-size: 44px; font-weight: 800;
+      color: var(--text-primary); line-height: 1; letter-spacing: -0.02em;
     }
-    .price-amount sup { font-size: 20px; vertical-align: top; }
-    .price-period { font-size: 14px; color: var(--text-dim); }
+    .price-amount sup { font-size: 22px; vertical-align: top; }
+    .price-period { font-size: 14px; color: var(--text-muted); }
     .price-features { list-style: none; margin: 24px 0; display: flex; flex-direction: column; gap: 12px; }
     .price-features li {
-      font-size: 14px; color: var(--text-muted);
+      font-size: 14px; color: var(--text-secondary);
       padding-left: 24px; position: relative;
     }
     .price-features li::before {
-      content: '›'; position: absolute; left: 0;
-      color: var(--cyan); font-weight: 700; font-size: 16px;
+      content: '✓'; position: absolute; left: 0;
+      color: var(--text-primary); font-weight: 700; font-size: 13px;
     }
     .price-cta {
       display: block; text-align: center;
-      background: var(--surface-2); color: var(--text);
-      border: 1px solid var(--border);
-      padding: 13px; border-radius: 10px;
-      font-weight: 700; font-size: 14px;
+      background: var(--bg-section); color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 13px; border-radius: 12px;
+      font-size: 14px; font-weight: 700;
       text-decoration: none; margin-top: 16px;
       transition: all 0.2s;
     }
     .price-card.popular .price-cta {
-      background: linear-gradient(135deg, var(--purple), var(--pink));
-      border: none; color: white;
+      background: var(--accent-green);
+      border-color: var(--accent-green);
     }
-    .price-cta:hover { border-color: var(--cyan); color: var(--cyan); }
-    .price-card.popular .price-cta:hover { opacity: 0.9; }
+    .price-cta:hover { border-color: var(--text-primary); }
+    .price-card.popular .price-cta:hover { background: #d0ff70; }
 
     /* ── TESTIMONIALS ── */
-    .testimonials { background: var(--bg); padding: 100px 0; }
+    .testimonials { background: var(--bg-section); padding: 100px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
     .testi-header { text-align: center; margin-bottom: 60px; }
-    .testi-header .section-eyebrow { color: var(--pink); }
-    .testi-header .section-title { color: var(--text); }
-    .testi-header .section-sub { color: var(--text-muted); }
+    .testi-header .section-eyebrow { color: var(--text-muted); }
+    .testi-header .section-title { color: var(--text-primary); }
+    .testi-header .section-sub { color: var(--text-secondary); }
     .testi-track-wrap { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .testi-track-wrap::-webkit-scrollbar { display: none; }
     .testi-track {
@@ -301,111 +269,94 @@
     }
     .testi-card {
       flex-shrink: 0; width: 300px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px;
-      transition: border-color 0.3s;
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 28px;
+      transition: box-shadow 0.3s;
     }
-    .testi-card:hover { border-color: rgba(168,85,247,0.4); }
+    .testi-card:hover { box-shadow: var(--shadow-md); }
     .testi-card blockquote {
-      font-size: 14px; line-height: 1.7; color: var(--text-muted);
+      font-size: 14px; line-height: 1.7; color: var(--text-secondary);
       margin-bottom: 16px; font-style: normal;
     }
-    .testi-stars { color: var(--orange); font-size: 13px; letter-spacing: 2px; margin-bottom: 14px; }
+    .testi-stars { color: #fbbf24; font-size: 13px; letter-spacing: 2px; margin-bottom: 14px; }
     .testi-author { display: flex; align-items: center; gap: 10px; }
     .testi-avatar {
       width: 40px; height: 40px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--purple), var(--pink));
-      color: white;
+      background: var(--accent-green); color: var(--accent-text);
       display: flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: 13px; flex-shrink: 0;
     }
-    .testi-name { font-weight: 700; font-size: 13px; color: var(--text); }
-    .testi-role { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+    .testi-name { font-weight: 700; font-size: 13px; color: var(--text-primary); }
+    .testi-role { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
     /* ── FAQ ── */
-    .faq { background: var(--surface); padding: 100px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .faq { background: var(--bg-main); padding: 100px 0; border-top: 1px solid var(--border-color); }
     .faq-header { text-align: center; margin-bottom: 60px; }
     .faq-inner { max-width: 720px; margin: 0 auto; padding: 0 40px; }
     .faq-list { display: flex; flex-direction: column; gap: 12px; }
     .faq-item {
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-color);
       border-radius: 12px; overflow: hidden;
-      background: var(--bg);
-      transition: border-color 0.2s;
+      background: var(--bg-main);
+      transition: box-shadow 0.2s;
     }
-    .faq-item:hover { border-color: rgba(0,229,255,0.3); }
+    .faq-item:hover { box-shadow: var(--shadow-sm); }
     .faq-q {
       padding: 18px 24px;
       display: flex; justify-content: space-between; align-items: center;
       cursor: pointer; font-weight: 600; font-size: 15px;
-      color: var(--text); gap: 16px;
+      color: var(--text-primary); gap: 16px;
     }
-    .faq-q::after { content: '+'; font-size: 18px; color: var(--cyan); flex-shrink: 0; }
+    .faq-q::after { content: '+'; font-size: 18px; color: var(--text-muted); flex-shrink: 0; }
     .faq-item.open .faq-q::after { content: '−'; }
     .faq-a {
       padding: 0 24px 18px;
-      font-size: 14px; color: var(--text-muted); line-height: 1.7;
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7;
       display: none;
     }
     .faq-item.open .faq-a { display: block; }
 
     /* ── CTA ── */
     .cta-section {
-      background: var(--bg);
+      background: var(--bg-section);
       padding: 100px 0;
-      position: relative; overflow: hidden;
-    }
-    .cta-section::before {
-      content: '';
-      position: absolute;
-      bottom: -300px; right: -100px;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%);
-      pointer-events: none;
+      border-top: 1px solid var(--border-color);
     }
     .cta-inner {
       max-width: 1200px; margin: 0 auto; padding: 0 40px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-      position: relative; z-index: 1;
     }
     .cta-inner h2 {
-      font-family: 'Unbounded', sans-serif;
-      font-size: clamp(28px, 3vw, 42px); font-weight: 700;
-      color: var(--text); margin-bottom: 16px;
+      font-size: clamp(28px, 3vw, 40px); font-weight: 700;
+      letter-spacing: -0.01em; color: var(--text-primary); margin-bottom: 16px;
     }
-    .cta-inner h2 span { color: var(--cyan); }
-    .cta-inner p { font-size: 16px; color: var(--text-muted); line-height: 1.7; margin-bottom: 12px; }
-    .contact-email {
-      font-size: 20px; font-weight: 700;
-      color: var(--orange);
-    }
+    .cta-inner p { font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+    .contact-email { font-size: 18px; font-weight: 700; color: var(--text-primary); }
     .contact-form { display: flex; flex-direction: column; gap: 14px; }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+    .form-group label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
     .form-group input, .form-group textarea {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px; padding: 13px 16px;
-      font-size: 15px; color: var(--text);
-      font-family: 'Inter', sans-serif; resize: vertical;
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 13px 16px;
+      font-size: 15px; color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; resize: vertical;
       transition: border-color 0.2s;
     }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-dim); }
-    .form-group input:focus, .form-group textarea:focus {
-      outline: none; border-color: var(--cyan);
-    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--text-primary); }
     .form-submit {
-      background: var(--orange); color: white; border: none; border-radius: 10px;
+      background: var(--accent-green); color: var(--accent-text); border: none; border-radius: 12px;
       padding: 13px 28px; font-weight: 700; font-size: 15px;
       cursor: pointer; align-self: flex-start; transition: all 0.2s;
     }
-    .form-submit:hover { background: #ff7a3d; box-shadow: 0 8px 24px rgba(255,107,43,0.3); }
+    .form-submit:hover { background: #d0ff70; box-shadow: var(--shadow-md); }
 
     /* ── FOOTER ── */
     footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
+      background: var(--bg-main);
+      border-top: 1px solid var(--border-color);
       padding: 60px 0 40px;
     }
     .footer-inner {
@@ -413,18 +364,18 @@
       display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
     }
     .footer-col h4 {
-      font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700;
-      color: var(--cyan); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;
+      font-size: 12px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.06em;
     }
     .footer-col a {
-      display: block; color: var(--text-dim); font-size: 14px;
+      display: block; color: var(--text-muted); font-size: 14px;
       text-decoration: none; margin-bottom: 10px; transition: color 0.2s;
     }
-    .footer-col a:hover { color: var(--text); }
+    .footer-col a:hover { color: var(--text-primary); }
     .footer-bottom {
       max-width: 1200px; margin: 40px auto 0; padding: 30px 40px 0;
-      border-top: 1px solid var(--border);
-      text-align: center; font-size: 13px; color: var(--text-dim);
+      border-top: 1px solid var(--border-color);
+      text-align: center; font-size: 13px; color: var(--text-muted);
     }
 
     /* Responsive */
@@ -458,7 +409,7 @@
         <a href="#precios">Precios</a>
         <a href="#faq">FAQ</a>
       </div>
-      <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="nav-cta" target="_blank">Hablamos?</a>
+      <a href="#contacto" class="nav-cta">Hablamos?</a>
     </div>
   </nav>
 
@@ -466,15 +417,15 @@
   <section class="hero" id="inicio">
     <div class="hero-grid">
       <div class="hero-text">
-        <div class="hero-eyebrow reveal">Profesionales Agénticos especializados para PYMES</div>
-        <h1 class="hero-title reveal reveal-delay-1">Tu compañero digital para tu <span>día a día</span></h1>
-        <p class="hero-sub reveal reveal-delay-2">Con una persona en tu empresa, puedes contratar a 5 Profesionales Agénticos expertos para optimizar tu trabajo y reducir costos en un 80%.</p>
-        <div class="hero-btns reveal reveal-delay-3">
-          <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-primary" target="_blank">Empezar ahora</a>
+        <div class="hero-eyebrow">Profesionales Agénticos especializados para PYMES</div>
+        <h1 class="hero-title">Tu compañero digital para tu <span>día a día</span></h1>
+        <p class="hero-sub">Con una persona en tu empresa, puedes contratar a 5 Profesionales Agénticos expertos para optimizar tu trabajo y reducir costos en un 80%.</p>
+        <div class="hero-btns">
+          <a href="#contacto" class="btn-primary">Empezar ahora</a>
           <a href="#servicios" class="btn-outline">Saber más</a>
         </div>
       </div>
-      <div class="reveal reveal-delay-2">
+      <div>
         <img src="/assets/dashboard.jpg" alt="MyCompi Dashboard" class="hero-img">
       </div>
     </div>
@@ -483,19 +434,19 @@
   <!-- STATS -->
   <section class="stats-section">
     <div class="stats-grid">
-      <div class="stat-box reveal">
+      <div class="stat-box">
         <div class="stat-num">62%</div>
         <div class="stat-label">Mejora en procesos</div>
       </div>
-      <div class="stat-box reveal reveal-delay-1">
+      <div class="stat-box">
         <div class="stat-num">200+</div>
         <div class="stat-label">Casos de éxito</div>
       </div>
-      <div class="stat-box reveal reveal-delay-2">
+      <div class="stat-box">
         <div class="stat-num">150+</div>
         <div class="stat-label">Clientes recurrentes</div>
       </div>
-      <div class="stat-box reveal reveal-delay-3">
+      <div class="stat-box">
         <div class="stat-num">1349+</div>
         <div class="stat-label">5 Star Reviews</div>
       </div>
@@ -505,37 +456,37 @@
   <!-- SERVICES -->
   <section class="services" id="servicios">
     <div class="services-header">
-      <div class="section-eyebrow reveal">Nuestra Especialidad</div>
-      <h2 class="section-title reveal reveal-delay-1">Ahorra 80% en costes operativos</h2>
-      <p class="section-sub reveal reveal-delay-2">El mejor equipo de agentes IA para tu negocio, sin los costes de contratar 5 personas.</p>
+      <div class="section-eyebrow">Nuestra Especialidad</div>
+      <h2 class="section-title">Ahorra 80% en costes operativos</h2>
+      <p class="section-sub">El mejor equipo de agentes IA para tu negocio, sin los costes de contratar 5 personas.</p>
     </div>
     <div class="services-grid">
-      <div class="service-card reveal">
+      <div class="service-card">
         <div class="service-icon">🎯</div>
         <h3>Especialización total</h3>
         <p>Cada agente domina su área: Marketing, Ventas, Atención al Cliente, Operaciones y Data. Resultados medibles desde el día uno.</p>
       </div>
-      <div class="service-card reveal reveal-delay-1">
+      <div class="service-card">
         <div class="service-icon">🤝</div>
         <h3>Trabajo en equipo</h3>
         <p>Los agentes colaboran entre sí, comparten información y coordinan tareas complejas para conseguir tus objetivos.</p>
       </div>
-      <div class="service-card reveal reveal-delay-2">
+      <div class="service-card">
         <div class="service-icon">🚀</div>
         <h3>Sin despidos</h3>
         <p>Tus empleados se liberan de tareas repetitivas para enfocarse en lo estratégico. Tecnología que potencia, no reemplaza.</p>
       </div>
-      <div class="service-card reveal reveal-delay-3">
+      <div class="service-card">
         <div class="service-icon">⚡</div>
         <h3>Activo 24/7</h3>
         <p>Tus agentes trabajan sin descanso, respondiendo clientes, generando reportes y procesando datos a cualquier hora.</p>
       </div>
-      <div class="service-card reveal reveal-delay-4">
+      <div class="service-card">
         <div class="service-icon">🔗</div>
         <h3>Integración total</h3>
         <p>Conectamos los agentes con tus herramientas, APIs y fuentes de datos para una operación fluida y sin fricciones.</p>
       </div>
-      <div class="service-card reveal reveal-delay-5">
+      <div class="service-card">
         <div class="service-icon">🌍</div>
         <h3>Escala global</h3>
         <p>Infraestructura de alta disponibilidad que crece contigo. De startup a empresa internacional, sin cambios de herramienta.</p>
@@ -546,32 +497,32 @@
   <!-- TEAM -->
   <section class="team" id="equipo">
     <div class="team-header">
-      <div class="section-eyebrow reveal">Tu equipo de agentes</div>
-      <h2 class="section-title reveal reveal-delay-1">5 agentes especializados trabajando para ti</h2>
-      <p class="section-sub reveal reveal-delay-2">Cada agente es un experto en su área. Coordínalos como un equipo real.</p>
+      <div class="section-eyebrow">Tu equipo de agentes</div>
+      <h2 class="section-title">5 agentes especializados trabajando para ti</h2>
+      <p class="section-sub">Cada agente es un experto en su área. Coordínalos como un equipo real.</p>
     </div>
     <div class="team-grid">
-      <div class="team-card reveal">
+      <div class="team-card">
         <img src="/assets/mia.jpg" alt="Enzo Herrera">
         <h4>Enzo Herrera</h4>
         <p>Marketing</p>
       </div>
-      <div class="team-card reveal reveal-delay-1">
+      <div class="team-card">
         <img src="/assets/victor.jpg" alt="Carlos Mendoza">
         <h4>Carlos Mendoza</h4>
         <p>Ventas</p>
       </div>
-      <div class="team-card reveal reveal-delay-2">
+      <div class="team-card">
         <img src="/assets/alex.jpg" alt="Luna Vidal">
         <h4>Luna Vidal</h4>
         <p>Atención al Cliente</p>
       </div>
-      <div class="team-card reveal reveal-delay-3">
+      <div class="team-card">
         <img src="/assets/marta.jpg" alt="Elena Ortega">
         <h4>Elena Ortega</h4>
         <p>Operaciones</p>
       </div>
-      <div class="team-card reveal reveal-delay-4">
+      <div class="team-card">
         <img src="/assets/alan.jpg" alt="Diana Palau">
         <h4>Diana Palau</h4>
         <p>Data Growth</p>
@@ -582,12 +533,12 @@
   <!-- PRICING -->
   <section class="pricing" id="precios">
     <div class="pricing-header">
-      <div class="section-eyebrow reveal">Planes</div>
-      <h2 class="section-title reveal reveal-delay-1">Elige tu plan</h2>
-      <p class="section-sub reveal reveal-delay-2">Sin costes de contratación. Sin compromisos a largo plazo. Cancela cuando quieras.</p>
+      <div class="section-eyebrow">Planes</div>
+      <h2 class="section-title">Elige tu plan</h2>
+      <p class="section-sub">Sin costes de contratación. Sin compromisos a largo plazo. Cancela cuando quieras.</p>
     </div>
     <div class="pricing-grid">
-      <div class="price-card reveal">
+      <div class="price-card">
         <div class="price-name">ED Básico</div>
         <div class="price-desc">Para PYMEs que quieren empezar a automatizar</div>
         <div class="price-amount"><sup>€</sup>147</div>
@@ -599,9 +550,9 @@
           <li>3 meses de soporte incluido</li>
           <li>Reportes mensuales básicos</li>
         </ul>
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="price-cta" target="_blank">Empezar ahora</a>
+        <a href="#contacto" class="price-cta">Empezar ahora</a>
       </div>
-      <div class="price-card popular reveal reveal-delay-1">
+      <div class="price-card popular">
         <div class="price-badge">Popular</div>
         <div class="price-name">ED Premium</div>
         <div class="price-desc">Para empresas en crecimiento que necesitan más</div>
@@ -614,9 +565,9 @@
           <li>6 meses de soporte incluido</li>
           <li>Reportes semanales y análisis</li>
         </ul>
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="price-cta" target="_blank">Empezar ahora</a>
+        <a href="#contacto" class="price-cta">Empezar ahora</a>
       </div>
-      <div class="price-card reveal reveal-delay-2">
+      <div class="price-card">
         <div class="price-name">ED ROI</div>
         <div class="price-desc">Para empresas que quieren domination total</div>
         <div class="price-amount"><sup>€</sup>1320</div>
@@ -628,7 +579,7 @@
           <li>12 meses de soporte incluido</li>
           <li>Reportes avanzados y consultoría</li>
         </ul>
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="price-cta" target="_blank">Empezar ahora</a>
+        <a href="#contacto" class="price-cta">Empezar ahora</a>
       </div>
     </div>
   </section>
@@ -636,11 +587,11 @@
   <!-- TESTIMONIALS -->
   <section class="testimonials" id="testimonios">
     <div class="testi-header">
-      <div class="section-eyebrow reveal">Testimonios</div>
-      <h2 class="section-title reveal reveal-delay-1">Lo que dicen nuestros clientes</h2>
-      <p class="section-sub reveal reveal-delay-2">Empresas que ya están creciendo con MyCompi</p>
+      <div class="section-eyebrow">Testimonios</div>
+      <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+      <p class="section-sub">Empresas que ya están creciendo con MyCompi</p>
     </div>
-    <div class="testi-track-wrap reveal reveal-delay-2">
+    <div class="testi-track-wrap">
       <div class="testi-track">
         <div class="testi-card">
           <blockquote>"Gracias a MyCompi, hemos automatizado nuestros procesos internos, resultando en un aumento del 35% en productividad."</blockquote>
@@ -737,36 +688,36 @@
   <!-- FAQ -->
   <section class="faq" id="faq">
     <div class="faq-header">
-      <div class="section-eyebrow reveal">FAQ</div>
-      <h2 class="section-title reveal reveal-delay-1">Tenemos respuestas</h2>
+      <div class="section-eyebrow">FAQ</div>
+      <h2 class="section-title">Tenemos respuestas</h2>
     </div>
     <div class="faq-inner">
       <div class="faq-list">
-        <div class="faq-item reveal">
+        <div class="faq-item">
           <div class="faq-q">¿Por qué automatizar con MyCompi?</div>
           <div class="faq-a">MyCompi permite que tu empresa opere con una fracción del coste mientras tus empleados se enfocan en tareas de alto valor estratégico.</div>
         </div>
-        <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-item">
           <div class="faq-q">¿Cómo funciona MyCompi?</div>
           <div class="faq-a">Contratas un equipo de agentes IA especializados que trabajan 24/7. Cada agente tiene un rol definido y se coordina con el resto para conseguir tus objetivos.</div>
         </div>
-        <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-item">
           <div class="faq-q">¿Cuánto cuesta?</div>
           <div class="faq-a">Planes desde 147€/mes (ED Básico) hasta 1.320€/mes (ED ROI). Sin costes de contratación, sin compromisos a largo plazo.</div>
         </div>
-        <div class="faq-item reveal reveal-delay-3">
+        <div class="faq-item">
           <div class="faq-q">¿Cuánto tarda en implementarse?</div>
           <div class="faq-a">Primer agente funcionando en menos de 24h. Equipo completo de 5 agentes en 1-3 días.</div>
         </div>
-        <div class="faq-item reveal reveal-delay-4">
+        <div class="faq-item">
           <div class="faq-q">¿Qué tareas puede automatizar?</div>
           <div class="faq-a">Atención al cliente, gestión de leads, reporting, análisis de datos, gestión de redes sociales, facturación y mucho más.</div>
         </div>
-        <div class="faq-item reveal reveal-delay-5">
+        <div class="faq-item">
           <div class="faq-q">¿Necesito conocimientos técnicos?</div>
           <div class="faq-a">No. Nuestra interfaz es intuitiva y el equipo de MyCompi te ayuda en todo el proceso de configuración.</div>
         </div>
-        <div class="faq-item reveal reveal-delay-6">
+        <div class="faq-item">
           <div class="faq-q">¿Qué soporte ofrecen?</div>
           <div class="faq-a">Soporte directo incluido en todos los planes: 3 meses en Básico, 6 en Premium, 12 en ROI. Account Manager dedicado.</div>
         </div>
@@ -777,13 +728,13 @@
   <!-- CTA / CONTACT -->
   <section class="cta-section" id="contacto">
     <div class="cta-inner">
-      <div class="reveal">
-        <h2>No reemplaces, <span>complementa</span></h2>
+      <div>
+        <h2>No reemplaces, complementa</h2>
         <p>Profesionales Agénticos que elevan el potencial de tu equipo. Empieza hoy.</p>
         <p>¿Hablamos de tu proyecto?</p>
         <p class="contact-email">hola@mycompi.com</p>
       </div>
-      <form class="contact-form reveal reveal-delay-2" onsubmit="return false;">
+      <form class="contact-form" onsubmit="return false;">
         <div class="form-group">
           <label>Nombre</label>
           <input type="text" placeholder="Tu nombre">
@@ -806,7 +757,7 @@
     <div class="footer-inner">
       <div class="footer-col">
         <a href="/"><img src="/assets/logo.png" alt="MyCompi" style="height:34px;margin-bottom:16px;display:block;"></a>
-        <p style="color:var(--text-dim);font-size:14px;line-height:1.6;">
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.6;">
           Mi futuro es Hoy.<br>Equipos de agentes IA para PYMES.
         </p>
       </div>
@@ -835,7 +786,6 @@
   </footer>
 
   <script>
-    // FAQ accordion
     document.querySelectorAll('.faq-q').forEach(q => {
       q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
     });
