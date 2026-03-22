@@ -1072,13 +1072,18 @@
     }
 
     // Auto-conectar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', () => {
+    function tryAutoConnect() {
       const savedKey = localStorage.getItem('mycompi_owner_key');
-      if (savedKey) {
+      if (savedKey && savedKey.length > 0) {
         document.getElementById('ownerKey').value = savedKey;
         conectar();
       }
-    });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', tryAutoConnect);
+    } else {
+      tryAutoConnect();
+    }
   </script>
 </body>
 </html>
