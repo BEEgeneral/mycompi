@@ -12,11 +12,16 @@ const AGENTS_PATH = path.join(__dirname, '../../agents');
 
 // Agentes disponibles (directorios)
 const AGENTS = {
-  luna: { path: 'atencion-cliente', nombre: 'Luna', emoji: '🌙' },
-  marcos: { path: 'marketing', nombre: 'Marcos', emoji: '📊' },
-  carlos: { path: 'ventas', nombre: 'Carlos', emoji: '💼' },
-  elena: { path: 'operaciones', nombre: 'Elena', emoji: '⚙️' },
-  diana: { path: 'data', nombre: 'Diana', emoji: '📈' },
+  // Agentes operativos (con overlay por cliente)
+  luna: { path: 'atencion-cliente', nombre: 'Luna', emoji: '🌙', tipo: 'operativo' },
+  enzo: { path: 'marketing', nombre: 'Enzo Herrera', emoji: '📊', tipo: 'operativo' },
+  carlos: { path: 'ventas', nombre: 'Carlos', emoji: '💼', tipo: 'operativo' },
+  elena: { path: 'operaciones', nombre: 'Elena', emoji: '⚙️', tipo: 'operativo' },
+  diana: { path: 'data', nombre: 'Diana', emoji: '📈', tipo: 'operativo' },
+  // Agentes internos (sin overlay - uso interno MyCompi)
+  alberto: { path: 'desarrollo', nombre: 'Alberto Gala', emoji: '💻', tipo: 'interno' },
+  policia: { path: 'policia-tokens', nombre: 'Policia de Tokens', emoji: '🚨', tipo: 'interno' },
+  orquesta: { path: 'orquestador', nombre: 'Orquestador', emoji: '🎯', tipo: 'interno' },
 };
 
 /**
@@ -27,6 +32,7 @@ function listarAgentes() {
     id: key,
     nombre: config.nombre,
     emoji: config.emoji,
+    tipo: config.tipo || 'operativo',
     activo: esAgenteActivo(key),
   }));
 }
