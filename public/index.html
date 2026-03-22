@@ -31,6 +31,123 @@
       color: var(--text-main);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ─── FLOAT ANIMATION ─── */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    .float { animation: float 4s ease-in-out infinite; }
+    .float-delay-1 { animation-delay: 0.5s; }
+    .float-delay-2 { animation-delay: 1s; }
+    .float-delay-3 { animation-delay: 1.5s; }
+
+    /* ─── HERO SPECIFIC ─── */
+    .hero-card {
+      animation: heroEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes heroEntrance {
+      from { opacity: 0; transform: translateY(30px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .hero-img {
+      animation: float 5s ease-in-out infinite;
+      animation-delay: 0.8s;
+    }
+
+    /* ─── CARD HOVER ─── */
+    .card, .agent-card, .pricing-card, .challenge-card, .testimonial {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+    }
+    .card:hover, .agent-card:hover, .pricing-card:hover, .challenge-card:hover, .testimonial:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 48px rgba(50, 56, 106, 0.12);
+    }
+
+    /* ─── BUTTON ANIMATIONS ─── */
+    .btn-cta {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background-color 0.2s ease;
+    }
+    .btn-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(50, 56, 106, 0.25);
+    }
+    .btn-cta:active { transform: translateY(-1px); }
+
+    .btn-outline {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    /* ─── NAV LINKS ─── */
+    .nav-links a {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--primary); }
+
+    /* ─── PRICING FEATURED PULSE ─── */
+    @keyframes subtlePulse {
+      0%, 100% { box-shadow: 0 20px 40px rgba(50, 56, 106, 0.12); }
+      50% { box-shadow: 0 24px 50px rgba(50, 56, 106, 0.18); }
+    }
+    .pricing-card.featured { animation: subtlePulse 3s ease-in-out infinite; }
+
+    /* ─── FAQ ITEMS ─── */
+    .faq-item {
+      transition: background 0.2s ease;
+    }
+    .faq-item:hover { background: rgba(50, 56, 106, 0.02); }
+
+    /* ─── CTA SECTION ─── */
+    .cta-section { position: relative; overflow: hidden; }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at center, rgba(255, 209, 82, 0.08) 0%, transparent 60%);
+      animation: rotateSlow 20s linear infinite;
+    }
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     a { color: inherit; text-decoration: none; }
@@ -500,10 +617,10 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-card">
-      <div class="badge">Profesionales Agénticos especializados para PYMES</div>
-      <h1>Tu compañero digital para tu <span class="highlight">día a día</span></h1>
-      <p>Con una persona en tu empresa, puedes contratar a 5 Profesionales Agénticos expertos para optimizar tu trabajo y reducir costos en un 80%.</p>
-      <div class="cta-row">
+      <div class="badge reveal">Profesionales Agénticos especializados para PYMES</div>
+      <h1 class="reveal">Tu compañero digital para tu <span class="highlight">día a día</span></h1>
+      <p class="reveal">Con una persona en tu empresa, puedes contratar a 5 Profesionales Agénticos expertos para optimizar tu trabajo y reducir costos en un 80%.</p>
+      <div class="cta-row reveal">
         <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">
           Comenzar ahora
           <span class="btn-icon"></span>
@@ -511,7 +628,7 @@
         <a href="#servicios" class="btn-outline">Saber más</a>
       </div>
 
-      <div class="hero-img">
+      <div class="hero-img reveal">
         <img src="/assets/dashboard.jpg" alt="MyCompi Dashboard">
       </div>
     </div>
@@ -520,13 +637,13 @@
   <!-- CONTRATA TU EQUIPO -->
   <section id="servicios" class="alt">
     <div class="container">
-      <div class="section-label">Contrata a tu equipo</div>
+      <div class="section-label reveal">Contrata a tu equipo</div>
       <div class="divider"></div>
-      <h2 class="section-title">Despliega equipos de Profesionales Agénticos<br>que trabajan juntos</h2>
+      <h2 class="section-title reveal">Despliega equipos de Profesionales Agénticos<br>que trabajan juntos</h2>
       <p class="section-sub">Equipos de Profesionales Agénticos de IA que trabajan juntos para resolver tus tareas diarias con MyCompi.</p>
 
       <div class="agents-grid">
-        <div class="agent-card">
+        <div class="agent-card reveal reveal-delay-1">
           <img src="/assets/mia.jpg" alt="Enzo Herrera" class="agent-photo">
           <div class="agent-dept">Marketing</div>
           <div Class="agent-name">Enzo Herrera</div>
@@ -572,36 +689,36 @@
   <!-- VALUE PROPS -->
   <section>
     <div class="container">
-      <div class="section-label">Características</div>
+      <div class="section-label reveal">Características</div>
       <div class="divider"></div>
-      <h2 class="section-title">Todo lo que necesitas</h2>
+      <h2 class="section-title reveal">Todo lo que necesitas</h2>
       <div class="grid">
-        <div class="card">
+        <div class="card reveal">
           <div class="icon-box"></div>
           <h3>Especialización de Profesionales Agénticos</h3>
           <p>Crea Profesionales Agénticos de IA especializados con capacidades únicas que destacan en diferentes tareas dentro de tu flujo de trabajo.</p>
         </div>
-        <div class="card">
+        <div class="card reveal reveal-delay-1">
           <div class="icon-box"></div>
           <h3>Colaboración en Equipo</h3>
           <p>Permite que los Profesionales Agénticos trabajen juntos, compartan información y coordinen tareas complejas con objetivos unificados.</p>
         </div>
-        <div class="card">
+        <div class="card reveal reveal-delay-2">
           <div class="icon-box"></div>
           <h3>Sin Despidos</h3>
           <p>Redefine y potencia el papel de los empleados: se centran en actividades estratégicas y de alto valor.</p>
         </div>
-        <div class="card">
+        <div class="card reveal reveal-delay-3">
           <div class="icon-box"></div>
           <h3>Implementación Rápida</h3>
           <p>Despliega equipos de Profesionales Agénticos en minutos con nuestra interfaz intuitiva y plantillas prediseñadas.</p>
         </div>
-        <div class="card">
+        <div class="card reveal reveal-delay-4">
           <div class="icon-box"></div>
           <h3>Flujos de Trabajo Integrados</h3>
           <p>Conecta tus equipos de Profesionales Agénticos con tus herramientas existentes, APIs y fuentes de datos sin problemas.</p>
         </div>
-        <div class="card">
+        <div class="card reveal reveal-delay-5">
           <div class="icon-box"></div>
           <h3>Escalabilidad Global</h3>
           <p>Escala tus operaciones de Profesionales Agénticos a nivel global con infraestructura de alta disponibilidad diseñada para empresas.</p>
@@ -613,21 +730,21 @@
   <!-- RETOS PYMES -->
   <section class="alt">
     <div class="container">
-      <div class="section-label">2026.</div>
+      <div class="section-label reveal">2026.</div>
       <div class="divider"></div>
-      <h2 class="section-title">Retos de las PYMES sin IA</h2>
+      <h2 class="section-title reveal">Retos de las PYMES sin IA</h2>
       <div class="challenges-grid">
-        <div class="challenge-card">
+        <div class="challenge-card reveal">
           <div class="challenge-year">2026.</div>
           <h4>Gestión de Ventas Ineficiente</h4>
           <p>Muchas PYMES luchan con sistemas de ventas complicados y poco intuitivos. Esto resulta en oportunidades perdidas y frustración.</p>
         </div>
-        <div class="challenge-card">
+        <div class="challenge-card reveal reveal-delay-1">
           <div class="challenge-year">2026.</div>
           <h4>Atención al Cliente Deficiente</h4>
           <p>La falta de recursos dificulta proporcionar un servicio al cliente de calidad. Esto puede llevar a la pérdida de clientes.</p>
         </div>
-        <div class="challenge-card">
+        <div class="challenge-card reveal reveal-delay-2">
           <div class="challenge-year">2026.</div>
           <h4>Procesos Manuales Tediosos</h4>
           <p>El tiempo valioso se desperdicia en tareas administrativas repetitivas. Esto reduce la productividad y el crecimiento del negocio.</p>
@@ -639,7 +756,7 @@
   <!-- VALUE PROPS 2 -->
   <section>
     <div class="container">
-      <div class="section-label">Por qué MyCompi</div>
+      <div class="section-label reveal">Por qué MyCompi</div>
       <div class="divider"></div>
       <div class="grid">
         <div class="card">
@@ -679,9 +796,9 @@
   <!-- EQUIPOS -->
   <section id="equipos">
     <div class="container">
-      <div class="section-label">Equipos especializados</div>
+      <div class="section-label reveal">Equipos especializados</div>
       <div class="divider"></div>
-      <h2 class="section-title">Tu equipo de Profesionales Agénticos<br>listo para trabajar</h2>
+      <h2 class="section-title reveal">Tu equipo de Profesionales Agénticos<br>listo para trabajar</h2>
       <p class="section-sub">Cada equipo con un líder humano y 5 Profesionales Agénticos especializados trabajando 24/7.</p>
 
       <div class="grid">
@@ -712,13 +829,13 @@
   <!-- PRICING -->
   <section id="precios" class="alt">
     <div class="container">
-      <div class="section-label">La inversión se paga sola</div>
+      <div class="section-label reveal">La inversión se paga sola</div>
       <div class="divider"></div>
-      <h2 class="section-title">Planes para cada etapa</h2>
+      <h2 class="section-title reveal">Planes para cada etapa</h2>
       <p class="section-sub">Sin sorpresas. Sin costes ocultos. Solo resultados.</p>
 
       <div class="pricing-grid">
-        <div class="pricing-card">
+        <div class="pricing-card reveal">
           <div class="pricing-name">ED Básico</div>
           <div class="pricing-price">
             <span class="pricing-currency">€</span>
@@ -754,7 +871,7 @@
           <a href="https://buy.stripe.com/8wM29kbOqgWQ50s9AJ" class="btn-cta" style="display:block;text-align:center;" target="_blank">Empezar</a>
         </div>
 
-        <div class="pricing-card">
+        <div class="pricing-card reveal reveal-delay-1">
           <div class="pricing-name">ED ROI</div>
           <div class="pricing-price">
             <span class="pricing-currency">€</span>
@@ -778,45 +895,45 @@
   <!-- FAQ -->
   <section id="faq">
     <div class="container">
-      <div class="section-label">FAQ</div>
+      <div class="section-label reveal">FAQ</div>
       <div class="divider"></div>
-      <h2 class="section-title">¿Tienes preguntas?<br>Tenemos respuestas.</h2>
+      <h2 class="section-title reveal">¿Tienes preguntas?<br>Tenemos respuestas.</h2>
 
       <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-question">¿Por qué automatizar tareas en mi empresa con MyCompi?</div>
+        <div class="faq-item reveal">
+          <div class="faq-question reveal">¿Por qué automatizar tareas en mi empresa con MyCompi?</div>
           <div class="faq-answer">MyCompi permite que tu empresa opere con una fracción del costo mientras tus empleados se enfocan en tareas de alto valor estratégico.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Cómo funciona MyCompi?</div>
+        <div class="faq-item reveal reveal-delay-1">
+          <div class="faq-question reveal reveal-delay-1">¿Cómo funciona MyCompi?</div>
           <div class="faq-answer">Contratas un equipo de Profesionales Agénticos especializados que trabajan 24/7. Cada Profesional Agéntico tiene un rol definido (Marketing, Ventas, Atención al Cliente, etc.) y se coordina con el resto.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Cuál es el costo de usar MyCompi?</div>
+        <div class="faq-item reveal reveal-delay-2">
+          <div class="faq-question reveal reveal-delay-2">¿Cuál es el costo de usar MyCompi?</div>
           <div class="faq-answer">Plans desde 147€/mes (ED Básico, hasta 2 agentes) hasta 1.320€/mes (ED ROI, Profesionales Agénticos ilimitados). La inversión se paga sola con el ahorro en costes operativos.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Cuánto tiempo toma implementar MyCompi?</div>
+        <div class="faq-item reveal reveal-delay-3">
+          <div class="faq-question reveal reveal-delay-3">¿Cuánto tiempo toma implementar MyCompi?</div>
           <div class="faq-answer">Puedes tener tu primer agente funcionando en menos de 24 horas. La configuración completa de un equipo de 5 Profesionales Agénticos toma entre 1-3 días.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Qué tipos de tareas puede automatizar MyCompi?</div>
+        <div class="faq-item reveal reveal-delay-4">
+          <div class="faq-question reveal reveal-delay-4">¿Qué tipos de tareas puede automatizar MyCompi?</div>
           <div class="faq-answer">Desde atención al cliente y gestión de leads, hasta reporting, análisis de datos, gestión de redes sociales, facturación y mucho más.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Cómo garantiza MyCompi la integración con mis herramientas actuales?</div>
+        <div class="faq-item reveal reveal-delay-5">
+          <div class="faq-question reveal reveal-delay-5">¿Cómo garantiza MyCompi la integración con mis herramientas actuales?</div>
           <div class="faq-answer">Conecta tus equipos de Profesionales Agénticos con tus herramientas existentes, APIs y fuentes de datos sin problemas. Flujos de trabajo integrados desde el primer día.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Es MyCompi adecuado para empresas de todos los tamaños?</div>
+        <div class="faq-item reveal reveal-delay-6">
+          <div class="faq-question reveal reveal-delay-6">¿Es MyCompi adecuado para empresas de todos los tamaños?</div>
           <div class="faq-answer">Sí. Empezamos con el Plan Básico para PYMEs y escalamos hasta equipos ilimitados para empresas en crecimiento.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Puedo personalizar los Profesionales Agénticos de MyCompi?</div>
+        <div class="faq-item reveal reveal-delay-7">
+          <div class="faq-question reveal reveal-delay-7">¿Puedo personalizar los Profesionales Agénticos de MyCompi?</div>
           <div class="faq-answer">Sí. Cada Profesional Agéntico se configura con el contexto de tu negocio, productos, tono de comunicación y procesos específicos.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">¿Qué soporte ofrece MyCompi durante el uso de sus servicios?</div>
+        <div class="faq-item reveal reveal-delay-8">
+          <div class="faq-question reveal reveal-delay-8">¿Qué soporte ofrece MyCompi durante el uso de sus servicios?</div>
           <div class="faq-answer">Soporte directo incluido en todos los planes: 3 meses en Básico, 6 meses en Premium y 12 meses en ROI. Además, cada cliente tiene un Account Manager dedicado.</div>
         </div>
       </div>
@@ -845,6 +962,17 @@
         q.parentElement.classList.toggle('open');
       });
     });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    reveals.forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
