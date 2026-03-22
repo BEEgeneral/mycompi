@@ -5,17 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MyCompi — Equipos de Agentes IA para tu negocio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #0070FF;
-      --primary-hover: #0059CC;
-      --text-main: #121212;
-      --text-muted: #666666;
+      --primary: #32386A;
+      --primary-hover: #262a56;
+      --accent: #FFD152;
+      --text-main: #32386A;
+      --text-muted: rgba(50, 56, 106, 0.7);
       --bg-light: #F5F5F7;
+      --bg-hero: #C6D8F2;
       --white: #FFFFFF;
-      --border: rgba(0, 0, 0, 0.08);
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+      --border: rgba(50, 56, 106, 0.08);
+      --shadow: 0 10px 30px rgba(50, 56, 106, 0.06);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,7 +25,7 @@
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--white);
       color: var(--text-main);
       line-height: 1.6;
@@ -42,8 +44,7 @@
       align-items: center;
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(12px);
+      background: var(--white);
       border-bottom: 1px solid var(--border);
       z-index: 100;
     }
@@ -53,10 +54,10 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      max-width: 1000px;
     }
 
-    .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; }
-    .logo span { color: var(--primary); }
+    .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.02em; color: var(--primary); }
 
     .nav-links { display: flex; gap: 2rem; }
     .nav-links a {
@@ -65,79 +66,111 @@
       font-weight: 500;
       transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--text-main); }
+    .nav-links a:hover { color: var(--primary); }
 
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      font-size: 0.9rem;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 112, 255, 0.3);
-      background: var(--primary-hover);
-    }
+    /* buttons use .btn-cta now */
 
     /* === HERO === */
     .hero {
-      padding: 120px 0 80px;
       text-align: center;
-      background: #0a0a0f;
-      color: white;
+      background: var(--bg-hero);
+      color: var(--primary);
+      padding: 0;
     }
 
-    .hero .container { max-width: 900px; }
+    .hero-card {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 60px;
+      padding: 80px 60px;
+    }
 
     .badge {
-      background: rgba(0, 112, 255, 0.15);
-      color: #6ba4ff;
+      background: var(--bg-hero);
+      color: var(--primary);
       padding: 6px 16px;
       border-radius: 100px;
       font-size: 14px;
       font-weight: 600;
       display: inline-block;
       margin-bottom: 24px;
-      border: 1px solid rgba(0, 112, 255, 0.3);
     }
 
     .hero h1 {
       font-size: clamp(2.5rem, 6vw, 4rem);
       font-weight: 800;
-      letter-spacing: -2.5px;
+      letter-spacing: -0.03em;
       line-height: 1.1;
       margin-bottom: 24px;
-      color: white;
+      color: var(--primary);
     }
 
-    .hero h1 span { color: var(--primary); }
+    .hero h1 .highlight {
+      background: var(--accent);
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
 
     .hero p {
       font-size: 20px;
-      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      color: var(--text-muted);
       max-width: 600px;
       margin: 0 auto 40px;
     }
 
-    .hero p span { color: var(--primary); font-weight: 600; }
-
-    .btn-primary.lg {
-      padding: 16px 32px;
-      font-size: 18px;
-      border-radius: 14px;
+    .btn-cta {
+      background-color: var(--primary);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
     }
+    .btn-cta:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+    .btn-icon {
+      background-color: var(--accent);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-main);
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
     .hero-img {
       max-width: 900px;
       margin: 60px auto 0;
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      box-shadow: var(--shadow);
     }
 
     .hero-stats {
@@ -157,7 +190,7 @@
       line-height: 1;
     }
     .hero-stat-label {
-      color: rgba(255,255,255,0.5);
+      color: var(--text-muted);
       font-size: 0.85rem;
       margin-top: 6px;
     }
@@ -309,8 +342,8 @@
     }
 
     .pricing-card.featured {
-      border-color: var(--primary);
-      box-shadow: 0 20px 40px rgba(0, 112, 255, 0.15);
+      border-color: var(--accent);
+      box-shadow: 0 20px 40px rgba(50, 56, 106, 0.12);
     }
 
     .pricing-badge {
@@ -318,8 +351,8 @@
       top: -14px;
       left: 50%;
       transform: translateX(-50%);
-      background: var(--primary);
-      color: white;
+      background: var(--accent);
+      color: var(--primary);
       padding: 6px 20px;
       border-radius: 100px;
       font-size: 0.75rem;
@@ -328,9 +361,9 @@
       letter-spacing: 0.05em;
     }
 
-    .pricing-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .pricing-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
     .pricing-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 24px; }
-    .pricing-amount { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; }
+    .pricing-amount { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; color: var(--primary); }
     .pricing-currency { font-size: 1.5rem; color: var(--text-muted); }
     .pricing-period { color: var(--text-muted); font-size: 0.9rem; }
 
@@ -428,8 +461,8 @@
 
     /* === CTA === */
     .cta-section {
-      background: var(--text-main);
-      color: white;
+      background: var(--bg-hero);
+      color: var(--primary);
       text-align: center;
       padding: 100px 24px;
     }
@@ -437,9 +470,9 @@
       font-size: clamp(1.8rem, 4vw, 2.5rem);
       font-weight: 800;
       margin-bottom: 16px;
-      letter-spacing: -1px;
+      letter-spacing: -0.03em;
     }
-    .cta-section p { color: rgba(255,255,255,0.6); font-size: 1.1rem; margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .cta-section p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
 
     /* === FOOTER === */
     footer {
@@ -480,19 +513,22 @@
         <a href="#precios">Precios</a>
         <a href="#faq">FAQ</a>
       </div>
-      <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-primary" target="_blank">Hablamos?</a>
+      <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">Hablamos?</a>
     </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="container">
+    <div class="hero-card">
       <div class="badge">Agentes IA especializados para PYMES españolas</div>
-      <h1>Tu compañero digital<br>para tu <span>día a día</span></h1>
-      <p>Con <span>una persona</span> en tu empresa, puedes contratar a <span>5 agentes IA expertos</span> para optimizar tu trabajo y reducir costos en un <span>80%</span>.</p>
+      <h1>Tu compañero digital para tu <span class="highlight">día a día</span></h1>
+      <p>Con una persona en tu empresa, puedes contratar a 5 agentes IA expertos para optimizar tu trabajo y reducir costos en un 80%.</p>
       <div class="cta-row">
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-primary lg" target="_blank">Comenzar ahora →</a>
-        <a href="#servicios" class="btn-outline" style="padding: 16px 32px; font-size: 18px; border-radius: 14px;">Saber más</a>
+        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">
+          Comenzar ahora
+          <span class="btn-icon"></span>
+        </a>
+        <a href="#servicios" class="btn-outline">Saber más</a>
       </div>
       <div class="hero-stats">
         <div class="hero-stat">
@@ -565,7 +601,7 @@
       </div>
 
       <div class="cta-row">
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-primary lg" target="_blank">Tu Equipo de Agentes →</a>
+        <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">Tu Equipo de Agentes →</a>
       </div>
     </div>
   </section>
@@ -752,7 +788,7 @@
             <li>Análisis de datos e informes detallados</li>
             <li>Soporte Directo 6 meses</li>
           </ul>
-          <a href="https://buy.stripe.com/8wM29kbOqgWQ50s9AJ" class="btn-primary" style="display:block;text-align:center;" target="_blank">Empezar →</a>
+          <a href="https://buy.stripe.com/8wM29kbOqgWQ50s9AJ" class="btn-cta" style="display:block;text-align:center;" target="_blank">Empezar</a>
         </div>
 
         <div class="pricing-card">
@@ -828,7 +864,7 @@
   <section class="cta-section">
     <h2>No reemplaces, complementa</h2>
     <p>Profesionales Agénticos que elevan el potencial de tu equipo. Empieza hoy.</p>
-    <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-primary lg" target="_blank">Hablar con un Agente →</a>
+    <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-cta" target="_blank">Hablar con un Agente →</a>
   </section>
 
   <!-- FOOTER -->
