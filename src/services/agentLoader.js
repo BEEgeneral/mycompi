@@ -13,11 +13,11 @@ const AGENTS_PATH = path.join(__dirname, '../../agents');
 // Agentes disponibles (directorios)
 const AGENTS = {
   // Agentes operativos (con overlay por cliente)
-  luna: { path: 'atencion-cliente', nombre: 'Luna', emoji: '🌙', tipo: 'operativo' },
+  luna: { path: 'atencion-cliente', nombre: 'Luna Vidal', emoji: '🌙', tipo: 'operativo' },
   enzo: { path: 'marketing', nombre: 'Enzo Herrera', emoji: '📊', tipo: 'operativo' },
-  carlos: { path: 'ventas', nombre: 'Carlos', emoji: '💼', tipo: 'operativo' },
-  elena: { path: 'operaciones', nombre: 'Elena', emoji: '⚙️', tipo: 'operativo' },
-  diana: { path: 'data', nombre: 'Diana', emoji: '📈', tipo: 'operativo' },
+  carlos: { path: 'ventas', nombre: 'Carlos Mendoza', emoji: '💼', tipo: 'operativo' },
+  elena: { path: 'operaciones', nombre: 'Elena Ortega', emoji: '⚙️', tipo: 'operativo' },
+  diana: { path: 'data', nombre: 'Diana Palau', emoji: '📈', tipo: 'operativo' },
   // Agentes internos (sin overlay - uso interno MyCompi)
   alberto: { path: 'desarrollo', nombre: 'Alberto Gala', emoji: '💻', tipo: 'interno' },
   policia: { path: 'policia-tokens', nombre: 'Policia de Tokens', emoji: '🚨', tipo: 'interno' },
