@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MyCompi Admin — Gestión de Agentes</title>
-  <link rel="icon" type="image/png" href="https://res.cloudinary.com/dtyqexija/image/upload/v1774165189/asset_12_wqaip6.png">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -684,7 +684,7 @@
     <div class="nav-center"></div>
     <div class="owner-key-input">
       <input type="password" id="ownerKey" placeholder="Owner Key..." value="">
-      <button class="btn btn-primary" onclick="conectar()">Conectar</button>
+      <button class="btn btn-primary" id="btnConectar">Conectar</button>
     </div>
   </nav>
 
@@ -727,7 +727,7 @@
                 <div class="detail-type" id="agenteTipo">Agente Operativo</div>
               </div>
             </div>
-            <button class="btn btn-outline" onclick="recargar()">↻ Recargar</button>
+            <button class="btn btn-outline" id="btnRecargar">↻ Recargar</button>
           </div>
 
           <div class="tabs">
@@ -748,7 +748,7 @@
             <textarea id="editor" placeholder="Selecciona un archivo..."></textarea>
             <div class="editor-footer">
               <span class="editor-hint">Edita el archivo y guarda los cambios</span>
-              <button class="btn btn-save" onclick="guardar()">💾 Guardar</button>
+              <button class="btn btn-save" id="btnGuardarArchivo">💾 Guardar</button>
             </div>
           </div>
 
@@ -763,7 +763,7 @@
           <div class="tab-content" id="tab-metricas">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
               <h3 style="font-size:15px;font-weight:700;color:var(--primary);">Dashboard de Costos</h3>
-              <button class="btn btn-outline" onclick="cargarMetricas()" style="font-size:12px;">↻ Actualizar</button>
+              <button class="btn btn-outline" id="btnActualizarMetricas" style="font-size:12px;">↻ Actualizar</button>
             </div>
             <div id="metricasContent">
               <div class="loading"><div class="spinner"></div>Cargando métricas...</div>
@@ -777,8 +777,8 @@
   <!-- Save bar -->
   <div class="save-bar" id="saveBar">
     <span class="message" id="saveMessage">Cambios sin guardar</span>
-    <button class="btn btn-save" onclick="guardar()">Guardar</button>
-    <button class="btn btnDiscard" onclick="descartar()">Descartar</button>
+    <button class="btn btn-save" id="btnGuardarSaveBar">Guardar</button>
+    <button class="btn btnDiscard" id="btnDescartar">Descartar</button>
   </div>
 
   <!-- Toast -->
@@ -832,7 +832,7 @@
           return;
         }
         lista.innerHTML = agentesData.map(a => `
-          <div class="agent-card" data-id="${a.id}" onclick="seleccionarAgente('${a.id}')">
+          <div class="agent-card" data-id="${a.id}">
             <div class="agent-card-avatar">${a.emoji}</div>
             <div class="agent-card-info">
               <div class="agent-card-nombre">${a.nombre}</div>
@@ -1079,11 +1079,19 @@
         conectar();
       }
     }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', tryAutoConnect);
-    } else {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('btnConectar').addEventListener('click', conectar);
+      document.getElementById('btnRecargar').addEventListener('click', recargar);
+      document.getElementById('btnGuardarArchivo').addEventListener('click', guardar);
+      document.getElementById('btnGuardarSaveBar').addEventListener('click', guardar);
+      document.getElementById('btnDescartar').addEventListener('click', descartar);
+      document.getElementById('btnActualizarMetricas').addEventListener('click', cargarMetricas);
+      document.addEventListener('click', function(e) {
+        const card = e.target.closest('.agent-card');
+        if (card) seleccionarAgente(card.dataset.id);
+      });
       tryAutoConnect();
-    }
+    });
   </script>
 </body>
 </html>
