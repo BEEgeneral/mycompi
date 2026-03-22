@@ -88,17 +88,22 @@
     .hero {
       padding: 120px 0 80px;
       text-align: center;
+      background: #0a0a0f;
+      color: white;
     }
 
+    .hero .container { max-width: 900px; }
+
     .badge {
-      background: #EBF5FF;
-      color: var(--primary);
+      background: rgba(0, 112, 255, 0.15);
+      color: #6ba4ff;
       padding: 6px 16px;
       border-radius: 100px;
       font-size: 14px;
       font-weight: 600;
       display: inline-block;
       margin-bottom: 24px;
+      border: 1px solid rgba(0, 112, 255, 0.3);
     }
 
     .hero h1 {
@@ -107,13 +112,14 @@
       letter-spacing: -2.5px;
       line-height: 1.1;
       margin-bottom: 24px;
+      color: white;
     }
 
     .hero h1 span { color: var(--primary); }
 
     .hero p {
       font-size: 20px;
-      color: var(--text-muted);
+      color: rgba(255,255,255,0.6);
       max-width: 600px;
       margin: 0 auto 40px;
     }
@@ -131,7 +137,29 @@
       margin: 60px auto 0;
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin: 60px 0 0;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat { text-align: center; }
+    .hero-stat-num {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .hero-stat-label {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      margin-top: 6px;
     }
 
     /* === SECTIONS === */
@@ -231,6 +259,8 @@
     }
 
     .agent-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .agent-photo { width: 100%; max-width: 180px; border-radius: 16px; margin: 0 auto 16px; display: block; }
+    .agent-team { color: var(--text-muted); font-size: 0.8rem; margin-top: 8px; }
     .agent-dept {
       color: var(--primary);
       font-size: 0.75rem;
@@ -458,11 +488,29 @@
   <section class="hero">
     <div class="container">
       <div class="badge">Agentes IA especializados para PYMES españolas</div>
-      <h1>Un Agente IA experto<br>trabaja para <span>ti</span></h1>
-      <p>No reemplaces, complementa: con Profesionales Agénticos que elevan el potencial de tu equipo. <span>24/7, sin descansos, sin excusas.</span></p>
+      <h1>Tu compañero digital<br>para tu <span>día a día</span></h1>
+      <p>Con <span>una persona</span> en tu empresa, puedes contratar a <span>5 agentes IA expertos</span> para optimizar tu trabajo y reducir costos en un <span>80%</span>.</p>
       <div class="cta-row">
         <a href="https://elevenlabs.io/app/talk-to?agent_id=NvstNLWEFoYWHuTCzYfy" class="btn-primary lg" target="_blank">Comenzar ahora →</a>
         <a href="#servicios" class="btn-outline" style="padding: 16px 32px; font-size: 18px; border-radius: 14px;">Saber más</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">10+</div>
+          <div class="hero-stat-label">Años de Experiencia</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">200+</div>
+          <div class="hero-stat-label">Casos de Éxito</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">150+</div>
+          <div class="hero-stat-label">Clientes Recurrentes</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">160</div>
+          <div class="hero-stat-label">5 Star Reviews</div>
+        </div>
       </div>
       <div class="hero-img">
         <img src="https://framerusercontent.com/images/dUseUtuxWZALl1W4o3xjq8KWc.jpg" alt="MyCompi Dashboard">
@@ -480,34 +528,39 @@
 
       <div class="agents-grid">
         <div class="agent-card">
-          <div class="agent-icon"></div>
+          <img src="https://framerusercontent.com/images/8uBbCpVTmLsz5JMJcXNtgiWazqs.png" alt="Mia Lopez" class="agent-photo">
           <div class="agent-dept">Marketing</div>
           <div class="agent-name">Mia Lopez</div>
           <div class="agent-role">Manager de Marketing</div>
+          <div class="agent-team">Equipo de 5 agentes</div>
         </div>
         <div class="agent-card">
-          <div class="agent-icon"></div>
+          <img src="https://framerusercontent.com/images/wimaqw4ROQhkCviYOvcgbDX9E.png" alt="Victor Gonzalez" class="agent-photo">
           <div class="agent-dept">Ventas</div>
           <div class="agent-name">Victor Gonzalez</div>
           <div class="agent-role">Manager de Ventas</div>
+          <div class="agent-team">Equipo de 5 agentes</div>
         </div>
         <div class="agent-card">
-          <div class="agent-icon"></div>
+          <img src="https://framerusercontent.com/images/NQua4FmGsf9BCYOhxa1zgBIOvk.png" alt="Alex Burgos" class="agent-photo">
           <div class="agent-dept">Att. Cliente</div>
           <div class="agent-name">Alex Burgos</div>
           <div class="agent-role">Manager de Att Cliente</div>
+          <div class="agent-team">Equipo de 5 agentes</div>
         </div>
         <div class="agent-card">
-          <div class="agent-icon"></div>
+          <img src="https://framerusercontent.com/images/PxgcgbEwxWX26Uxj0vmEPgcU8.png" alt="Marta Figueroa" class="agent-photo">
           <div class="agent-dept">Operaciones</div>
           <div class="agent-name">Marta Figueroa</div>
           <div class="agent-role">Manager de Operaciones</div>
+          <div class="agent-team">Equipo de 5 agentes</div>
         </div>
         <div class="agent-card">
-          <div class="agent-icon"></div>
+          <img src="https://framerusercontent.com/images/UcxO6AfOBm9mkGAF1s5e5pL5bI.png" alt="Alan Terrat" class="agent-photo">
           <div class="agent-dept">Data Growth</div>
           <div class="agent-name">Alan Terrat</div>
           <div class="agent-role">Manager Datos</div>
+          <div class="agent-team">Equipo de 5 agentes</div>
         </div>
       </div>
 
@@ -649,7 +702,7 @@
           <p style="margin-top: 8px;">Líder: <strong>Alex Burgos</strong> (Manager). Equipo de 5 agentes dando soporte 24/7.</p>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="icon-box">⚙️</div>
+          <div class="icon-box"></div>
           <h3>Equipo Operaciones</h3>
           <p style="margin-top: 8px;">Líder: <strong>Marta Figueroa</strong> (Manager). Equipo de 5 agentes automatizando procesos.</p>
         </div>
@@ -732,16 +785,40 @@
 
       <div class="faq-list">
         <div class="faq-item">
-          <div class="faq-question">¿Por qué automatizar con MyCompi?</div>
+          <div class="faq-question">¿Por qué automatizar tareas en mi empresa con MyCompi?</div>
           <div class="faq-answer">MyCompi permite que tu empresa opere con una fracción del costo mientras tus empleados se enfocan en tareas de alto valor estratégico.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-question">¿Cómo funciona?</div>
+          <div class="faq-question">¿Cómo funciona MyCompi?</div>
           <div class="faq-answer">Contratas un equipo de agentes IA especializados que trabajan 24/7. Cada agente tiene un rol definido (Marketing, Ventas, Atención al Cliente, etc.) y se coordina con el resto.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-question">¿Qué soporte ofrecen?</div>
-          <div class="faq-answer">Soporte directo incluido en todos los planes: 3 meses en Básico, 6 meses en Premium y 12 meses en ROI. Además, cada equipo tiene un Account Manager dedicado.</div>
+          <div class="faq-question">¿Cuál es el costo de usar MyCompi?</div>
+          <div class="faq-answer">Plans desde 147€/mes (ED Básico, hasta 2 agentes) hasta 1.320€/mes (ED ROI, agentes ilimitados). La inversión se paga sola con el ahorro en costes operativos.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">¿Cuánto tiempo toma implementar MyCompi?</div>
+          <div class="faq-answer">Puedes tener tu primer agente funcionando en menos de 24 horas. La configuración completa de un equipo de 5 agentes toma entre 1-3 días.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">¿Qué tipos de tareas puede automatizar MyCompi?</div>
+          <div class="faq-answer">Desde atención al cliente y gestión de leads, hasta reporting, análisis de datos, gestión de redes sociales, facturación y mucho más.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">¿Cómo garantiza MyCompi la integración con mis herramientas actuales?</div>
+          <div class="faq-answer">Conecta tus equipos de agentes con tus herramientas existentes, APIs y fuentes de datos sin problemas. Flujos de trabajo integrados desde el primer día.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">¿Es MyCompi adecuado para empresas de todos los tamaños?</div>
+          <div class="faq-answer">Sí. Empezamos con el Plan Básico para PYMEs y escalamos hasta equipos ilimitados para empresas en crecimiento.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">¿Puedo personalizar los agentes IA de MyCompi?</div>
+          <div class="faq-answer">Sí. Cada agente se configura con el contexto de tu negocio, productos, tono de comunicación y procesos específicos.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">¿Qué soporte ofrece MyCompi durante el uso de sus servicios?</div>
+          <div class="faq-answer">Soporte directo incluido en todos los planes: 3 meses en Básico, 6 meses en Premium y 12 meses en ROI. Además, cada cliente tiene un Account Manager dedicado.</div>
         </div>
       </div>
     </div>
