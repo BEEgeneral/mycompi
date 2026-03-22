@@ -13,7 +13,7 @@ const AGENTS_PATH = path.join(__dirname, '../../agents');
 // Agentes disponibles (directorios)
 const AGENTS = {
   // Agentes operativos (con overlay por cliente)
-  luna: { path: 'atencion-cliente', nombre: 'Luna Vidal', emoji: '🌙', tipo: 'operativo' },
+  luna: { path: 'atencion-cliente', nombre: 'Laura', emoji: '💬', tipo: 'operativo' },
   enzo: { path: 'marketing', nombre: 'Enzo Herrera', emoji: '📊', tipo: 'operativo' },
   carlos: { path: 'ventas', nombre: 'Carlos Mendoza', emoji: '💼', tipo: 'operativo' },
   elena: { path: 'operaciones', nombre: 'Elena Ortega', emoji: '⚙️', tipo: 'operativo' },
