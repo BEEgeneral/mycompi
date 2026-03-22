@@ -842,7 +842,9 @@
           </div>
         `).join('');
       } catch (err) {
-        showToast('Error: ' + err.message, 'error');
+        console.error('Error cargando agentes:', err);
+        showToast('Error conectando: ' + err.message, 'error');
+        document.getElementById('agentesLista').innerHTML = '<div class="no-data" style="color:#ef4444;">Error: ' + err.message + '</div>';
       }
     }
 
