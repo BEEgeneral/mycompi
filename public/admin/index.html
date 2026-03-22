@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyCompi Admin — Gestión de Agentes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #32386A;
+      --primary-hover: #262a56;
+      --accent: #FFD152;
+      --text-main: #32386A;
+      --text-muted: rgba(50, 56, 106, 0.7);
+      --bg-light: #F5F5F7;
+      --bg-hero: #C6D8F2;
+      --white: #FFFFFF;
+      --border: rgba(50, 56, 106, 0.08);
+      --shadow: 0 10px 30px rgba(50, 56, 106, 0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    /* Header / Navbar */
+    .navbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      padding: 0 32px;
+    }
+
+    .navbar-logo { height: 36px; }
+
+    .nav-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .owner-key-input {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .owner-key-input input {
+      background: var(--bg-light);
+      border: 1.5px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 100px;
+      font-size: 13px;
+      width: 220px;
+      font-family: inherit;
+    }
+
+    .owner-key-input input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn {
+      padding: 8px 18px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    /* Page layout */
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    /* Grid layout */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Agent list sidebar */
+    .agents-sidebar {
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: sticky;
+      top: 96px;
+    }
+
+    .agents-sidebar-header {
+      padding: 20px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .agents-sidebar-header h2 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .agents-list {
+      padding: 12px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .agent-card {
+      padding: 14px 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 6px;
+      border: 1.5px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .agent-card:hover {
+      background: var(--bg-light);
+    }
+
+    .agent-card.active {
+      background: var(--bg-hero);
+      border-color: var(--primary);
+    }
+
+    .agent-card-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--bg-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .agent-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .agent-card-nombre {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    .agent-card-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .agent-card-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .agent-card-status.activo { background: #22c55e; }
+    .agent-card-status.inactivo { background: #ef4444; }
+
+    /* Main content area */
+    .main-content {
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* Welcome state */
+    .welcome-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      text-align: center;
+    }
+
+    .welcome-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: var(--bg-hero);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .welcome-icon svg { width: 40px; height: 40px; }
+
+    .welcome-state h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .welcome-state p {
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 320px;
+    }
+
+    /* Agent detail */
+    .agent-detail { display: none; }
+    .agent-detail.visible { display: block; }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .detail-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--bg-hero);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .detail-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .detail-type {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 16px 28px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      padding: 10px 18px;
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      border: 1.5px solid transparent;
+      border-bottom: none;
+    }
+
+    .tab:hover { color: var(--primary); }
+
+    .tab.active {
+      color: var(--primary);
+      background: var(--white);
+      border-color: var(--border);
+      border-bottom-color: var(--white);
+    }
+
+    .tab-content { display: none; padding: 24px 28px; }
+    .tab-content.active { display: block; }
+
+    /* File tabs */
+    .file-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .file-tab {
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-light);
+      transition: all 0.2s;
+    }
+
+    .file-tab:hover { color: var(--primary); }
+
+    .file-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .file-tab-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 350px;
+      background: var(--bg-light);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--primary);
+      padding: 16px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .editor-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .editor-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-save {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-save:hover { background: var(--primary-hover); }
+
+    /* Save bar */
+    .save-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(50, 56, 106, 0.15);
+      display: none;
+    }
+
+    .save-bar.visible { display: flex; }
+
+    .save-bar .message {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-right: 8px;
+    }
+
+    .save-bar .message.success { color: #22c55e; }
+    .save-bar .message.error { color: #ef4444; }
+
+    .btnDiscard {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Clientes grid */
+    .clientes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .cliente-card {
+      background: var(--bg-light);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1.5px solid var(--border);
+    }
+
+    .cliente-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .cliente-card p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Métricas */
+    .metricas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .metrica-card {
+      background: var(--bg-light);
+      border-radius: 14px;
+      padding: 18px;
+      border: 1.5px solid var(--border);
+    }
+
+    .metrica-card .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .metrica-card .value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .metrica-card .sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .metrica-card .value.green { color: #22c55e; }
+    .metrica-card .value.orange { color: #f59e0b; }
+    .metrica-card .value.red { color: #ef4444; }
+
+    .seccion-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin: 24px 0 12px;
+    }
+
+    /* Bucket bar */
+    .bucket-bar {
+      background: var(--bg-light);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1.5px solid var(--border);
+    }
+
+    .bucket-bar h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .bucket-track {
+      background: var(--white);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bucket-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .bucket-fill.warning { background: #f59e0b; }
+    .bucket-fill.danger { background: #ef4444; }
+
+    .bucket-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Top clientes */
+    .top-clientes {
+      background: var(--bg-light);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+    }
+
+    .top-cliente {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .top-cliente:last-child { border-bottom: none; }
+
+    .top-cliente .nombre {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .top-cliente .stats {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .top-cliente .stats .costo {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Planes */
+    .planes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .plan-row {
+      background: var(--bg-light);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .plan-nombre { font-size: 13px; font-weight: 700; color: var(--primary); }
+    .plan-contador { font-size: 12px; color: var(--text-muted); }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 200;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; }
+    .toast.error { background: #ef4444; }
+    .toast.success { background: #22c55e; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .agents-sidebar { position: static; }
+      .page { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <img src="/assets/logo.png" alt="MyCompi" class="navbar-logo">
+    <div class="nav-center"></div>
+    <div class="owner-key-input">
+      <input type="password" id="ownerKey" placeholder="Owner Key..." value="">
+      <button class="btn btn-primary" onclick="conectar()">Conectar</button>
+    </div>
+  </nav>
+
+  <!-- Page -->
+  <div class="page">
+    <div class="page-header">
+      <h1>Dashboard de Agentes</h1>
+      <p>Selecciona un agente para ver y editar sus archivos de configuración.</p>
+    </div>
+
+    <div class="grid-2">
+      <!-- Sidebar: Agent List -->
+      <aside class="agents-sidebar">
+        <div class="agents-sidebar-header">
+          <h2>Agentes Instalados</h2>
+        </div>
+        <div class="agents-list" id="agentesLista">
+          <div class="loading"><div class="spinner"></div>Conectando...</div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="welcome-state" id="welcome">
+          <div class="welcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#32386A" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h2>Selecciona un agente</h2>
+          <p>Introduce tu Owner Key y pulsa Conectar para gestionar los agentes.</p>
+        </div>
+
+        <div class="agent-detail" id="agenteDetail">
+          <div class="detail-header">
+            <div class="detail-header-left">
+              <div class="detail-avatar" id="agenteEmoji">🌙</div>
+              <div>
+                <div class="detail-name" id="agenteNombre">Luna</div>
+                <div class="detail-type" id="agenteTipo">Agente Operativo</div>
+              </div>
+            </div>
+            <button class="btn btn-outline" onclick="recargar()">↻ Recargar</button>
+          </div>
+
+          <div class="tabs">
+            <div class="tab active" data-tab="archivos">Archivos</div>
+            <div class="tab" data-tab="clientes">Clientes</div>
+            <div class="tab" data-tab="metricas">Métricas</div>
+          </div>
+
+          <!-- Archivos -->
+          <div class="tab-content active" id="tab-archivos">
+            <div class="file-tabs">
+              <div class="file-tab active" data-file="SOUL.md">SOUL.md</div>
+              <div class="file-tab" data-file="IDENTITY.md">IDENTITY.md</div>
+              <div class="file-tab" data-file="SKILL.md">SKILL.md</div>
+              <div class="file-tab" data-file="MEMORY.md">MEMORY.md</div>
+            </div>
+            <div class="file-tab-title" id="editorTitulo">SOUL.md — Personalidad</div>
+            <textarea id="editor" placeholder="Selecciona un archivo..."></textarea>
+            <div class="editor-footer">
+              <span class="editor-hint">Edita el archivo y guarda los cambios</span>
+              <button class="btn btn-save" onclick="guardar()">💾 Guardar</button>
+            </div>
+          </div>
+
+          <!-- Clientes -->
+          <div class="tab-content" id="tab-clientes">
+            <div id="clientesContent">
+              <div class="loading"><div class="spinner"></div>Cargando...</div>
+            </div>
+          </div>
+
+          <!-- Métricas -->
+          <div class="tab-content" id="tab-metricas">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <h3 style="font-size:15px;font-weight:700;color:var(--primary);">Dashboard de Costos</h3>
+              <button class="btn btn-outline" onclick="cargarMetricas()" style="font-size:12px;">↻ Actualizar</button>
+            </div>
+            <div id="metricasContent">
+              <div class="loading"><div class="spinner"></div>Cargando métricas...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save bar -->
+  <div class="save-bar" id="saveBar">
+    <span class="message" id="saveMessage">Cambios sin guardar</span>
+    <button class="btn btn-save" onclick="guardar()">Guardar</button>
+    <button class="btn btnDiscard" onclick="descartar()">Descartar</button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API = '';
+    let ownerKey = '';
+    let agenteActual = null;
+    let archivoActual = 'SOUL.md';
+    let contenidoOriginal = '';
+    let agentesData = [];
+
+    // ─────────────────────────────────────────
+    // Conexión
+    // ─────────────────────────────────────────
+
+    function conectar() {
+      ownerKey = document.getElementById('ownerKey').value;
+      if (!ownerKey) {
+        showToast('Introduce el owner key', 'error');
+        return;
+      }
+      localStorage.setItem('mycompi_owner_key', ownerKey);
+      cargarAgentes();
+    }
+
+    async function apiCall(url, options = {}) {
+      const headers = {
+        'X-Owner-Key': ownerKey,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      };
+      const response = await fetch(API + url, { ...options, headers });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Error de API');
+      return data;
+    }
+
+    // ─────────────────────────────────────────
+    // Cargar agentes
+    // ─────────────────────────────────────────
+
+    async function cargarAgentes() {
+      try {
+        const data = await apiCall('/api/admin/agentes');
+        agentesData = data.agentes;
+        const lista = document.getElementById('agentesLista');
+        if (agentesData.length === 0) {
+          lista.innerHTML = '<div class="no-data">No hay agentes registrados.</div>';
+          return;
+        }
+        lista.innerHTML = agentesData.map(a => `
+          <div class="agent-card" data-id="${a.id}" onclick="seleccionarAgente('${a.id}')">
+            <div class="agent-card-avatar">${a.emoji}</div>
+            <div class="agent-card-info">
+              <div class="agent-card-nombre">${a.nombre}</div>
+              <div class="agent-card-meta">${a.tipo === 'interno' ? 'Agente Interno' : 'Agente Operativo'}</div>
+            </div>
+            <div class="agent-card-status ${a.activo ? 'activo' : 'inactivo'}"></div>
+          </div>
+        `).join('');
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────
+    // Seleccionar agente
+    // ─────────────────────────────────────────
+
+    async function seleccionarAgente(id) {
+      document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
+      document.querySelector(`.agent-card[data-id="${id}"]`).classList.add('active');
+      document.getElementById('welcome').style.display = 'none';
+      document.getElementById('agenteDetail').classList.add('visible');
+      try {
+        const data = await apiCall(`/api/admin/agentes/${id}`);
+        agenteActual = { ...data.agente, archivos: data.agente.archivos };
+        document.getElementById('agenteEmoji').textContent = data.agente.emoji;
+        document.getElementById('agenteNombre').textContent = data.agente.nombre;
+        document.getElementById('agenteTipo').textContent = data.agente.tipo === 'interno' ? 'Agente Interno' : 'Agente Operativo';
+        seleccionarArchivo('SOUL.md');
+        cargarClientes(id);
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────
+    // Archivos
+    // ─────────────────────────────────────────
+
+    function seleccionarArchivo(nombre) {
+      archivoActual = nombre;
+      const archivos = agenteActual.archivos;
+      const titulos = {
+        'SOUL.md': 'SOUL.md — Personalidad y filosofía',
+        'IDENTITY.md': 'IDENTITY.md — Identidad y contexto',
+        'SKILL.md': 'SKILL.md — Capacidades y habilidades',
+        'MEMORY.md': 'MEMORY.md — Aprendizaje acumulado',
+      };
+      document.getElementById('editorTitulo').textContent = titulos[nombre] || nombre;
+      document.getElementById('editor').value = archivos[nombre] || '';
+      contenidoOriginal = archivos[nombre] || '';
+      document.querySelectorAll('.file-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.file === nombre);
+      });
+      document.getElementById('saveBar').classList.remove('visible');
+    }
+
+    document.querySelectorAll('.file-tab').forEach(tab => {
+      tab.addEventListener('click', () => seleccionarArchivo(tab.dataset.file));
+    });
+
+    document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+      tab.addEventListener('click', () => seleccionarTab(tab.dataset.tab));
+    });
+
+    function seleccionarTab(tab) {
+      document.querySelectorAll('.tab[data-tab]').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tab);
+      });
+      document.querySelectorAll('.tab-content').forEach(c => {
+        c.classList.toggle('active', c.id === `tab-${tab}`);
+      });
+      if (tab === 'metricas') cargarMetricas();
+    }
+
+    document.getElementById('editor').addEventListener('input', function() {
+      const modificado = this.value !== contenidoOriginal;
+      document.getElementById('saveBar').classList.toggle('visible', modificado);
+      document.getElementById('saveMessage').textContent = modificado ? 'Cambios sin guardar' : 'Guardado';
+    });
+
+    async function guardar() {
+      if (!agenteActual) return;
+      const contenido = document.getElementById('editor').value;
+      const fileMap = {
+        'SOUL.md': 'soul',
+        'IDENTITY.md': 'identity',
+        'SKILL.md': 'skill',
+        'MEMORY.md': 'memory',
+      };
+      try {
+        await apiCall(`/api/admin/agentes/${agenteActual.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ [fileMap[archivoActual]]: contenido }),
+        });
+        agenteActual.archivos[archivoActual] = contenido;
+        contenidoOriginal = contenido;
+        document.getElementById('saveBar').classList.remove('visible');
+        showToast('Guardado correctamente', 'success');
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+      }
+    }
+
+    function descartar() {
+      document.getElementById('editor').value = contenidoOriginal;
+      document.getElementById('saveBar').classList.remove('visible');
+    }
+
+    async function recargar() {
+      if (agenteActual) {
+        await seleccionarAgente(agenteActual.id);
+        showToast('Recargado', 'success');
+      }
+    }
+
+    // ─────────────────────────────────────────
+    // Clientes
+    // ─────────────────────────────────────────
+
+    async function cargarClientes(agenteId) {
+      const content = document.getElementById('clientesContent');
+      content.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+      try {
+        const data = await apiCall(`/api/admin/agentes/${agenteId}/clientes`);
+        if (!data.clientes || data.clientes.length === 0) {
+          content.innerHTML = '<div class="no-data">Este agente aún no tiene clientes. Cuando un cliente lo contrate, aparecerá aquí.</div>';
+        } else {
+          content.innerHTML = '<div class="clientes-grid">' + data.clientes.map(c => `
+            <div class="cliente-card">
+              <h4>👤 ${c}</h4>
+              <p>Overlay activo — click para ver</p>
+            </div>
+          `).join('') + '</div>';
+        }
+      } catch (err) {
+        content.innerHTML = `<div class="no-data" style="color:#ef4444;">Error: ${err.message}</div>`;
+      }
+    }
+
+    // ─────────────────────────────────────────
+    // Métricas
+    // ─────────────────────────────────────────
+
+    async function cargarMetricas() {
+      const content = document.getElementById('metricasContent');
+      content.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+      try {
+        const [dashData, estadoData] = await Promise.all([
+          apiCall('/api/admin/metrics/dashboard'),
+          apiCall('/api/admin/metrics/estado'),
+        ]);
+        const dash = dashData;
+        const est = estadoData;
+        const bucketPct = Math.round((est.starter.consumidos / est.starter.maximos) * 100);
+        const bucketClass = bucketPct > 80 ? 'danger' : bucketPct > 50 ? 'warning' : '';
+        const resetMin = Math.ceil((est.starter.resetEnMs || 0) / 60000);
+
+        content.innerHTML = `
+          <div class="bucket-bar">
+            <h4>🪣 Bucket Global Starter</h4>
+            <div class="bucket-track">
+              <div class="bucket-fill ${bucketClass}" style="width:${bucketPct}%"></div>
+            </div>
+            <div class="bucket-info">
+              <span>${est.starter.consumidos} / ${est.starter.maximos} requests</span>
+              <span>Reset en ${resetMin} min</span>
+            </div>
+          </div>
+
+          <div class="metricas-grid">
+            <div class="metrica-card">
+              <div class="label">Tokens Totales</div>
+              <div class="value">${formatNumber(dash.resumen.tokensTotal)}</div>
+              <div class="sub">histórico</div>
+            </div>
+            <div class="metrica-card">
+              <div class="label">Sesiones</div>
+              <div class="value">${formatNumber(dash.resumen.sessionsTotales)}</div>
+              <div class="sub">totales</div>
+            </div>
+            <div class="metrica-card">
+              <div class="label">Gasto Est.</div>
+              <div class="value green">$${dash.resumen.gastoTotal.toFixed(4)}</div>
+              <div class="sub">total estimado</div>
+            </div>
+            <div class="metrica-card">
+              <div class="label">Sesiones Activas</div>
+              <div class="value">${est.sesionesActivas}</div>
+              <div class="sub">ahora</div>
+            </div>
+          </div>
+
+          <div class="seccion-title">Por Plan</div>
+          <div class="planes-grid">
+            ${Object.entries(est.planes).map(([plan, data]) => `
+              <div class="plan-row">
+                <span class="plan-nombre">${plan}</span>
+                <span class="plan-contador">${data.consumidos} / ${data.limite} req/h</span>
+              </div>
+            `).join('')}
+          </div>
+
+          ${dash.topClientes && dash.topClientes.length > 0 ? `
+          <div class="seccion-title">Top Clientes</div>
+          <div class="top-clientes">
+            ${dash.topClientes.slice(0, 8).map(c => `
+              <div class="top-cliente">
+                <span class="nombre">👤 ${c.clienteId}</span>
+                <div class="stats">
+                  <div class="costo">$${c.costo.toFixed(4)}</div>
+                  <div>${formatNumber(c.tokens)} tokens · ${c.turnos} turnos</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+        `;
+      } catch (err) {
+        content.innerHTML = `<div class="no-data" style="color:#ef4444;">Error: ${err.message}</div>`;
+      }
+    }
+
+    function formatNumber(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return n.toString();
+    }
+
+    function showToast(mensaje, tipo = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = mensaje;
+      toast.className = 'toast show' + (tipo ? ` ${tipo}` : '');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Auto-conectar
+    const savedKey = localStorage.getItem('mycompi_owner_key');
+    if (savedKey) {
+      document.getElementById('ownerKey').value = savedKey;
+    }
+  </script>
+</body>
+</html>
