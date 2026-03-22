@@ -1068,12 +1068,14 @@
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // Auto-conectar
-    const savedKey = localStorage.getItem('mycompi_owner_key');
-    if (savedKey) {
-      document.getElementById('ownerKey').value = savedKey;
-      conectar();
-    }
+    // Auto-conectar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedKey = localStorage.getItem('mycompi_owner_key');
+      if (savedKey) {
+        document.getElementById('ownerKey').value = savedKey;
+        conectar();
+      }
+    });
   </script>
 </body>
 </html>
