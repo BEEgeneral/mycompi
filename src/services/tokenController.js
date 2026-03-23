@@ -258,7 +258,7 @@ class TokenController {
     this._checkBucketReset();
 
     // Métricas agregadas del día
-    const metricasDia = this._getMetricassDia();
+    const metricasDia = this._getMetricsDia();
 
     return {
       starter: {
@@ -341,7 +341,7 @@ class TokenController {
    */
   dashboard() {
     const logs = this._leerLogs();
-    const metricasDia = this._getMetricassDia();
+    const metricasDia = this._getMetricsDia();
 
     // Gasto total
     const gastoTotal = logs.reduce((sum, l) => sum + l.costoEstimado, 0);
@@ -352,17 +352,48 @@ class TokenController {
     const porCliente = {};
     logs.forEach(l => {
       if (!porCliente[l.clienteId]) {
-        porCliente[l.clienteId] = { tokens: 0, costo: 0, turnos: 0 };
+        porCliente[l.clienteId] = { tokens: 0, costo: 0, turnos: 0, agentes: {} };
       }
       porCliente[l.clienteId].tokens += l.tokens.total;
       porCliente[l.clienteId].costo += l.costoEstimado;
       porCliente[l.clienteId].turnos += l.turnos;
+      // por agente
+      if (l.agente) {
+        if (!porCliente[l.clienteId].agentes[l.agente]) {
+          porCliente[l.clienteId].agentes[l.agente] = { tokens: 0, costo: 0, turnos: 0 };
+        }
+        porCliente[l.clienteId].agentes[l.agente].tokens += l.tokens.total;
+        porCliente[l.clienteId].agentes[l.agente].costo += l.costoEstimado;
+        porCliente[l.clienteId].agentes[l.agente].turnos += l.turnos;
+      }
     });
 
     const topClientes = Object.entries(porCliente)
       .sort((a, b) => b[1].costo - a[1].costo)
       .slice(0, 10)
       .map(([id, data]) => ({ clienteId: id, ...data }));
+
+    // Por agente
+    const porAgente = {};
+    logs.forEach(l => {
+      if (!l.agente) return;
+      if (!porAgente[l.agente]) {
+        porAgente[l.agente] = { tokens: 0, costo: 0, turnos: 0, clientes: {} };
+      }
+      porAgente[l.agente].tokens += l.tokens.total;
+      porAgente[l.agente].costo += l.costoEstimado;
+      porAgente[l.agente].turnos += l.turnos;
+      if (!porAgente[l.agente].clientes[l.clienteId]) {
+        porAgente[l.agente].clientes[l.clienteId] = { tokens: 0, costo: 0, turnos: 0 };
+      }
+      porAgente[l.agente].clientes[l.clienteId].tokens += l.tokens.total;
+      porAgente[l.agente].clientes[l.clienteId].costo += l.costoEstimado;
+      porAgente[l.agente].clientes[l.clienteId].turnos += l.turnos;
+    });
+
+    const agentes = Object.entries(porAgente)
+      .sort((a, b) => b[1].costo - a[1].costo)
+      .map(([id, data]) => ({ agenteId: id, ...data }));
 
     return {
       resumen: {
@@ -373,6 +404,7 @@ class TokenController {
         sessionsTotales: logs.length,
       },
       metricasDia,
+      agentes,
       topClientes,
       modeloActual: MODELO_DEFAULT.nombre,
     };
@@ -481,6 +513,7 @@ class TokenController {
       logs.push({
         timestamp: reporte.timestamp,
         clienteId: sesion.clienteId,
+        agente: sesion.agente || null,
         plan: sesion.plan,
         sessionId: reporte.sessionId,
         modelo: reporte.modelo,
@@ -507,7 +540,7 @@ class TokenController {
     }
   }
 
-  _getMetricassDia() {
+  _getMetricsDia() {
     const logs = this._leerLogs();
     const hoy = new Date().toISOString().split('T')[0];
 

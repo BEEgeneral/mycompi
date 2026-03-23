@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
     const solicitud = await tokenController.solicitar(
       clienteId, 
       planCliente, 
-      { mensaje, complejidad: complejidad || 'baja' }
+      { mensaje, complejidad: complejidad || 'baja', agente: agenteKey }
     );
 
     if (!solicitud.puedeProcesar) {
