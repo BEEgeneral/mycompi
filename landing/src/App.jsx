@@ -1,3 +1,4 @@
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './sections/Hero'
 import Stats from './sections/Stats'
@@ -7,9 +8,10 @@ import Pricing from './sections/Pricing'
 import Testimonials from './sections/Testimonials'
 import FAQ from './sections/FAQ'
 import Contact from './sections/Contact'
+import Hiring from './sections/Hiring'
 import Footer from './sections/Footer'
 
-export default function App() {
+function HomePage() {
   return (
     <div className="min-h-screen bg-brand-bg">
       <Navbar />
@@ -25,5 +27,16 @@ export default function App() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/contratacion" element={<Hiring />} />
+      </Routes>
+    </HashRouter>
   )
 }
