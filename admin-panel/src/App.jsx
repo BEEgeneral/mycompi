@@ -12,6 +12,7 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [connected, setConnected] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(true)
 
   const apiCall = useCallback(async (url, options = {}) => {
     const headers = {
@@ -51,6 +52,7 @@ export default function App() {
     try {
       const data = await apiCall(`/api/admin/agentes/${id}`)
       setAgenteActual({ ...data.agente, archivos: data.agente.archivos })
+      setShowSidebar(false) // on mobile, show detail immediately
     } catch (err) {
       setError(err.message)
     } finally {
@@ -65,21 +67,21 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <nav className="h-[72px] flex items-center px-8 bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="h-[72px] flex items-center px-4 md:px-8 bg-white border-b border-gray-200 sticky top-0 z-50">
         <a href="/" className="h-9">
           <img src="/assets/logo.png" alt="MyCompi" className="h-full" />
         </a>
-        <div className="flex-1 flex justify-center items-center gap-2">
+        <div className="flex-1 flex justify-center items-center gap-2 px-2">
           <input
             type="password"
             value={ownerKey}
             onChange={e => setOwnerKey(e.target.value)}
             placeholder="Owner Key..."
-            className="bg-gray-100 border border-gray-300 rounded-full px-4 py-2 text-sm w-56 focus:outline-none focus:border-primary"
+            className="bg-gray-100 border border-gray-300 rounded-full px-3 md:px-4 py-2 text-xs md:text-sm w-36 md:w-56 focus:outline-none focus:border-primary"
           />
           <button
             onClick={conectar}
-            className="bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-full text-sm font-semibold transition-colors"
+            className="bg-primary hover:bg-primary-hover text-white px-3 md:px-5 py-2 rounded-full text-xs md:text-sm font-semibold transition-colors whitespace-nowrap"
           >
             Conectar
           </button>
@@ -94,21 +96,33 @@ export default function App() {
       )}
 
       {/* Main content */}
-      <div className="flex-1 max-w-[1200px] mx-auto w-full px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-extrabold tracking-tight text-primary">Dashboard de Agentes</h1>
-          <p className="text-sm text-text-muted mt-1">Selecciona un agente para ver y editar sus archivos de configuración.</p>
+      <div className="flex-1 max-w-[1200px] mx-auto w-full px-4 md:px-6 py-6 md:py-8">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-primary">Dashboard de Agentes</h1>
+          <p className="text-xs md:text-sm text-text-muted mt-1">Selecciona un agente para ver y editar sus archivos de configuración.</p>
         </div>
 
-        <div className="grid grid-cols-[300px_1fr] gap-6 items-start">
-          {/* Sidebar */}
-          <Sidebar
-            agentes={agentes}
-            agenteActual={agenteActual}
-            onSelect={seleccionarAgente}
-            loading={loading}
-            connected={connected}
-          />
+        {/* Mobile: show back button when detail is visible */}
+        {!showSidebar && agenteActual && (
+          <button
+            onClick={() => setShowSidebar(true)}
+            className="mb-4 text-sm text-primary font-semibold flex items-center gap-1 hover:underline"
+          >
+            ← Volver al listado
+          </button>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 items-start">
+          {/* Sidebar — hidden on mobile when showing detail */}
+          {showSidebar && (
+            <Sidebar
+              agentes={agentes}
+              agenteActual={agenteActual}
+              onSelect={seleccionarAgente}
+              loading={loading}
+              connected={connected}
+            />
+          )}
 
           {/* Content */}
           {agenteActual ? (
@@ -118,7 +132,7 @@ export default function App() {
               onRecargar={recargar}
             />
           ) : (
-            <WelcomeState connected={connected} loading={loading} />
+            showSidebar && <WelcomeState connected={connected} loading={loading} />
           )}
         </div>
       </div>
