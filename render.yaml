@@ -1,7 +1,7 @@
 name: mycompi
 env: node
 region: frankfurt
-buildCommand: npm install && npx prisma generate
+buildCommand: npm install && npm run build && npx prisma generate
 startCommand: node src/index.js
 healthCheckPath: /health
 headers:
