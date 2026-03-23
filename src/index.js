@@ -52,7 +52,13 @@ app.get('/health', (req, res) => {
 });
 
 // SPA catch-all — cualquier ruta desconocida sirve index.html para que HashRouter funcione
+// IMPORTANTE: excluimos /api/* que ya están manejadas por las rutas acima
 app.get('*', (req, res) => {
+  // Si la petición es para una ruta de API, no debería llegar aquí
+  // Pero si llega, devolvemos 404
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   res.sendFile('index.html', { root: 'public' });
 });
 
