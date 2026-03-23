@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat con Luna — MyCompi</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a24;
+      --accent: #6c5ce7;
+      --accent-light: #a29bfe;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b0;
+      --text-muted: #606070;
+      --border: #2a2a3a;
+      --success: #00b894;
+      --warning: #fdcb6e;
+      --error: #ff6b6b;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .agent-info h1 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .agent-info span {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--success);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* Chat container */
+    .chat-container {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Messages */
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .message.user .message-avatar {
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    }
+
+    .message-content {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+    }
+
+    .message.user .message-content {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .message-text {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .message.user .message-time {
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* Typing indicator */
+    .typing {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }
+
+    .typing-content {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    /* Input area */
+    .input-area {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 16px 24px;
+    }
+
+    .input-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      max-height: 120px;
+      line-height: 1.5;
+    }
+
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .send-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    /* Token info bar */
+    .token-bar {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .token-bar span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .token-bar .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .token-bar .dot.ok { background: var(--success); }
+    .token-bar .dot.warning { background: var(--warning); }
+    .token-bar .dot.error { background: var(--error); }
+
+    /* Error toast */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--error);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Welcome message */
+    .welcome {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+
+    .welcome h2 {
+      font-size: 20px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      font-size: 14px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <div class="avatar">🌙</div>
+      <div class="agent-info">
+        <h1>Luna</h1>
+        <span>Responsable de Atención al Cliente</span>
+      </div>
+    </div>
+    <div class="status">
+      <div class="status-dot"></div>
+      En línea
+    </div>
+  </header>
+
+  <div class="token-bar">
+    <span><span class="dot ok" id="statusDot"></span> <span id="statusText">Conectado</span></span>
+    <span id="tokenInfo">Budget: --</span>
+  </div>
+
+  <div class="chat-container" id="chatContainer">
+    <div class="welcome">
+      <h2>👋 Hola, soy Luna</h2>
+      <p>Estoy aquí para ayudarte con cualquier duda sobre Pizzería Don Carlos. ¿En qué puedo ayudarte hoy?</p>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-container">
+      <div class="input-wrapper">
+        <textarea 
+          id="messageInput" 
+          placeholder="Escribe tu mensaje..."
+          rows="1"
+        ></textarea>
+      </div>
+      <button class="send-btn" id="sendBtn" disabled>
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_URL = ''; // Mismo origen en producción
+    const AGENTE = 'luna';
+    
+    // Elementos DOM
+    const chatContainer = document.getElementById('chatContainer');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const toast = document.getElementById('toast');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const tokenInfo = document.getElementById('tokenInfo');
+
+    let isLoading = false;
+    let tokenBudget = null;
+
+    // Auto-resize textarea
+    messageInput.addEventListener('input', () => {
+      messageInput.style.height = 'auto';
+      messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+      sendBtn.disabled = !messageInput.value.trim() || isLoading;
+    });
+
+    // Enviar con Enter (Shift+Enter para nueva línea)
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (messageInput.value.trim() && !isLoading) {
+          sendMessage();
+        }
+      }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    async function sendMessage() {
+      const mensaje = messageInput.value.trim();
+      if (!mensaje || isLoading) return;
+
+      isLoading = true;
+      sendBtn.disabled = true;
+      messageInput.value = '';
+      messageInput.style.height = 'auto';
+
+      // Agregar mensaje del usuario
+      addMessage(mensaje, 'user');
+
+      // Mostrar typing indicator
+      showTyping();
+
+      try {
+        const response = await fetch(`${API_URL}/api/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // En producción, el JWT vendría del auth del frontend
+            'Authorization': 'Bearer demo_token',
+          },
+          body: JSON.stringify({
+            agente: AGENTE,
+            mensaje: mensaje,
+          }),
+        });
+
+        hideTyping();
+
+        if (response.status === 429) {
+          const data = await response.json();
+          if (data.razon === 'BUCKET_STARTER_LLENO') {
+            const mins = Math.ceil(data.esperarMs / 60000);
+            showToast(`Límite global alcanzado. Espera ${mins} minutos.`);
+          } else {
+            showToast(data.mensaje || 'Has excedido tu límite. Upgrade tu plan.');
+          }
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Error del servidor');
+        }
+
+        const data = await response.json();
+        
+        // Actualizar budget info
+        if (data.metadata) {
+          updateBudget(data.metadata);
+        }
+
+        // Agregar respuesta de Luna
+        addMessage(data.respuesta, 'luna');
+
+      } catch (err) {
+        hideTyping();
+        console.error(err);
+        showToast('No pude enviar el mensaje. Intenta de nuevo.');
+      } finally {
+        isLoading = false;
+        sendBtn.disabled = !messageInput.value.trim();
+      }
+    }
+
+    function addMessage(text, sender) {
+      const div = document.createElement('div');
+      div.className = `message ${sender}`;
+      
+      const time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      
+      div.innerHTML = `
+        <div class="message-avatar">${sender === 'luna' ? '🌙' : '👤'}</div>
+        <div class="message-content">
+          <div class="message-text">${escapeHtml(text)}</div>
+          <div class="message-time">${time}</div>
+        </div>
+      `;
+
+      // Remover welcome si existe
+      const welcome = chatContainer.querySelector('.welcome');
+      if (welcome) welcome.remove();
+
+      chatContainer.appendChild(div);
+      scrollToBottom();
+    }
+
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'typing';
+      div.id = 'typingIndicator';
+      div.innerHTML = `
+        <div class="message-avatar">🌙</div>
+        <div class="typing-content">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      chatContainer.appendChild(div);
+      scrollToBottom();
+    }
+
+    function hideTyping() {
+      const typing = document.getElementById('typingIndicator');
+      if (typing) typing.remove();
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function updateBudget(metadata) {
+      const remaining = metadata.bucketRestante || 0;
+      const total = 1500;
+      const pct = (remaining / total * 100).toFixed(0);
+      
+      tokenInfo.textContent = `Budget: ${remaining}/${total} (${pct}%)`;
+      
+      if (pct < 10) {
+        statusDot.className = 'dot error';
+        statusText.textContent = 'Budget bajo';
+      } else if (pct < 30) {
+        statusDot.className = 'dot warning';
+        statusText.textContent = 'Budget moderado';
+      } else {
+        statusDot.className = 'dot ok';
+        statusText.textContent = 'Conectado';
+      }
+    }
+
+    function scrollToBottom() {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Obtener estado inicial
+    async function fetchEstado() {
+      try {
+        const response = await fetch(`${API_URL}/api/chat/estado`, {
+          headers: { 'Authorization': 'Bearer demo_token' },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.starter) {
+            updateBudget({ bucketRestante: data.starter.restante });
+          }
+        }
+      } catch (err) {
+        console.log('No se pudo obtener estado:', err);
+      }
+    }
+
+    // Inicializar
+    fetchEstado();
+  </script>
+</body>
+</html>
