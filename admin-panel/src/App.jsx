@@ -13,6 +13,13 @@ export default function App() {
   const [error, setError] = useState('')
   const [connected, setConnected] = useState(false)
   const [showSidebar, setShowSidebar] = useState(true)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const apiCall = useCallback(async (url, options = {}) => {
     const headers = {
@@ -52,7 +59,10 @@ export default function App() {
     try {
       const data = await apiCall(`/api/admin/agentes/${id}`)
       setAgenteActual({ ...data.agente, archivos: data.agente.archivos })
-      setShowSidebar(false) // on mobile, show detail immediately
+      // Only hide sidebar on mobile — on desktop it's always visible via CSS grid
+      if (isMobile) {
+        setShowSidebar(false)
+      }
     } catch (err) {
       setError(err.message)
     } finally {
@@ -102,11 +112,11 @@ export default function App() {
           <p className="text-xs md:text-sm text-text-muted mt-1">Selecciona un agente para ver y editar sus archivos de configuración.</p>
         </div>
 
-        {/* Mobile: show back button when detail is visible */}
-        {!showSidebar && agenteActual && (
+        {/* Mobile only: show back button when detail is visible (sidebar hidden) */}
+        {!showSidebar && agenteActual && isMobile && (
           <button
             onClick={() => setShowSidebar(true)}
-            className="mb-4 text-sm text-primary font-semibold flex items-center gap-1 hover:underline"
+            className="mb-4 text-sm text-primary font-semibold flex items-center gap-1 hover:underline lg:hidden"
           >
             ← Volver al listado
           </button>
