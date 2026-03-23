@@ -246,4 +246,101 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 })
 
+// ─────────────────────────────────────────
+// PASSWORD RESET
+// ─────────────────────────────────────────
+const fs = require('fs')
+const path = require('path')
+const RESET_TOKENS_FILE = path.join(__dirname, '../lib/resetTokens.json')
+
+function loadResetTokens() {
+  try {
+    return JSON.parse(fs.readFileSync(RESET_TOKENS_FILE, 'utf8'))
+  } catch {
+    return {}
+  }
+}
+
+function saveResetTokens(tokens) {
+  fs.writeFileSync(RESET_TOKENS_FILE, JSON.stringify(tokens))
+}
+
+// Genera token y envía email de recuperación
+router.post('/recuperar', async (req, res) => {
+  try {
+    const { email } = req.body
+    if (!email) return res.status(400).json({ error: 'Email requerido' })
+
+    const usuario = await prisma.usuario.findUnique({ where: { email } })
+    if (!usuario) {
+      return res.json({ ok: true })
+    }
+
+    const crypto = require('crypto')
+    const token = crypto.randomBytes(32).toString('hex')
+    const expiry = Date.now() + 24 * 60 * 60 * 1000
+
+    const tokens = loadResetTokens()
+    tokens[token] = { usuarioId: usuario.id, expiry }
+    saveResetTokens(tokens)
+
+    const resetLink = `https://mycompi.onrender.com/#/reset-password?token=${token}`
+
+    const { Resend } = require('resend')
+    const resend = new Resend(process.env.RESEND_API_KEY)
+
+    resend.emails.send({
+      from: 'MyCompi <noreply@mycompi.com>',
+      to: email,
+      subject: 'Recupera tu contraseña de MyCompi',
+      html: `
+        <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #111;">Recupera tu contraseña</h2>
+          <p style="color: #555;">Hola ${usuario.nombre},</p>
+          <p style="color: #555;">Recibiste este email porque pediste recuperar tu contraseña.</p>
+          <a href="${resetLink}" style="display: inline-block; background: #FDC239; color: #111; font-weight: bold; padding: 14px 28px; border-radius: 8px; text-decoration: none; margin: 20px 0;">Reiniciar contraseña</a>
+          <p style="color: #888; font-size: 12px;">Si no pediste esto, ignora este email. El enlace expira en 24h.</p>
+        </div>
+      `
+    }).catch(err => {
+      console.error('Error enviando email Resend:', err?.message || err)
+    })
+
+    res.json({ ok: true })
+  } catch (err) {
+    console.error('Error en /recuperar:', err)
+    res.status(500).json({ error: 'Error interno' })
+  }
+})
+
+// Reset password con token
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, password } = req.body
+    if (!token || !password) return res.status(400).json({ error: 'Token y contraseña requeridos' })
+    if (password.length < 8) return res.status(400).json({ error: 'Mínimo 8 caracteres' })
+
+    const tokens = loadResetTokens()
+    const record = tokens[token]
+
+    if (!record || record.expiry < Date.now()) {
+      return res.status(400).json({ error: 'Token inválido o expirado' })
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12)
+    await prisma.usuario.update({
+      where: { id: record.usuarioId },
+      data: { passwordHash }
+    })
+
+    delete tokens[token]
+    saveResetTokens(tokens)
+
+    res.json({ ok: true })
+  } catch (err) {
+    console.error('Error en /reset-password:', err)
+    res.status(500).json({ error: 'Error interno' })
+  }
+})
+
 module.exports = { router, authMiddleware }

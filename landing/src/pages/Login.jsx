@@ -94,6 +94,11 @@ export default function Login() {
               Regístrate gratis
             </Link>
           </p>
+          <p className="text-center text-sm text-brand-secondary mt-3">
+            <Link to="/recuperar" className="text-brand-secondary hover:text-brand-text transition-colors">
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </p>
         </div>
       </main>
     </div>

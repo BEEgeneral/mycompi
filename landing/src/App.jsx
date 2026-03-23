@@ -13,6 +13,8 @@ import Footer from './sections/Footer'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import Recuperar from './pages/Recuperar'
+import ResetPassword from './pages/ResetPassword'
 
 function HomePage() {
   return (
@@ -42,6 +44,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/recuperar" element={<Recuperar />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </HashRouter>
   )
