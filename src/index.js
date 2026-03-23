@@ -51,6 +51,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// SPA catch-all — cualquier ruta desconocida sirve index.html para que HashRouter funcione
+app.get('*', (req, res) => {
+  res.sendFile('index.html', { root: 'public' });
+});
+
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
