@@ -8,678 +8,346 @@
   <link rel="icon" type="image/png" href="/assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#FDC239',
+              'yellow-hover': '#F5B800',
+              bg: '#FFFFFF',
+              'bg-section': '#F7F8F9',
+              border: '#E5E7EB',
+              text: '#000000',
+              muted: '#9CA3AF',
+              secondary: '#4B5563',
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+          },
+          borderRadius: {
+            'xl': '16px',
+          },
+          boxShadow: {
+            'sm': '0 4px 6px -1px rgba(0,0,0,0.05)',
+            'md': '0 10px 24px -4px rgba(0,0,0,0.08)',
+            'lg': '0 20px 40px -8px rgba(0,0,0,0.12)',
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    :root {
-      --bg-main: #ffffff;
-      --bg-section: #f7f8f9;
-      --border-color: #e5e7eb;
-      --accent-green: #fdc239;
-      --accent-yellow: #fdc239;
-      --accent-text: #000000;
-      --text-primary: #000000;
-      --text-secondary: #4b5563;
-      --text-muted: #9ca3af;
-      --radius-lg: 16px;
-      --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
-      --shadow-md: 0 10px 24px -4px rgba(0,0,0,0.08);
-      --shadow-lg: 0 20px 40px -8px rgba(0,0,0,0.12);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-      background: var(--bg-main);
-      color: var(--text-secondary);
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-    h1,h2,h3,h4,h5 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; color: var(--text-primary); }
-
-    /* ── NAVBAR ── */
-    .navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      height: 68px;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color);
-      display: flex; align-items: center;
-    }
-    .nav-inner {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: flex; align-items: center; justify-content: space-between; width: 100%;
-    }
-    .nav-logo { height: 34px; cursor: pointer; }
-    .nav-links { display: flex; gap: 2rem; }
-    .nav-links a {
-      font-size: 14px; font-weight: 600;
-      color: var(--text-secondary); text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--text-primary); }
-    .nav-cta {
-      font-size: 14px; font-weight: 700;
-      background: var(--accent-green); color: var(--accent-text); text-decoration: none;
-      padding: 10px 24px; border-radius: 10px;
-      transition: all 0.2s;
-    }
-    .nav-cta:hover { background: #f5b800; }
-
-    /* ── HERO ── */
-    .hero {
-      background: var(--bg-main);
-      padding: 130px 0 80px;
-    }
-    .hero-grid {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-    }
-    .hero-eyebrow {
-      font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-muted); margin-bottom: 16px;
-    }
-    .hero-title {
-      font-size: clamp(40px, 5vw, 64px); font-weight: 800;
-      letter-spacing: -0.02em; line-height: 1.1;
-      color: var(--text-primary); margin-bottom: 20px;
-    }
-    .hero-title span { color: var(--accent-yellow); }
-    .hero-sub {
-      font-size: 17px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 36px;
-    }
-    .hero-btns { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-    .btn-primary {
-      background: var(--accent-green); color: var(--accent-text);
-      padding: 14px 32px; border-radius: 12px;
-      font-size: 15px; font-weight: 700;
-      text-decoration: none; display: inline-block;
-      transition: all 0.2s; border: none; cursor: pointer;
-    }
-    .btn-primary:hover { background: #f5b800; transform: translateY(-2px); box-shadow: var(--shadow-md); }
-    .btn-outline {
-      border: 1.5px solid var(--border-color); color: var(--text-secondary);
-      padding: 14px 32px; border-radius: 12px;
-      font-size: 15px; font-weight: 600;
-      text-decoration: none; display: inline-block;
-      transition: all 0.2s;
-    }
-    .btn-outline:hover { border-color: var(--text-primary); color: var(--text-primary); }
-    .hero-img {
-      border-radius: 20px;
-      box-shadow: var(--shadow-lg);
-      width: 100%; display: block;
-    }
-
-    /* ── STATS ── */
-    .stats-section {
-      background: var(--bg-section);
-      padding: 60px 0;
-      border-top: 1px solid var(--border-color);
-      border-bottom: 1px solid var(--border-color);
-    }
-    .stats-grid {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
-    }
-    .stat-box { text-align: center; }
-    .stat-num {
-      font-size: 52px; font-weight: 800;
-      letter-spacing: -0.02em; line-height: 1;
-      color: var(--text-primary);
-    }
-    .stat-label { font-size: 14px; color: var(--text-muted); margin-top: 8px; font-weight: 500; }
-
-    /* ── SERVICES ── */
-    .services { background: var(--bg-main); padding: 100px 0; }
-    .services-header { text-align: center; margin-bottom: 60px; }
-    .section-eyebrow {
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--accent-yellow); margin-bottom: 12px;
-    }
-    .section-title {
-      font-size: clamp(28px, 3vw, 40px); font-weight: 700;
-      letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 12px;
-      color: var(--text-primary);
-    }
-    .section-sub { font-size: 16px; color: var(--text-secondary); max-width: 560px; margin: 0 auto; }
-    .services-grid {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-    }
-    .service-card {
-      background: var(--bg-section);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 32px 28px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .service-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-md);
-    }
-    .service-icon {
-      width: 52px; height: 52px;
-      background: var(--accent-green);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; margin-bottom: 20px;
-    }
-    .service-card h3 {
-      font-size: 18px; font-weight: 700;
-      color: var(--text-primary); margin-bottom: 10px;
-    }
-    .service-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
-
-    /* ── TEAM ── */
-    .team {
-      background: var(--bg-section);
-      padding: 100px 0;
-      border-top: 1px solid var(--border-color);
-      border-bottom: 1px solid var(--border-color);
-    }
-    .team-header { text-align: center; margin-bottom: 60px; }
-    .team-grid {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px;
-    }
-    .team-card { text-align: center; }
-    .team-card img {
-      width: 100%; aspect-ratio: 1; object-fit: cover; margin-bottom: 14px;
-      border: 2px solid var(--border-color);
-      transition: border-color 0.3s;
-    }
-    .team-card:hover img { border-color: var(--accent-green); }
-    .team-card:nth-child(1) img { border-radius: 70px 70px 70px 70px; }
-    .team-card:nth-child(2) img { border-radius: 100px 100px 100px 100px; }
-    .team-card:nth-child(3) img { border-radius: 130px 130px 130px 130px; }
-    .team-card:nth-child(4) img { border-radius: 140px 140px 140px 140px; }
-    .team-card:nth-child(5) img { border-radius: 140px 140px 140px 140px; }
-    .team-card h4 { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-    .team-card p { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
-
-    /* ── PRICING ── */
-    .pricing { background: var(--bg-main); padding: 100px 0; }
-    .pricing-header { text-align: center; margin-bottom: 60px; }
-    .pricing-grid {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start;
-    }
-    .price-card {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 36px 28px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-    .price-card.popular {
-      border: 2px solid var(--accent-green);
-      box-shadow: var(--shadow-lg);
-    }
-    .price-badge {
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      background: var(--accent-green); color: var(--accent-text);
-      padding: 4px 12px; border-radius: 20px;
-      display: inline-block; margin-bottom: 16px;
-    }
-    .price-name { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
-    .price-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; min-height: 36px; }
-    .price-amount {
-      font-size: 44px; font-weight: 800;
-      color: var(--text-primary); line-height: 1; letter-spacing: -0.02em;
-    }
-    .price-amount sup { font-size: 22px; vertical-align: top; }
-    .price-period { font-size: 14px; color: var(--text-muted); }
-    .price-features { list-style: none; margin: 24px 0; display: flex; flex-direction: column; gap: 12px; }
-    .price-features li {
-      font-size: 14px; color: var(--text-secondary);
-      padding-left: 24px; position: relative;
-    }
-    .price-features li::before {
-      content: '✓'; position: absolute; left: 0;
-      color: var(--text-primary); font-weight: 700; font-size: 13px;
-    }
-    .price-cta {
-      display: block; text-align: center;
-      background: var(--bg-section); color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      padding: 13px; border-radius: 12px;
-      font-size: 14px; font-weight: 700;
-      text-decoration: none; margin-top: 16px;
-      transition: all 0.2s;
-    }
-    .price-card.popular .price-cta {
-      background: var(--accent-green);
-      border-color: var(--accent-green);
-    }
-    .price-cta:hover { border-color: var(--text-primary); }
-    .price-card.popular .price-cta:hover { background: #f5b800; }
-
-    /* ── TESTIMONIALS ── */
-    .testimonials { background: var(--bg-section); padding: 100px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
-    .testi-header { text-align: center; margin-bottom: 60px; }
-    .testi-header .section-title { color: var(--text-primary); }
-    .testi-header .section-sub { color: var(--text-secondary); }
-    .testi-track-wrap { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-    .testi-track-wrap::-webkit-scrollbar { display: none; }
-    .testi-track {
-      display: flex; gap: 20px; padding: 10px 40px 30px;
-      max-width: 1200px; margin: 0 auto;
-    }
-    .testi-card {
-      flex-shrink: 0; width: 300px;
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg); padding: 28px;
-      transition: box-shadow 0.3s;
-    }
-    .testi-card:hover { box-shadow: var(--shadow-md); }
-    .testi-card blockquote {
-      font-size: 14px; line-height: 1.7; color: var(--text-secondary);
-      margin-bottom: 16px; font-style: normal;
-    }
-    .testi-stars { color: #fbbf24; font-size: 13px; letter-spacing: 2px; margin-bottom: 14px; }
-    .testi-author { display: flex; align-items: center; gap: 10px; }
-    .testi-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--accent-green); color: var(--accent-text);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 13px; flex-shrink: 0;
-    }
-    .testi-name { font-weight: 700; font-size: 13px; color: var(--text-primary); }
-    .testi-role { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-    /* ── FAQ ── */
-    .faq { background: var(--bg-main); padding: 100px 0; border-top: 1px solid var(--border-color); }
-    .faq-header { text-align: center; margin-bottom: 60px; }
-    .faq-inner { max-width: 720px; margin: 0 auto; padding: 0 40px; }
-    .faq-list { display: flex; flex-direction: column; gap: 12px; }
-    .faq-item {
-      border: 1px solid var(--border-color);
-      border-radius: 12px; overflow: hidden;
-      background: var(--bg-main);
-      transition: box-shadow 0.2s;
-    }
-    .faq-item:hover { box-shadow: var(--shadow-sm); }
-    .faq-q {
-      padding: 18px 24px;
-      display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; font-weight: 600; font-size: 15px;
-      color: var(--text-primary); gap: 16px;
-    }
-    .faq-q::after { content: '+'; font-size: 18px; color: var(--text-muted); flex-shrink: 0; }
-    .faq-item.open .faq-q::after { content: '−'; }
-    .faq-a {
-      padding: 0 24px 18px;
-      font-size: 14px; color: var(--text-secondary); line-height: 1.7;
-      display: none;
-    }
-    .faq-item.open .faq-a { display: block; }
-
-    /* ── CTA ── */
-    .cta-section {
-      background: var(--bg-section);
-      padding: 100px 0;
-      border-top: 1px solid var(--border-color);
-    }
-    .cta-inner {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-    }
-    .cta-inner h2 {
-      font-size: clamp(28px, 3vw, 40px); font-weight: 700;
-      letter-spacing: -0.01em; color: var(--text-primary); margin-bottom: 16px;
-    }
-    .cta-inner p { font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
-    .contact-email { font-size: 18px; font-weight: 700; color: var(--text-primary); }
-    .contact-form { display: flex; flex-direction: column; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-group label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-    .form-group input, .form-group textarea {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 13px 16px;
-      font-size: 15px; color: var(--text-primary);
-      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; resize: vertical;
-      transition: border-color 0.2s;
-    }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
-    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--text-primary); }
-    .form-submit {
-      background: var(--accent-green); color: var(--accent-text); border: none; border-radius: 12px;
-      padding: 13px 28px; font-weight: 700; font-size: 15px;
-      cursor: pointer; align-self: flex-start; transition: all 0.2s;
-    }
-    .form-submit:hover { background: #f5b800; box-shadow: var(--shadow-md); }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--bg-main);
-      border-top: 1px solid var(--border-color);
-      padding: 60px 0 40px;
-    }
-    .footer-inner {
-      max-width: 1200px; margin: 0 auto; padding: 0 40px;
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
-    }
-    .footer-col h4 {
-      font-size: 12px; font-weight: 700;
-      color: var(--text-primary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    .footer-col a {
-      display: block; color: var(--text-muted); font-size: 14px;
-      text-decoration: none; margin-bottom: 10px; transition: color 0.2s;
-    }
-    .footer-col a:hover { color: var(--text-primary); }
-    .footer-bottom {
-      max-width: 1200px; margin: 40px auto 0; padding: 30px 40px 0;
-      border-top: 1px solid var(--border-color);
-      text-align: center; font-size: 13px; color: var(--text-muted);
-    }
-
-    /* Responsive */
-    @media (max-width: 1000px) {
-      .hero-grid { grid-template-columns: 1fr; }
-      .hero-img { max-width: 480px; margin: 0 auto; }
-      .cta-inner { grid-template-columns: 1fr; }
-      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
-      .footer-inner { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 768px) {
-      .hero-grid, .services-grid, .team-grid, .pricing-grid,
-      .testi-track, .faq-inner, .cta-inner, .footer-inner, .stats-grid { padding: 0 24px; }
-      .services, .team, .pricing, .testimonials, .faq, .cta-section { padding: 60px 0; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .team-grid { grid-template-columns: repeat(3, 1fr); }
-      .services-grid { grid-template-columns: 1fr; }
-      .footer-inner { grid-template-columns: 1fr; }
-    }
   </style>
 </head>
-<body>
+<body class="font-sans bg-brand-bg text-brand-secondary antialiased overflow-x-hidden">
 
   <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="nav-inner">
-      <a href="/"><img src="/assets/logo.png" alt="MyCompi" class="nav-logo"></a>
-      <div class="nav-links">
-        <a href="#servicios">Servicios</a>
-        <a href="#equipo">Equipo</a>
-        <a href="#precios">Precios</a>
-        <a href="#faq">FAQ</a>
+  <nav class="fixed top-0 left-0 right-0 z-50 h-[68px] bg-white/95 backdrop-blur-md border-b border-brand-border flex items-center">
+    <div class="max-w-[1200px] mx-auto px-10 w-full flex items-center justify-between">
+      <a href="/"><img src="/assets/logo.png" alt="MyCompi" class="h-[34px]"></a>
+      <div class="flex items-center gap-8">
+        <a href="#servicios" class="text-sm font-semibold text-brand-secondary hover:text-brand-text transition-colors">Servicios</a>
+        <a href="#equipo" class="text-sm font-semibold text-brand-secondary hover:text-brand-text transition-colors">Equipo</a>
+        <a href="#precios" class="text-sm font-semibold text-brand-secondary hover:text-brand-text transition-colors">Precios</a>
+        <a href="#faq" class="text-sm font-semibold text-brand-secondary hover:text-brand-text transition-colors">FAQ</a>
       </div>
-      <a href="#contacto" class="nav-cta">Hablamos?</a>
+      <a href="#contacto" class="bg-brand-yellow text-brand-text text-sm font-bold px-6 py-2.5 rounded-xl hover:bg-brand-yellow-hover transition-all">Hablamos?</a>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section class="hero" id="inicio">
-    <div class="hero-grid">
-      <div class="hero-text">
-        <div class="hero-eyebrow">Profesionales Agénticos Especializados para PYMES</div>
-        <h1 class="hero-title">Tu compañero digital para tu <span>día a día</span></h1>
-        <p class="hero-sub">Profesionales Agénticos Especializados que trabajan para tu negocio. Desde €10/mes. Reduce costes hasta un 80%.</p>
-        <div class="hero-btns">
-          <a href="#contacto" class="btn-primary">Empezar ahora</a>
-          <a href="#servicios" class="btn-outline">Saber más</a>
+  <section class="bg-brand-bg pt-[130px] pb-20">
+    <div class="max-w-[1200px] mx-auto px-10 grid grid-cols-2 gap-[60px] items-center">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-brand-muted mb-4">Profesionales Agénticos Especializados para PYMES</p>
+        <h1 class="text-[clamp(40px,5vw,64px)] font-extrabold leading-tight tracking-tight text-brand-text mb-5">
+          Tu compañero digital para tu <span class="text-brand-yellow">día a día</span>
+        </h1>
+        <p class="text-[17px] text-brand-secondary leading-relaxed mb-9">
+          Profesionales Agénticos Especializados que trabajan para tu negocio. Desde €10/mes. Reduce costes hasta un 80%.
+        </p>
+        <div class="flex gap-4 items-center flex-wrap">
+          <a href="#contacto" class="bg-brand-yellow text-brand-text font-bold text-[15px] px-8 py-3.5 rounded-xl hover:bg-brand-yellow-hover hover:-translate-y-0.5 hover:shadow-md transition-all inline-block">Empezar ahora</a>
+          <a href="#servicios" class="border border-brand-border text-brand-secondary font-semibold text-[15px] px-8 py-3.5 rounded-xl hover:border-brand-text hover:text-brand-text transition-all inline-block">Saber más</a>
         </div>
       </div>
       <div>
-        <img src="/assets/dashboard.jpg" alt="MyCompi Dashboard" class="hero-img">
+        <img src="/assets/dashboard.jpg" alt="MyCompi Dashboard" class="rounded-2xl shadow-lg w-full block">
       </div>
     </div>
   </section>
 
   <!-- STATS -->
-  <section class="stats-section">
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="stat-num">62%</div>
-        <div class="stat-label">Mejora en procesos</div>
+  <section class="bg-brand-bg-section border-t border-b border-brand-border py-[60px]">
+    <div class="max-w-[1200px] mx-auto px-10 grid grid-cols-4 gap-8">
+      <div class="text-center">
+        <div class="text-[52px] font-extrabold tracking-tight text-brand-text leading-none">62%</div>
+        <div class="text-sm text-brand-muted mt-2 font-medium">Mejora en procesos</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num">200+</div>
-        <div class="stat-label">Casos de éxito</div>
+      <div class="text-center">
+        <div class="text-[52px] font-extrabold tracking-tight text-brand-text leading-none">200+</div>
+        <div class="text-sm text-brand-muted mt-2 font-medium">Casos de éxito</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num">150+</div>
-        <div class="stat-label">Clientes recurrentes</div>
+      <div class="text-center">
+        <div class="text-[52px] font-extrabold tracking-tight text-brand-text leading-none">150+</div>
+        <div class="text-sm text-brand-muted mt-2 font-medium">Clientes recurrentes</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num">1349+</div>
-        <div class="stat-label">5 Star Reviews</div>
+      <div class="text-center">
+        <div class="text-[52px] font-extrabold tracking-tight text-brand-text leading-none">1349+</div>
+        <div class="text-sm text-brand-muted mt-2 font-medium">5 Star Reviews</div>
       </div>
     </div>
   </section>
 
   <!-- SERVICES -->
-  <section class="services" id="servicios">
-    <div class="services-header">
-      <div class="section-eyebrow">Nuestra Especialidad</div>
-      <h2 class="section-title">Ahorra 80% en costes operativos</h2>
-      <p class="section-sub">El mejor equipo de agentes IA para tu negocio, sin los costes de contratar 5 personas.</p>
-    </div>
-    <div class="services-grid">
-      <div class="service-card">
-        <div class="service-icon">🎯</div>
-        <h3>Especialización total</h3>
-        <p>Cada agente domina su área: Marketing, Ventas, Atención al Cliente, Operaciones y Data. Resultados medibles desde el día uno.</p>
+  <section id="servicios" class="bg-brand-bg py-[100px]">
+    <div class="max-w-[1200px] mx-auto px-10">
+      <div class="text-center mb-[60px]">
+        <p class="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-3">Nuestra Especialidad</p>
+        <h2 class="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-3">Ahorra 80% en costes operativos</h2>
+        <p class="text-base text-brand-secondary max-w-[560px] mx-auto">El mejor equipo de agentes IA para tu negocio, sin los costes de contratar 5 personas.</p>
       </div>
-      <div class="service-card">
-        <div class="service-icon">🤝</div>
-        <h3>Trabajo en equipo</h3>
-        <p>Los agentes colaboran entre sí, comparten información y coordinan tareas complejas para conseguir tus objetivos.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">🚀</div>
-        <h3>Sin despidos</h3>
-        <p>Tus empleados se liberan de tareas repetitivas para enfocarse en lo estratégico. Tecnología que potencia, no reemplaza.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">⚡</div>
-        <h3>Activo 24/7</h3>
-        <p>Tus agentes trabajan sin descanso, respondiendo clientes, generando reportes y procesando datos a cualquier hora.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">🔗</div>
-        <h3>Integración total</h3>
-        <p>Conectamos los agentes con tus herramientas, APIs y fuentes de datos para una operación fluida y sin fricciones.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">🌍</div>
-        <h3>Escala global</h3>
-        <p>Infraestructura de alta disponibilidad que crece contigo. De startup a empresa internacional, sin cambios de herramienta.</p>
+      <div class="grid grid-cols-3 gap-5">
+        <!-- Card 1 -->
+        <div class="bg-brand-bg-section border border-brand-border rounded-xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
+          <div class="w-[52px] h-[52px] bg-brand-yellow rounded-xl flex items-center justify-center text-2xl mb-5">🎯</div>
+          <h3 class="text-lg font-bold text-brand-text mb-2.5">Especialización total</h3>
+          <p class="text-sm text-brand-secondary leading-relaxed">Cada agente domina su área: Marketing, Ventas, Atención al Cliente, Operaciones y Data. Resultados medibles desde el día uno.</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="bg-brand-bg-section border border-brand-border rounded-xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
+          <div class="w-[52px] h-[52px] bg-brand-yellow rounded-xl flex items-center justify-center text-2xl mb-5">🤝</div>
+          <h3 class="text-lg font-bold text-brand-text mb-2.5">Trabajo en equipo</h3>
+          <p class="text-sm text-brand-secondary leading-relaxed">Los agentes colaboran entre sí, comparten información y coordinan tareas complejas para conseguir tus objetivos.</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="bg-brand-bg-section border border-brand-border rounded-xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
+          <div class="w-[52px] h-[52px] bg-brand-yellow rounded-xl flex items-center justify-center text-2xl mb-5">🚀</div>
+          <h3 class="text-lg font-bold text-brand-text mb-2.5">Sin despidos</h3>
+          <p class="text-sm text-brand-secondary leading-relaxed">Tus empleados se liberan de tareas repetitivas para enfocarse en lo estratégico. Tecnología que potencia, no reemplaza.</p>
+        </div>
+        <!-- Card 4 -->
+        <div class="bg-brand-bg-section border border-brand-border rounded-xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
+          <div class="w-[52px] h-[52px] bg-brand-yellow rounded-xl flex items-center justify-center text-2xl mb-5">⚡</div>
+          <h3 class="text-lg font-bold text-brand-text mb-2.5">Activo 24/7</h3>
+          <p class="text-sm text-brand-secondary leading-relaxed">Tus agentes trabajan sin descanso, respondiendo clientes, generando reportes y procesando datos a cualquier hora.</p>
+        </div>
+        <!-- Card 5 -->
+        <div class="bg-brand-bg-section border border-brand-border rounded-xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
+          <div class="w-[52px] h-[52px] bg-brand-yellow rounded-xl flex items-center justify-center text-2xl mb-5">🔗</div>
+          <h3 class="text-lg font-bold text-brand-text mb-2.5">Integración total</h3>
+          <p class="text-sm text-brand-secondary leading-relaxed">Conectamos los agentes con tus herramientas, APIs y fuentes de datos para una operación fluida y sin fricciones.</p>
+        </div>
+        <!-- Card 6 -->
+        <div class="bg-brand-bg-section border border-brand-border rounded-xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
+          <div class="w-[52px] h-[52px] bg-brand-yellow rounded-xl flex items-center justify-center text-2xl mb-5">🌍</div>
+          <h3 class="text-lg font-bold text-brand-text mb-2.5">Escala global</h3>
+          <p class="text-sm text-brand-secondary leading-relaxed">Infraestructura de alta disponibilidad que crece contigo. De startup a empresa internacional, sin cambios de herramienta.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- TEAM -->
-  <section class="team" id="equipo">
-    <div class="team-header">
-      <div class="section-eyebrow">Tu equipo de agentes</div>
-      <h2 class="section-title">5 agentes especializados trabajando para ti</h2>
-      <p class="section-sub">Cada agente es un experto en su área. Coordínalos como un equipo real.</p>
-    </div>
-    <div class="team-grid">
-      <div class="team-card">
-        <img src="/assets/mia.jpg" alt="Enzo Herrera">
-        <h4>Enzo Herrera</h4>
-        <p>Marketing</p>
+  <section id="equipo" class="bg-brand-bg-section border-t border-b border-brand-border py-[100px]">
+    <div class="max-w-[1200px] mx-auto px-10">
+      <div class="text-center mb-[60px]">
+        <p class="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-3">Tu equipo de agentes</p>
+        <h2 class="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-3">5 agentes especializados trabajando para ti</h2>
+        <p class="text-base text-brand-secondary max-w-[560px] mx-auto">Cada agente es un experto en su área. Coordínalos como un equipo real.</p>
       </div>
-      <div class="team-card">
-        <img src="/assets/victor.jpg" alt="Carlos Mendoza">
-        <h4>Carlos Mendoza</h4>
-        <p>Ventas</p>
-      </div>
-      <div class="team-card">
-        <img src="/assets/alex.jpg" alt="Laura Montes">
-        <h4>Laura Montes</h4>
-        <p>Atención al Cliente</p>
-      </div>
-      <div class="team-card">
-        <img src="/assets/marta.jpg" alt="Elena Ortega">
-        <h4>Elena Ortega</h4>
-        <p>Operaciones</p>
-      </div>
-      <div class="team-card">
-        <img src="/assets/alan.jpg" alt="Diana Palau">
-        <h4>Diana Palau</h4>
-        <p>Data Growth</p>
+      <div class="grid grid-cols-5 gap-6">
+        <div class="text-center">
+          <img src="/assets/mia.jpg" alt="Enzo Herrera" class="w-full aspect-square object-cover mb-3.5 border-2 border-brand-border hover:border-brand-yellow transition-colors rounded-[70px]">
+          <h4 class="text-[13px] font-bold text-brand-text">Enzo Herrera</h4>
+          <p class="text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">Marketing</p>
+        </div>
+        <div class="text-center">
+          <img src="/assets/victor.jpg" alt="Carlos Mendoza" class="w-full aspect-square object-cover mb-3.5 border-2 border-brand-border hover:border-brand-yellow transition-colors rounded-full">
+          <h4 class="text-[13px] font-bold text-brand-text">Carlos Mendoza</h4>
+          <p class="text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">Ventas</p>
+        </div>
+        <div class="text-center">
+          <img src="/assets/alex.jpg" alt="Laura Montes" class="w-full aspect-square object-cover mb-3.5 border-2 border-brand-border hover:border-brand-yellow transition-colors rounded-[130px]">
+          <h4 class="text-[13px] font-bold text-brand-text">Laura Montes</h4>
+          <p class="text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">Atención al Cliente</p>
+        </div>
+        <div class="text-center">
+          <img src="/assets/marta.jpg" alt="Elena Ortega" class="w-full aspect-square object-cover mb-3.5 border-2 border-brand-border hover:border-brand-yellow transition-colors rounded-[140px]">
+          <h4 class="text-[13px] font-bold text-brand-text">Elena Ortega</h4>
+          <p class="text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">Operaciones</p>
+        </div>
+        <div class="text-center">
+          <img src="/assets/alan.jpg" alt="Diana Palau" class="w-full aspect-square object-cover mb-3.5 border-2 border-brand-border hover:border-brand-yellow transition-colors rounded-[140px]">
+          <h4 class="text-[13px] font-bold text-brand-text">Diana Palau</h4>
+          <p class="text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">Data Growth</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- PRICING -->
-  <section class="pricing" id="precios">
-    <div class="pricing-header">
-      <div class="section-eyebrow">Planes</div>
-      <h2 class="section-title">Elige tu plan</h2>
-      <p class="section-sub">Sin costes de contratación. Sin compromisos a largo plazo. Cancela cuando quieras.</p>
-    </div>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <div class="price-name">Profesional Agéntico</div>
-        <div class="price-desc">Para empezar a automatizar con un agente especializado</div>
-        <div class="price-amount"><sup>€</sup>10</div>
-        <div class="price-period">por mes</div>
-        <ul class="price-features">
-          <li>1 Profesional Agéntico especializado</li>
-          <li>Automatización de tareas esenciales</li>
-          <li>Soporte por email</li>
-          <li>3 meses de soporte incluido</li>
-          <li>Reportes mensuales básicos</li>
-        </ul>
-        <a href="#contacto" class="price-cta">Empezar ahora</a>
+  <section id="precios" class="bg-brand-bg py-[100px]">
+    <div class="max-w-[1200px] mx-auto px-10">
+      <div class="text-center mb-[60px]">
+        <p class="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-3">Planes</p>
+        <h2 class="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-3">Elige tu plan</h2>
+        <p class="text-base text-brand-secondary max-w-[560px] mx-auto">Sin costes de contratación. Sin compromisos a largo plazo. Cancela cuando quieras.</p>
       </div>
-      <div class="price-card popular">
-        <div class="price-badge">Popular</div>
-        <div class="price-name">Equipo Agéntico</div>
-        <div class="price-desc">Un equipo completo con manager y 5 subagentes</div>
-        <div class="price-amount"><sup>€</sup>49</div>
-        <div class="price-period">por mes</div>
-        <ul class="price-features">
-          <li>1 Manager Agéntico</li>
-          <li>5 Profesiones Agénticos especializados</li>
-          <li>Coordinación y supervisión incluido</li>
-          <li>Soporte prioritario</li>
-          <li>6 meses de soporte incluido</li>
-          <li>Reportes semanales y análisis</li>
-        </ul>
-        <a href="#contacto" class="price-cta">Empezar ahora</a>
-      </div>
-      <div class="price-card">
-        <div class="price-name">Equipos con Dirección</div>
-        <div class="price-desc">Varios equipos agénticos con equipo de dirección</div>
-        <div class="price-amount"><sup>€</sup>147</div>
-        <div class="price-period">por mes</div>
-        <ul class="price-features">
-          <li>Equipos Agénticos ilimitados</li>
-          <li>Equipo de dirección incluido</li>
-          <li>Automatización total del negocio</li>
-          <li>Soporte dedicado 24/7</li>
-          <li>12 meses de soporte incluido</li>
-          <li>Reportes avanzados y consultoría</li>
-        </ul>
-        <a href="#contacto" class="price-cta">Empezar ahora</a>
+      <div class="grid grid-cols-3 gap-6 items-start">
+        <!-- Plan 1 -->
+        <div class="bg-brand-bg border border-brand-border rounded-xl p-9 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+          <div class="text-xl font-bold text-brand-text mb-2">Profesional Agéntico</div>
+          <div class="text-sm text-brand-secondary mb-5 min-h-[36px]">Para empezar a automatizar con un agente especializado</div>
+          <div class="text-[44px] font-extrabold tracking-tight text-brand-text leading-none"><sup class="text-[22px] align-top">€</sup>10</div>
+          <div class="text-sm text-brand-muted mt-1 mb-6">por mes</div>
+          <ul class="space-y-3 mb-6">
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">1 Profesional Agéntico especializado</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Automatización de tareas esenciales</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Soporte por email</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">3 meses de soporte incluido</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Reportes mensuales básicos</li>
+          </ul>
+          <a href="#contacto" class="block text-center bg-brand-bg-section border border-brand-border text-brand-text font-bold text-sm px-4 py-3.5 rounded-xl hover:border-brand-text transition-all">Empezar ahora</a>
+        </div>
+        <!-- Plan 2 - Popular -->
+        <div class="bg-brand-bg border-2 border-brand-yellow rounded-xl p-9 shadow-lg transition-all duration-300 hover:-translate-y-1 scale-[1.04]">
+          <span class="inline-block bg-brand-yellow text-brand-text text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">Popular</span>
+          <div class="text-xl font-bold text-brand-text mb-2">Equipo Agéntico</div>
+          <div class="text-sm text-brand-secondary mb-5 min-h-[36px]">Un equipo completo con manager y 5 subagentes</div>
+          <div class="text-[44px] font-extrabold tracking-tight text-brand-text leading-none"><sup class="text-[22px] align-top">€</sup>49</div>
+          <div class="text-sm text-brand-muted mt-1 mb-6">por mes</div>
+          <ul class="space-y-3 mb-6">
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">1 Manager Agéntico</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">5 Profesionales Agénticos especializados</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Coordinación y supervisión incluido</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Soporte prioritario</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">6 meses de soporte incluido</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Reportes semanales y análisis</li>
+          </ul>
+          <a href="#contacto" class="block text-center bg-brand-yellow text-brand-text font-bold text-sm px-4 py-3.5 rounded-xl hover:bg-brand-yellow-hover transition-all">Empezar ahora</a>
+        </div>
+        <!-- Plan 3 -->
+        <div class="bg-brand-bg border border-brand-border rounded-xl p-9 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+          <div class="text-xl font-bold text-brand-text mb-2">Equipos con Dirección</div>
+          <div class="text-sm text-brand-secondary mb-5 min-h-[36px]">Varios equipos agénticos con equipo de dirección</div>
+          <div class="text-[44px] font-extrabold tracking-tight text-brand-text leading-none"><sup class="text-[22px] align-top">€</sup>147</div>
+          <div class="text-sm text-brand-muted mt-1 mb-6">por mes</div>
+          <ul class="space-y-3 mb-6">
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Equipos Agénticos ilimitados</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Equipo de dirección incluido</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Automatización total del negocio</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Soporte dedicado 24/7</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">12 meses de soporte incluido</li>
+            <li class="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">Reportes avanzados y consultoría</li>
+          </ul>
+          <a href="#contacto" class="block text-center bg-brand-bg-section border border-brand-border text-brand-text font-bold text-sm px-4 py-3.5 rounded-xl hover:border-brand-text transition-all">Empezar ahora</a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- TESTIMONIALS -->
-  <section class="testimonials" id="testimonios">
-    <div class="testi-header">
-      <div class="section-eyebrow">Testimonios</div>
-      <h2 class="section-title">Lo que dicen nuestros clientes</h2>
-      <p class="section-sub">Empresas que ya están creciendo con MyCompi</p>
+  <section id="testimonios" class="bg-brand-bg-section border-t border-b border-brand-border py-[100px]">
+    <div class="max-w-[1200px] mx-auto px-10">
+      <div class="text-center mb-[60px]">
+        <p class="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-3">Testimonios</p>
+        <h2 class="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-3">Lo que dicen nuestros clientes</h2>
+        <p class="text-base text-brand-secondary max-w-[560px] mx-auto">Empresas que ya están creciendo con MyCompi</p>
+      </div>
     </div>
-    <div class="testi-track-wrap">
-      <div class="testi-track">
-        <div class="testi-card">
-          <blockquote>"Gracias a MyCompi, hemos automatizado nuestros procesos internos, resultando en un aumento del 35% en productividad."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">LM</div>
+    <div class="overflow-x-auto scrollbar-none">
+      <div class="flex gap-5 px-10 pb-8 max-w-[1200px] mx-auto">
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"Gracias a MyCompi, hemos automatizado nuestros procesos internos, resultando en un aumento del 35% en productividad."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">LM</div>
             <div>
-              <div class="testi-name">Laura Martínez</div>
-              <div class="testi-role">Científica de Datos, DataFlow</div>
+              <div class="font-bold text-[13px] text-brand-text">Laura Martínez</div>
+              <div class="text-[11px] text-brand-muted">Científica de Datos, DataFlow</div>
             </div>
           </div>
         </div>
-        <div class="testi-card">
-          <blockquote>"La implementación de agentes ha mejorado significativamente la experiencia de nuestros clientes. Tasa de conversión +25%."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">CG</div>
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"La implementación de agentes ha mejorado significativamente la experiencia de nuestros clientes. Tasa de conversión +25%."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">CG</div>
             <div>
-              <div class="testi-name">Carlos Gómez</div>
-              <div class="testi-role">Gerente de Marketing, TechWorld</div>
+              <div class="font-bold text-[13px] text-brand-text">Carlos Gómez</div>
+              <div class="text-[11px] text-brand-muted">Gerente de Marketing, TechWorld</div>
             </div>
           </div>
         </div>
-        <div class="testi-card">
-          <blockquote>"BeeNoCode transformó la forma en que interactuamos con nuestros clientes. Servicio eficiente y personalizado."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">AB</div>
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"BeeNoCode transformó la forma en que interactuamos con nuestros clientes. Servicio eficiente y personalizado."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">AB</div>
             <div>
-              <div class="testi-name">Ana Beltrán</div>
-              <div class="testi-role">Responsable Att. Cliente, ServiPlus</div>
+              <div class="font-bold text-[13px] text-brand-text">Ana Beltrán</div>
+              <div class="text-[11px] text-brand-muted">Responsable Att. Cliente, ServiPlus</div>
             </div>
           </div>
         </div>
-        <div class="testi-card">
-          <blockquote>"La integración de las soluciones ha sido un cambio de juego. Reducimos costes operativos y mejoramos eficiencia."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">JR</div>
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"La integración de las soluciones ha sido un cambio de juego. Reducimos costes operativos y mejoramos eficiencia."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">JR</div>
             <div>
-              <div class="testi-name">Javier Ruiz</div>
-              <div class="testi-role">CEO, MarketLeaders</div>
+              <div class="font-bold text-[13px] text-brand-text">Javier Ruiz</div>
+              <div class="text-[11px] text-brand-muted">CEO, MarketLeaders</div>
             </div>
           </div>
         </div>
-        <div class="testi-card">
-          <blockquote>"Trabajar con MyCompi ha sido excepcional. Soluciones que han optimizado nuestros procesos de forma impresionante."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">MF</div>
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"Trabajar con MyCompi ha sido excepcional. Soluciones que han optimizado nuestros procesos de forma impresionante."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">MF</div>
             <div>
-              <div class="testi-name">María Fernández</div>
-              <div class="testi-role">Directiva General, EcoSolutions</div>
+              <div class="font-bold text-[13px] text-brand-text">María Fernández</div>
+              <div class="text-[11px] text-brand-muted">Directiva General, EcoSolutions</div>
             </div>
           </div>
         </div>
-        <div class="testi-card">
-          <blockquote>"Desde que incorporamos MyCompi, nuestra empresa ha visto una mejora notable en eficiencia y satisfacción de clientes."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">RS</div>
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"Desde que incorporamos MyCompi, nuestra empresa ha visto una mejora notable en eficiencia y satisfacción de clientes."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">RS</div>
             <div>
-              <div class="testi-name">Roberto Sánchez</div>
-              <div class="testi-role">Director de Tecnología, InnovaCorp</div>
+              <div class="font-bold text-[13px] text-brand-text">Roberto Sánchez</div>
+              <div class="text-[11px] text-brand-muted">Director de Tecnología, InnovaCorp</div>
             </div>
           </div>
         </div>
-        <div class="testi-card">
-          <blockquote>"MyCompi nos permitió escalar sin incrementar costes operativos. Automatización real que funciona."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">EL</div>
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"MyCompi nos permitió escalar sin incrementar costes operativos. Automatización real que funciona."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">EL</div>
             <div>
-              <div class="testi-name">Elena López</div>
-              <div class="testi-role">Gerente de Proyectos, TechSolutions</div>
+              <div class="font-bold text-[13px] text-brand-text">Elena López</div>
+              <div class="text-[11px] text-brand-muted">Gerente de Proyectos, TechSolutions</div>
             </div>
           </div>
         </div>
-        <div class="testi-card">
-          <blockquote>"La colaboración con MyCompi ha sido fundamental para nuestra transformación digital. Mejora medible."</blockquote>
-          <div class="testi-stars">★★★★★</div>
-          <div class="testi-author">
-            <div class="testi-avatar">MT</div>
+        <div class="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
+          <blockquote class="text-sm text-brand-secondary leading-relaxed mb-4">"La colaboración con MyCompi ha sido fundamental para nuestra transformación digital. Mejora medible."</blockquote>
+          <div class="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">MT</div>
             <div>
-              <div class="testi-name">Miguel Torres</div>
-              <div class="testi-role">Director de Operaciones, DigitalWave</div>
+              <div class="font-bold text-[13px] text-brand-text">Miguel Torres</div>
+              <div class="text-[11px] text-brand-muted">Director de Operaciones, DigitalWave</div>
             </div>
           </div>
         </div>
@@ -688,105 +356,156 @@
   </section>
 
   <!-- FAQ -->
-  <section class="faq" id="faq">
-    <div class="faq-header">
-      <div class="section-eyebrow">FAQ</div>
-      <h2 class="section-title">Tenemos respuestas</h2>
-    </div>
-    <div class="faq-inner">
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q">¿Por qué automatizar con MyCompi?</div>
-          <div class="faq-a">Con MyCompi reduces costes operativos hasta un 80% sin contratar más personal. Un solo Profesional Agéntico puede hacer el trabajo de 5 personas especializadas, disponible 24/7. Tu equipo humano se libera de tareas repetitivas para enfocarse en lo que realmente importa: crecer tu negocio.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">¿Cómo funciona MyCompi?</div>
-          <div class="faq-a">Contratas uno o varios Profesionales Agénticos según tu plan. Cada uno es un experto en su área — Marketing, Ventas, Atención al Cliente, Operaciones o Data — y trabajan en equipo coordinado. Tú defines objetivos y ellos los ejecutan de forma autónoma, reportando resultados.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">¿Cuánto cuesta?</div>
-          <div class="faq-a">Desde 10€/mes por un Profesional Agéntico. Un Equipo Agéntico (1 manager + 5 agentes) cuesta 49€/mes. Y si necesitas varios equipos con dirección, desde 147€/mes. Sin contratos, sin compromisos a largo plazo.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">¿Cuánto tarda en implementarse?</div>
-          <div class="faq-a">Tu primer Profesional Agéntico está operativo en menos de 24 horas. Un Equipo Agéntico completo en 1-3 días. Empezar es tan simple como elegir tu plan y contarnos qué necesitáis.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">¿Qué tareas puede automatizar?</div>
-          <div class="faq-a">Cada Profesional Agéntico es un especialista: tu agente de Atención al Cliente responde dudas y resuelve incidencias; el de Ventas gestiona y sigue leads; el de Marketing crea contenido y gestiona redes; el de Operaciones automatiza procesos internos; y el de Data analiza métricas y genera informes.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">¿Necesito conocimientos técnicos?</div>
-          <div class="faq-a">No. El alta, configuración y gestión se hacen desde tu panel de cliente. Si necesitas ayuda, tu Account Manager te acompaña en todo el proceso. No requerimos acceso a tus sistemas.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">¿Qué soporte ofrecen?</div>
-          <div class="faq-a">Todos los planes incluyen soporte directo: 3 meses en Profesional Agéntico, 6 meses en Equipo Agéntico, y 12 meses con Account Manager dedicado en Equipos con Dirección. Siempre tendrás a alguien de MyCompi disponible.</div>
+  <section id="faq" class="bg-brand-bg border-t border-brand-border py-[100px]">
+    <div class="max-w-[1200px] mx-auto px-10">
+      <div class="text-center mb-[60px]">
+        <p class="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-3">FAQ</p>
+        <h2 class="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-3">Tenemos respuestas</h2>
+      </div>
+      <div class="max-w-[720px] mx-auto">
+        <div class="space-y-3" id="faq-list">
+          <div class="faq-item border border-brand-border rounded-xl overflow-hidden bg-brand-bg">
+            <div class="faq-q px-6 py-4.5 flex justify-between items-center cursor-pointer font-semibold text-[15px] text-brand-text gap-4">
+              <span>¿Por qué automatizar con MyCompi?</span>
+              <span class="faq-icon text-brand-muted text-lg flex-shrink-0">+</span>
+            </div>
+            <div class="faq-a px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed hidden">Con MyCompi reduces costes operativos hasta un 80% sin contratar más personal. Un solo Profesional Agéntico puede hacer el trabajo de 5 personas especializadas, disponible 24/7. Tu equipo humano se libera de tareas repetitivas para enfocarse en lo que realmente importa: crecer tu negocio.</div>
+          </div>
+          <div class="faq-item border border-brand-border rounded-xl overflow-hidden bg-brand-bg">
+            <div class="faq-q px-6 py-4.5 flex justify-between items-center cursor-pointer font-semibold text-[15px] text-brand-text gap-4">
+              <span>¿Cómo funciona MyCompi?</span>
+              <span class="faq-icon text-brand-muted text-lg flex-shrink-0">+</span>
+            </div>
+            <div class="faq-a px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed hidden">Contratas uno o varios Profesionales Agénticos según tu plan. Cada uno es un experto en su área — Marketing, Ventas, Atención al Cliente, Operaciones o Data — y trabajan en equipo coordinado. Tú defines objetivos y ellos los ejecutan de forma autónoma, reportando resultados.</div>
+          </div>
+          <div class="faq-item border border-brand-border rounded-xl overflow-hidden bg-brand-bg">
+            <div class="faq-q px-6 py-4.5 flex justify-between items-center cursor-pointer font-semibold text-[15px] text-brand-text gap-4">
+              <span>¿Cuánto cuesta?</span>
+              <span class="faq-icon text-brand-muted text-lg flex-shrink-0">+</span>
+            </div>
+            <div class="faq-a px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed hidden">Desde 10€/mes por un Profesional Agéntico. Un Equipo Agéntico (1 manager + 5 agentes) cuesta 49€/mes. Y si necesitas varios equipos con dirección, desde 147€/mes. Sin contratos, sin compromisos a largo plazo.</div>
+          </div>
+          <div class="faq-item border border-brand-border rounded-xl overflow-hidden bg-brand-bg">
+            <div class="faq-q px-6 py-4.5 flex justify-between items-center cursor-pointer font-semibold text-[15px] text-brand-text gap-4">
+              <span>¿Cuánto tarda en implementarse?</span>
+              <span class="faq-icon text-brand-muted text-lg flex-shrink-0">+</span>
+            </div>
+            <div class="faq-a px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed hidden">Tu primer Profesional Agéntico está operativo en menos de 24 horas. Un Equipo Agéntico completo en 1-3 días. Empezar es tan simple como elegir tu plan y contarnos qué necesitáis.</div>
+          </div>
+          <div class="faq-item border border-brand-border rounded-xl overflow-hidden bg-brand-bg">
+            <div class="faq-q px-6 py-4.5 flex justify-between items-center cursor-pointer font-semibold text-[15px] text-brand-text gap-4">
+              <span>¿Qué tareas puede automatizar?</span>
+              <span class="faq-icon text-brand-muted text-lg flex-shrink-0">+</span>
+            </div>
+            <div class="faq-a px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed hidden">Cada Profesional Agéntico es un especialista: tu agente de Atención al Cliente responde dudas y resuelve incidencias; el de Ventas gestiona y sigue leads; el de Marketing crea contenido y gestiona redes; el de Operaciones automatiza procesos internos; y el de Data analiza métricas y genera informes.</div>
+          </div>
+          <div class="faq-item border border-brand-border rounded-xl overflow-hidden bg-brand-bg">
+            <div class="faq-q px-6 py-4.5 flex justify-between items-center cursor-pointer font-semibold text-[15px] text-brand-text gap-4">
+              <span>¿Necesito conocimientos técnicos?</span>
+              <span class="faq-icon text-brand-muted text-lg flex-shrink-0">+</span>
+            </div>
+            <div class="faq-a px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed hidden">No. El alta, configuración y gestión se hacen desde tu panel de cliente. Si necesitas ayuda, tu Account Manager te acompaña en todo el proceso. No requerimos acceso a tus sistemas.</div>
+          </div>
+          <div class="faq-item border border-brand-border rounded-xl overflow-hidden bg-brand-bg">
+            <div class="faq-q px-6 py-4.5 flex justify-between items-center cursor-pointer font-semibold text-[15px] text-brand-text gap-4">
+              <span>¿Qué soporte ofrecen?</span>
+              <span class="faq-icon text-brand-muted text-lg flex-shrink-0">+</span>
+            </div>
+            <div class="faq-a px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed hidden">Todos los planes incluyen soporte directo: 3 meses en Profesional Agéntico, 6 meses en Equipo Agéntico, y 12 meses con Account Manager dedicado en Equipos con Dirección. Siempre tendrás a alguien de MyCompi disponible.</div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- CTA / CONTACT -->
-  <section class="cta-section" id="contacto">
-    <div class="cta-inner">
+  <section id="contacto" class="bg-brand-bg-section border-t border-brand-border py-[100px]">
+    <div class="max-w-[1200px] mx-auto px-10 grid grid-cols-2 gap-[60px] items-center">
       <div>
-        <h2>No reemplaces, complementa</h2>
-        <p>Profesionales Agénticos que elevan el potencial de tu equipo. Empieza hoy.</p>
-        <p>¿Hablamos de tu proyecto?</p>
-        <p class="contact-email">hola@mycompi.com</p>
+        <h2 class="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-4">No reemplaces, complementa</h2>
+        <p class="text-base text-brand-secondary leading-relaxed mb-3">Profesionales Agénticos que elevan el potencial de tu equipo. Empieza hoy.</p>
+        <p class="text-base text-brand-secondary leading-relaxed mb-3">¿Hablamos de tu proyecto?</p>
+        <p class="text-lg font-bold text-brand-text">hola@mycompi.com</p>
       </div>
-      <form class="contact-form" onsubmit="return false;">
-        <div class="form-group">
-          <label>Nombre</label>
-          <input type="text" placeholder="Tu nombre">
+      <form class="flex flex-col gap-3.5" onsubmit="return false;">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-brand-secondary">Nombre</label>
+          <input type="text" placeholder="Tu nombre" class="bg-brand-bg border border-brand-border rounded-xl px-4 py-3.5 text-[15px] text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-text transition-colors font-sans">
         </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" placeholder="tu@empresa.com">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-brand-secondary">Email</label>
+          <input type="email" placeholder="tu@empresa.com" class="bg-brand-bg border border-brand-border rounded-xl px-4 py-3.5 text-[15px] text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-text transition-colors font-sans">
         </div>
-        <div class="form-group">
-          <label>Mensaje</label>
-          <textarea rows="4" placeholder="Cuéntanos tu proyecto..."></textarea>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-brand-secondary">Mensaje</label>
+          <textarea rows="4" placeholder="Cuéntanos tu proyecto..." class="bg-brand-bg border border-brand-border rounded-xl px-4 py-3.5 text-[15px] text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-text transition-colors font-sans resize-y"></textarea>
         </div>
-        <button type="submit" class="form-submit">Enviar mensaje</button>
+        <button type="submit" class="bg-brand-yellow text-brand-text font-bold text-[15px] px-7 py-3.5 rounded-xl hover:bg-brand-yellow-hover transition-all self-start hover:shadow-md">Enviar mensaje</button>
       </form>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-col">
-        <a href="/"><img src="/assets/logo.png" alt="MyCompi" style="height:34px;margin-bottom:16px;display:block;"></a>
-        <p style="color:var(--text-muted);font-size:14px;line-height:1.6;">
-          Mi futuro es Hoy.<br>Equipos de agentes IA para PYMES.
-        </p>
+  <footer class="bg-brand-bg border-t border-brand-border py-[60px]">
+    <div class="max-w-[1200px] mx-auto px-10">
+      <div class="grid grid-cols-4 gap-10">
+        <div>
+          <a href="/"><img src="/assets/logo.png" alt="MyCompi" class="h-[34px] mb-4 block"></a>
+          <p class="text-sm text-brand-muted leading-relaxed">Mi futuro es Hoy.<br>Equipos de agentes IA para PYMES.</p>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-brand-text uppercase tracking-wider mb-4">Producto</h4>
+          <div class="flex flex-col gap-2.5">
+            <a href="#servicios" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Servicios</a>
+            <a href="#equipo" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Equipo</a>
+            <a href="#precios" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Precios</a>
+            <a href="#faq" class="text-sm text-brand-muted hover:text-brand-text transition-colors">FAQ</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-brand-text uppercase tracking-wider mb-4">Empresa</h4>
+          <div class="flex flex-col gap-2.5">
+            <a href="#" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Sobre nosotros</a>
+            <a href="#" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Blog</a>
+            <a href="#" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Prensa</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-brand-text uppercase tracking-wider mb-4">Legal</h4>
+          <div class="flex flex-col gap-2.5">
+            <a href="#" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Privacidad</a>
+            <a href="#" class="text-sm text-brand-muted hover:text-brand-text transition-colors">Términos</a>
+          </div>
+        </div>
       </div>
-      <div class="footer-col">
-        <h4>Producto</h4>
-        <a href="#servicios">Servicios</a>
-        <a href="#equipo">Equipo</a>
-        <a href="#precios">Precios</a>
-        <a href="#faq">FAQ</a>
+      <div class="mt-10 pt-8 border-t border-brand-border text-center">
+        <p class="text-[13px] text-brand-muted">© 2026 MyCompi — Todos los derechos reservados</p>
       </div>
-      <div class="footer-col">
-        <h4>Empresa</h4>
-        <a href="#">Sobre nosotros</a>
-        <a href="#">Blog</a>
-        <a href="#">Prensa</a>
-      </div>
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <a href="#">Privacidad</a>
-        <a href="#">Términos</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      © 2026 MyCompi — Todos los derechos reservados
     </div>
   </footer>
 
   <script src="/home.js"></script>
+  <script>
+    // FAQ Accordion
+    document.querySelectorAll('.faq-q').forEach(function(q) {
+      q.addEventListener('click', function() {
+        const item = q.parentElement;
+        const icon = q.querySelector('.faq-icon');
+        const isOpen = item.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(function(i) {
+          i.classList.remove('open');
+          i.querySelector('.faq-icon').textContent = '+';
+          i.querySelector('.faq-a').classList.add('hidden');
+        });
+        // Open clicked if was closed
+        if (!isOpen) {
+          item.classList.add('open');
+          icon.textContent = '−';
+          item.querySelector('.faq-a').classList.remove('hidden');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
