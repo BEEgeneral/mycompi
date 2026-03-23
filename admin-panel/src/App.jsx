@@ -54,24 +54,25 @@ export default function App() {
     if (ownerKey) conectar()
   }, [])
 
-  const seleccionarAgente = async (id) => {
+  const seleccionarAgente = (agente) => {
+    setAgenteActual(agente)
+    // Only hide sidebar on mobile — on desktop it's always visible via CSS grid
+    if (isMobile) {
+      setShowSidebar(false)
+    }
+  }
+
+  const recargar = async () => {
+    if (!agenteActual) return
     setLoading(true)
     try {
-      const data = await apiCall(`/api/admin/agentes/${id}`)
+      const data = await apiCall(`/api/admin/agentes/${agenteActual.id}`)
       setAgenteActual({ ...data.agente, archivos: data.agente.archivos })
-      // Only hide sidebar on mobile — on desktop it's always visible via CSS grid
-      if (isMobile) {
-        setShowSidebar(false)
-      }
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
-  }
-
-  const recargar = () => {
-    if (agenteActual) seleccionarAgente(agenteActual.id)
   }
 
   return (

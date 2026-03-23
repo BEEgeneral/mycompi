@@ -30,7 +30,7 @@ export default function Sidebar({ agentes, agenteActual, onSelect, loading, conn
         {agentes.map(a => (
           <div
             key={a.id}
-            onClick={() => onSelect(a.id)}
+            onClick={() => onSelect(a)}
             className={`flex items-center gap-3 p-3.5 rounded-xl cursor-pointer transition-all mb-1.5 border-2 ${
               agenteActual?.id === a.id
                 ? 'bg-sky-50 border-primary'
