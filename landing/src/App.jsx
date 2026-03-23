@@ -10,6 +10,9 @@ import FAQ from './sections/FAQ'
 import Contact from './sections/Contact'
 import Hiring from './sections/Hiring'
 import Footer from './sections/Footer'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
 
 function HomePage() {
   return (
@@ -36,6 +39,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/contratacion" element={<Hiring />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </HashRouter>
   )

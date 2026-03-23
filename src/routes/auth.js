@@ -107,7 +107,8 @@ router.post('/register', async (req, res) => {
         id: result.usuario.id,
         nombre: result.usuario.nombre,
         email: result.usuario.email,
-        rol: result.usuario.rol
+        rol: result.usuario.rol,
+        rol_platform: 'CLIENT'
       }
     })
   } catch (err) {
@@ -153,7 +154,8 @@ router.post('/login', async (req, res) => {
         id: usuario.id,
         nombre: usuario.nombre,
         email: usuario.email,
-        rol: usuario.rol
+        rol: usuario.rol,
+        rol_platform: usuario.rol_platform
       },
       cliente: {
         id: usuario.cliente.id,
