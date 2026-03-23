@@ -11,27 +11,27 @@ const testimonios = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-brand-bg-section border-t border-b border-brand-border py-[100px]">
-      <div className="max-w-[1200px] mx-auto px-10 mb-[60px]">
+    <section className="bg-brand-bg-section border-t border-b border-brand-border py-16 md:py-[100px]">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-10 mb-8 md:mb-[60px]">
         <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-3">Testimonios</p>
-          <h2 className="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-3">Lo que dicen nuestros clientes</h2>
-          <p className="text-base text-brand-secondary max-w-[560px] mx-auto">Empresas que ya están creciendo con MyCompi</p>
+          <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brand-yellow mb-2 md:mb-3">Testimonios</p>
+          <h2 className="text-[22px] md:text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-2 md:mb-3">Lo que dicen nuestros clientes</h2>
+          <p className="text-sm text-brand-secondary max-w-[560px] mx-auto px-4">Empresas que ya están creciendo con MyCompi</p>
         </div>
       </div>
       <div className="overflow-x-auto scrollbar-none pb-8">
-        <div className="flex gap-5 px-10">
+        <div className="flex gap-4 md:gap-5 px-6 md:px-10">
           {testimonios.map(t => (
-            <div key={t.initials} className="flex-shrink-0 w-[300px] bg-brand-bg border border-brand-border rounded-xl p-7 transition-all duration-300 hover:shadow-md">
-              <blockquote className="text-sm text-brand-secondary leading-relaxed mb-4">"{t.quote}"</blockquote>
-              <div className="text-amber-400 text-[13px] tracking-widest mb-3.5">★★★★★</div>
+            <div key={t.initials} className="flex-shrink-0 w-[280px] md:w-[300px] bg-brand-bg border border-brand-border rounded-xl p-5 md:p-7 transition-all duration-300 hover:shadow-md">
+              <blockquote className="text-[13px] md:text-sm text-brand-secondary leading-relaxed mb-3 md:mb-4">"{t.quote}"</blockquote>
+              <div className="text-amber-400 text-[12px] md:text-[13px] tracking-widest mb-3 md:mb-3.5">★★★★★</div>
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[13px] flex-shrink-0">
+                <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[12px] md:text-[13px] flex-shrink-0">
                   {t.initials}
                 </div>
                 <div>
-                  <div className="font-bold text-[13px] text-brand-text">{t.name}</div>
-                  <div className="text-[11px] text-brand-muted">{t.role}</div>
+                  <div className="font-bold text-[12px] md:text-[13px] text-brand-text">{t.name}</div>
+                  <div className="text-[10px] md:text-[11px] text-brand-muted">{t.role}</div>
                 </div>
               </div>
             </div>

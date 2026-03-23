@@ -8,24 +8,24 @@ const miembros = [
 
 export default function Team() {
   return (
-    <section id="equipo" className="bg-brand-bg-section border-t border-b border-brand-border py-[100px]">
-      <div className="max-w-[1200px] mx-auto px-10">
-        <div className="text-center mb-[60px]">
-          <p className="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-3">Tu equipo de agentes</p>
-          <h2 className="text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-3">5 agentes especializados trabajando para ti</h2>
-          <p className="text-base text-brand-secondary max-w-[560px] mx-auto">Cada agente es un experto en su área. Coordínalos como un equipo real.</p>
+    <section id="equipo" className="bg-brand-bg-section border-t border-b border-brand-border py-16 md:py-[100px]">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-10">
+        <div className="text-center mb-10 md:mb-[60px]">
+          <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brand-yellow mb-2 md:mb-3">Tu equipo de agentes</p>
+          <h2 className="text-[22px] md:text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-2 md:mb-3">5 agentes especializados trabajando para ti</h2>
+          <p className="text-sm text-brand-secondary max-w-[560px] mx-auto px-4">Cada agente es un experto en su área. Coordínalos como un equipo real.</p>
         </div>
-        <div className="grid grid-cols-5 gap-6">
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
           {miembros.map(m => (
             <div key={m.nombre} className="text-center">
               <img
                 src={m.img}
                 alt={m.nombre}
-                className="w-full aspect-square object-cover mb-3.5 border-2 border-brand-border hover:border-brand-yellow transition-colors"
-                style={{ borderRadius: m.radius }}
+                className="w-full aspect-square object-cover mb-3 border-2 border-brand-border hover:border-brand-yellow transition-colors mx-auto"
+                style={{ borderRadius: m.radius, maxWidth: '160px' }}
               />
-              <h4 className="text-[13px] font-bold text-brand-text">{m.nombre}</h4>
-              <p className="text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">{m.rol}</p>
+              <h4 className="text-[12px] md:text-[13px] font-bold text-brand-text">{m.nombre}</h4>
+              <p className="text-[10px] md:text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">{m.rol}</p>
             </div>
           ))}
         </div>

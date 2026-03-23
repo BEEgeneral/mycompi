@@ -7,12 +7,12 @@ export default function Stats() {
   ]
 
   return (
-    <section className="bg-brand-bg-section border-t border-b border-brand-border py-[60px]">
-      <div className="max-w-[1200px] mx-auto px-10 grid grid-cols-4 gap-8">
+    <section className="bg-brand-bg-section border-t border-b border-brand-border py-12 md:py-[60px]">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-10 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
         {stats.map(s => (
           <div key={s.label} className="text-center">
-            <div className="text-[52px] font-extrabold tracking-tight text-brand-text leading-none">{s.num}</div>
-            <div className="text-sm text-brand-muted mt-2 font-medium">{s.label}</div>
+            <div className="text-[32px] md:text-[52px] font-extrabold tracking-tight text-brand-text leading-none">{s.num}</div>
+            <div className="text-[11px] md:text-sm text-brand-muted mt-2 font-medium">{s.label}</div>
           </div>
         ))}
       </div>
