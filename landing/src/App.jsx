@@ -1,0 +1,29 @@
+import Navbar from './components/Navbar'
+import Hero from './sections/Hero'
+import Stats from './sections/Stats'
+import Services from './sections/Services'
+import Team from './sections/Team'
+import Pricing from './sections/Pricing'
+import Testimonials from './sections/Testimonials'
+import FAQ from './sections/FAQ'
+import Contact from './sections/Contact'
+import Footer from './sections/Footer'
+
+export default function App() {
+  return (
+    <div className="min-h-screen bg-brand-bg">
+      <Navbar />
+      <main>
+        <Hero />
+        <Stats />
+        <Services />
+        <Team />
+        <Pricing />
+        <Testimonials />
+        <FAQ />
+        <Contact />
+      </main>
+      <Footer />
+    </div>
+  )
+}
