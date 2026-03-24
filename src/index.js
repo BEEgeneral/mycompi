@@ -45,6 +45,11 @@ app.use('/api/trabajos', trabajosRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use('/api/auth', authRoutes.router);
 app.use('/api/chat', chatRoutes);
+// Exponer AGENTS para que las rutas puedan acceder
+app.use((req, res, next) => {
+  req.app.set('AGENTS', AGENTS);
+  next();
+});
 app.use('/api/admin', adminRoutes);
 app.use('/api/orchestrator', digestRoutes);
 

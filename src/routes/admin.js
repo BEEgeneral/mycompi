@@ -8,7 +8,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { authMiddleware } = require('./auth');
-const { listarAgentes, getAgenteInfo, buildContext, logInteraction } = require('../services/agentLoader');
+const { listarAgentes, getAgenteInfo, buildContext, logInteraction, AGENTS } = require('../services/agentLoader');
 
 const router = express.Router();
 
@@ -351,7 +351,8 @@ router.put('/agentes/:id/clientes/:clienteId', ownerOnly, (req, res) => {
 // ─────────────────────────────────────────
 router.get('/agentes/:id/archivos', ownerOnly, (req, res) => {
   const { id } = req.params;
-  const agentPath = path.join(AGENTS_PATH, id);
+  const agentConfig = AGENTS?.[id];
+  const agentPath = path.join(AGENTS_PATH, agentConfig?.path || id);
   if (!fs.existsSync(agentPath)) {
     return res.status(404).json({ error: 'Agente no encontrado' });
   }
@@ -377,7 +378,8 @@ router.put('/agentes/:id/archivos/:file', ownerOnly, (req, res) => {
   if (!allowed.includes(file)) {
     return res.status(400).json({ error: 'Archivo no permitido' });
   }
-  const agentPath = path.join(AGENTS_PATH, id);
+  const agentConfig = AGENTS?.[id];
+  const agentPath = path.join(AGENTS_PATH, agentConfig?.path || id);
   if (!fs.existsSync(agentPath)) {
     return res.status(404).json({ error: 'Agente no encontrado' });
   }
