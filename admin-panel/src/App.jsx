@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Sidebar from './components/Sidebar'
 import AgentDetail from './components/AgentDetail'
 import WelcomeState from './components/WelcomeState'
+import HierarchyView from './components/HierarchyView'
 
 const API = ''
 
@@ -14,6 +15,7 @@ export default function App() {
   const [connected, setConnected] = useState(false)
   const [showSidebar, setShowSidebar] = useState(true)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+  const [view, setView] = useState('agentes') // 'agentes' | 'jerarquia'
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024)
@@ -111,19 +113,41 @@ export default function App() {
         <div className="mb-6 md:mb-8">
           <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-primary">Dashboard de Agentes</h1>
           <p className="text-xs md:text-sm text-text-muted mt-1">Selecciona un agente para ver y editar sus archivos de configuración.</p>
+
+          {/* View switcher */}
+          {connected && (
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => { setView('agentes'); setShowSidebar(true) }}
+                className={`text-xs font-semibold px-4 py-2 rounded-full border transition-all ${view === 'agentes' ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-300 text-gray-600 hover:border-gray-900'}`}
+              >
+                Agentes
+              </button>
+              <button
+                onClick={() => { setView('jerarquia'); setShowSidebar(false); setAgenteActual(null) }}
+                className={`text-xs font-semibold px-4 py-2 rounded-full border transition-all ${view === 'jerarquia' ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-300 text-gray-600 hover:border-gray-900'}`}
+              >
+                Jerarquia
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Mobile only: show back button when detail is visible (sidebar hidden) */}
-        {!showSidebar && agenteActual && isMobile && (
-          <button
-            onClick={() => setShowSidebar(true)}
-            className="mb-4 text-sm text-primary font-semibold flex items-center gap-1 hover:underline lg:hidden"
-          >
-            ← Volver al listado
-          </button>
-        )}
+        {view === 'jerarquia' ? (
+          <HierarchyView />
+        ) : (
+          <>
+            {/* Mobile only: show back button when detail is visible */}
+            {!showSidebar && agenteActual && isMobile && (
+              <button
+                onClick={() => setShowSidebar(true)}
+                className="mb-4 text-sm text-primary font-semibold flex items-center gap-1 hover:underline lg:hidden"
+              >
+                ← Volver al listado
+              </button>
+            )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 items-start">
           {/* Sidebar — hidden on mobile when showing detail */}
           {showSidebar && (
             <Sidebar
@@ -135,17 +159,30 @@ export default function App() {
             />
           )}
 
-          {/* Content */}
-          {agenteActual ? (
-            <AgentDetail
-              agente={agenteActual}
-              apiCall={apiCall}
-              onRecargar={recargar}
-            />
-          ) : (
-            showSidebar && <WelcomeState connected={connected} loading={loading} />
-          )}
-        </div>
+              {/* Sidebar */}
+              {showSidebar && (
+                <Sidebar
+                  agentes={agentes}
+                  agenteActual={agenteActual}
+                  onSelect={seleccionarAgente}
+                  loading={loading}
+                  connected={connected}
+                />
+              )}
+
+              {/* Content */}
+              {agenteActual ? (
+                <AgentDetail
+                  agente={agenteActual}
+                  apiCall={apiCall}
+                  onRecargar={recargar}
+                />
+              ) : (
+                showSidebar && <WelcomeState connected={connected} loading={loading} />
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
