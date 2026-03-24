@@ -214,8 +214,8 @@ export default function TeamPresentation() {
           <p className="text-sm text-gray-500 mb-4">
             Cada plan incluye un equipo completo. Sin contratos, sin compromisos.
           </p>
-          <a href="#precios" className="inline-block bg-brand-yellow text-gray-900 font-bold px-8 py-3.5 rounded-xl hover:bg-brand-yellow-dark transition-all">
-            Ver qué incluye mi plan →
+          <a href="/checkout" className="inline-block bg-brand-yellow text-gray-900 font-bold px-8 py-3.5 rounded-xl hover:bg-brand-yellow-dark transition-all">
+            Contratar mi equipo →
           </a>
         </div>
       </div>

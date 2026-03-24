@@ -43,6 +43,7 @@ export default function App() {
         <Route path="/contratacion" element={<Hiring />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/recuperar" element={<Recuperar />} />
         <Route path="/reset-password" element={<ResetPassword />} />
