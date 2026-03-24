@@ -499,29 +499,30 @@ export default function App() {
       <div className="max-w-[1200px] mx-auto px-6 py-6">
 
         {vista === 'dashboard' && (
-          <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-            {/* Left col */}
-            <div className="space-y-4">
+          <>
+            <SpendChart metricas={metricas} />
+
+            <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 mt-6">
+              {/* Left col */}
               <div className="bg-white rounded-2xl border border-gray-200 p-5">
                 <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Agentes ({agentes.length})</div>
                 <AgentList agentes={agentes} selected={agenteActual} onSelect={seleccionarAgente} loading={loading} />
               </div>
-              <SpendChart metricas={metricas} />
-            </div>
 
-            {/* Right col */}
-            <div>
-              {agenteActual ? (
-                <AgentDetail agente={agenteActual} apiCall={apiCall} />
-              ) : (
-                <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
-                  <div className="text-5xl mb-4">👈</div>
-                  <div className="text-base font-bold text-gray-700 mb-2">Selecciona un agente</div>
-                  <div className="text-sm text-gray-400">Pulsa en un agente para ver y editar sus archivos de configuración</div>
-                </div>
-              )}
+              {/* Right col */}
+              <div>
+                {agenteActual ? (
+                  <AgentDetail agente={agenteActual} apiCall={apiCall} />
+                ) : (
+                  <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
+                    <div className="text-5xl mb-4">👈</div>
+                    <div className="text-base font-bold text-gray-700 mb-2">Selecciona un agente</div>
+                    <div className="text-sm text-gray-400">Pulsa en un agente para ver y editar sus archivos de configuración</div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {vista === 'jerarquia' && (
