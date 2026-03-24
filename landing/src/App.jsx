@@ -4,7 +4,7 @@ import Hero from './sections/Hero'
 import Stats from './sections/Stats'
 import Services from './sections/Services'
 import Team from './sections/Team'
-import Pricing from './sections/Pricing'
+import TeamPresentation from './sections/TeamPresentation'
 import Testimonials from './sections/Testimonials'
 import FAQ from './sections/FAQ'
 import Contact from './sections/Contact'
@@ -24,7 +24,7 @@ function HomePage() {
         <Hero />
         <Stats />
         <Services />
-        <Team />
+        <TeamPresentation />
         <Pricing />
         <Testimonials />
         <FAQ />
