@@ -28,6 +28,7 @@ model Cliente {
   trabajos    Trabajo[]
   pagos       Pago[]
   documentos  Documento[]
+  interacciones InteraccionChat[]
 }
 
 // ============================================
@@ -77,6 +78,7 @@ model Agente {
   cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   trabajos    Trabajo[]
   mensajes    Mensaje[]
+  interacciones InteraccionChat[]
 }
 
 // ============================================
@@ -158,18 +160,19 @@ model Mensaje {
 // INTERACCIONES DE CHAT (aprendizaje)
 // ============================================
 model InteraccionChat {
-  id              String   @id @default(cuid())
-  clienteId      String
-  agenteId       String   // siempre el Orquestador en el chat del cliente
-  tipoPeticion   TipoPeticion
-  mensajeOriginal String   @db.Text
-  resumen        String?  @db.VarChar(250)
-  respuestaAgente String? @db.Text
-  clienteAcepta  Boolean?
-  resultadoExitoso Boolean? // nullable — se llena después
-  createdAt      DateTime @default(now())
+  id               String   @id @default(cuid())
+  clienteId        String
+  agenteId         String
+  tipoPeticion     TipoPeticion
+  mensajeOriginal  String   @db.Text
+  resumen         String?  @db.VarChar(250)
+  respuestaAgente  String? @db.Text
+  clienteAcepta   Boolean?
+  resultadoExitoso Boolean?
+  createdAt       DateTime @default(now())
 
-  cliente        Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  cliente         Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  agente          Agente  @relation(fields: [agenteId], references: [id], onDelete: Cascade)
 }
 
 enum TipoPeticion {
