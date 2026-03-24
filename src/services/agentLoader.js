@@ -19,7 +19,7 @@ const AGENTS = {
   elena: { path: 'operaciones', nombre: 'Elena Ortega', emoji: '⚙️', tipo: 'operativo' },
   diana: { path: 'data', nombre: 'Diana Palau', emoji: '📈', tipo: 'operativo' },
   // Agentes internos (sin overlay - uso interno MyCompi)
-  alberto: { path: 'desarrollo', nombre: 'Alberto Gala', emoji: '💻', tipo: 'interno' },
+  marcos: { path: 'marcos-desarrollo', nombre: 'Marcos Fernández', emoji: '💻', tipo: 'operativo' },
   policia: { path: 'policia-tokens', nombre: 'Policia de Tokens', emoji: '🚨', tipo: 'interno' },
   orquesta: { path: 'orquestador', nombre: 'Orquestador', emoji: '🎯', tipo: 'interno' },
 };
