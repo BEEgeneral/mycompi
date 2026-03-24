@@ -97,7 +97,7 @@ function generateDigest({ logs, clienteNombre, clienteEmail, plan }) {
       <strong>${clienteNombre},</strong>
     </p>
     <p style="font-size: 15px; line-height: 1.6; color: #333; margin: 0 0 20px;">
-      Hoy el foco ha estado en <strong>${focoText}</strong>. Tu equipo ha trabajado en ${totalSessions} sesión${totalSessions !== 1 ? 'es' : ''} con un total de ${Math.round(totalTokens).toLocaleString()} tokens procesados.
+      Hoy el foco ha estado en <strong>${focoText}</strong>. Tu equipo ha trabajado en ${totalSessions} sesión${totalSessions !== 1 ? 'es' : ''}.
     </p>
     
     <h2 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin: 0 0 12px; border-bottom: 1px solid #E5E7EB; padding-bottom: 8px;">
@@ -118,7 +118,7 @@ function generateDigest({ logs, clienteNombre, clienteEmail, plan }) {
     <h2 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin: 0 0 12px; border-bottom: 1px solid #E5E7EB; padding-bottom: 8px;">
       Resumen rápido
     </h2>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
       <div style="background: #F9FAFB; padding: 12px; border-radius: 8px; text-align: center;">
         <div style="font-size: 24px; font-weight: 800; color: #111;">${totalSessions}</div>
         <div style="font-size: 11px; color: #888; text-transform: uppercase;">Sesiones</div>
@@ -126,10 +126,6 @@ function generateDigest({ logs, clienteNombre, clienteEmail, plan }) {
       <div style="background: #F9FAFB; padding: 12px; border-radius: 8px; text-align: center;">
         <div style="font-size: 24px; font-weight: 800; color: #111;">${equipoCount}</div>
         <div style="font-size: 11px; color: #888; text-transform: uppercase;">Agentes activos</div>
-      </div>
-      <div style="background: #F9FAFB; padding: 12px; border-radius: 8px; text-align: center;">
-        <div style="font-size: 24px; font-weight: 800; color: #111;">${Math.round(totalTokens).toLocaleString()}</div>
-        <div style="font-size: 11px; color: #888; text-transform: uppercase;">Tokens</div>
       </div>
     </div>
     
