@@ -1,14 +1,14 @@
 {
   "name": "mycompi",
   "version": "1.0.0",
-  "description": "MyCompi - Plataforma de profesionales agénticos",
+  "description": "MyCompi - Plataforma de profesionales ag\u00e9nticos",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "build:admin": "cd admin-panel && npm install && npm run build",
+    "build:admin": "cd admin-panel && npm install && npm run build && node ../scripts/post-build-admin.js",
     "build:chat": "cd chat-panel && npm install && npm run build",
-    "build:landing": "cd landing && npm install && npm run build",
+    "build:landing": "cd landing && npm install && npm run build && node ../scripts/post-build.js",
     "build": "npm run build:landing && npm run build:admin && npm run build:chat",
     "test": "node --test tests/*.test.js"
   },

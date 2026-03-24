@@ -4,7 +4,7 @@ export default function Hero() {
       <div className="max-w-[1200px] mx-auto px-6 md:px-10 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[60px] items-center">
         <div>
           <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brand-muted mb-3 md:mb-4">Profesionales Agénticos Especializados para PYMES</p>
-          <h1 className="text-[32px] md:text-[clamp(40px,5vw,64px)] font-extrabold leading-tight tracking-tight text-brand-text mb-4 md:mb-5">
+          <h1 className="text-[32px] md:text-[clamp(40px,5vw,64px)] font-display font-extrabold leading-tight tracking-tight text-brand-text mb-4 md:mb-5">
             Tu compañero digital para tu <span className="text-brand-yellow">día a día</span>
           </h1>
           <p className="text-sm md:text-[17px] text-brand-secondary leading-relaxed mb-6 md:mb-9">

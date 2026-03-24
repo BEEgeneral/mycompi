@@ -15,13 +15,19 @@ export default {
           muted: '#9CA3AF',
         },
         primary: {
-          DEFAULT: '#1D4ED8',    // Azul principal
-          hover: '#1E40AF',       // Azul hover
-          light: '#DBEAFE',        // Azul claro
+          DEFAULT: '#1D4ED8',
+          hover: '#1E40AF',
+          light: '#DBEAFE',
         }
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Unbounded', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'display-xl': ['clamp(2.5rem,6vw,5rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+        'display-lg': ['clamp(2rem,4vw,3.5rem)', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
+        'display-md': ['clamp(1.5rem,3vw,2.25rem)', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
       },
       boxShadow: {
         sm: '0 4px 6px -1px rgba(0,0,0,0.05)',
