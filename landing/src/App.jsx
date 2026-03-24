@@ -13,6 +13,7 @@ import Footer from './sections/Footer'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import Activar from './pages/Activar'
 import Recuperar from './pages/Recuperar'
 import ResetPassword from './pages/ResetPassword'
 import Checkout from './pages/Checkout'
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/registro" element={<Register />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/activar" element={<Activar />} />
         <Route path="/recuperar" element={<Recuperar />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>

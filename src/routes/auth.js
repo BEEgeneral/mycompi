@@ -343,4 +343,36 @@ router.post('/reset-password', async (req, res) => {
   }
 })
 
+// ─────────────────────────────────────────
+// ACTIVAR CUENTA (después del pago)
+// POST /api/auth/activar
+// ─────────────────────────────────────────
+router.post('/activar', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'Email y contraseña requeridos' });
+  if (password.length < 8) return res.status(400).json({ error: 'Mínimo 8 caracteres' });
+
+  try {
+    const usuario = await prisma.usuario.findUnique({ where: { email } });
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    if (usuario.passwordHash !== '__pending_activation__') {
+      return res.status(400).json({ error: 'Esta cuenta ya tiene contraseña. Inicia sesión.' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const updated = await prisma.usuario.update({
+      where: { id: usuario.id },
+      data: { passwordHash },
+    });
+
+    // Generar tokens para login automático
+    const tokens = generateTokens(updated.id, updated.clienteId);
+    res.json({ ok: true, tokens });
+  } catch (err) {
+    console.error('Error activating account:', err);
+    res.status(500).json({ error: 'Error activando la cuenta' });
+  }
+});
+
 module.exports = { router, authMiddleware }
