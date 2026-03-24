@@ -38,6 +38,7 @@ const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const digestRoutes = require('./routes/digest');
+const stripeRoutes = require('./routes/stripe');
 
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/agentes', agentesRoutes);
