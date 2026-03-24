@@ -153,6 +153,33 @@ model Mensaje {
   agente    Agente   @relation(fields: [agenteId], references: [id], onDelete: Cascade)
 }
 
+
+// ============================================
+// INTERACCIONES DE CHAT (aprendizaje)
+// ============================================
+model InteraccionChat {
+  id              String   @id @default(cuid())
+  clienteId      String
+  agenteId       String   // siempre el Orquestador en el chat del cliente
+  tipoPeticion   TipoPeticion
+  mensajeOriginal String   @db.Text
+  resumen        String?  @db.VarChar(250)
+  respuestaAgente String? @db.Text
+  clienteAcepta  Boolean?
+  resultadoExitoso Boolean? // nullable — se llena después
+  createdAt      DateTime @default(now())
+
+  cliente        Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+}
+
+enum TipoPeticion {
+  CREAR_CONTENIDO
+  CONSULTAR_INFO
+  MODIFICAR_SOLICITUD
+  QUEJA
+  ALERTA
+  OTRO
+}
 // ============================================
 // ENUMS
 // ============================================
@@ -232,5 +259,5 @@ enum TipoMensaje {
   MENSAJE
   ALERTA
   REPORTE
- 请示
+  SOLICITUD
 }
