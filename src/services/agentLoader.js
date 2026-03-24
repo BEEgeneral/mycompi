@@ -13,15 +13,15 @@ const AGENTS_PATH = path.join(__dirname, '../../agents');
 // Agentes disponibles (directorios)
 const AGENTS = {
   // Agentes operativos (con overlay por cliente)
-  luna: { path: 'atencion-cliente', nombre: 'Laura', emoji: '💬', tipo: 'operativo' },
-  enzo: { path: 'marketing', nombre: 'Enzo Herrera', emoji: '📊', tipo: 'operativo' },
-  carlos: { path: 'ventas', nombre: 'Carlos Mendoza', emoji: '💼', tipo: 'operativo' },
-  elena: { path: 'operaciones', nombre: 'Elena Ortega', emoji: '⚙️', tipo: 'operativo' },
-  diana: { path: 'data', nombre: 'Diana Palau', emoji: '📈', tipo: 'operativo' },
+  luna: { path: 'atencion-cliente', nombre: 'Laura', inicial: 'L', color: 'from-pink-500 to-rose-600', tipo: 'operativo' },
+  enzo: { path: 'marketing', nombre: 'Enzo Herrera', inicial: 'E', color: 'from-blue-500 to-indigo-600', tipo: 'operativo' },
+  carlos: { path: 'ventas', nombre: 'Carlos Mendoza', inicial: 'C', color: 'from-green-500 to-emerald-600', tipo: 'operativo' },
+  elena: { path: 'operaciones', nombre: 'Elena Ortega', inicial: 'E', color: 'from-orange-500 to-amber-600', tipo: 'operativo' },
+  diana: { path: 'data', nombre: 'Diana Palau', inicial: 'D', color: 'from-purple-500 to-violet-600', tipo: 'operativo' },
   // Agentes internos (sin overlay - uso interno MyCompi)
-  marcos: { path: 'marcos-desarrollo', nombre: 'Marcos Fernández', emoji: '💻', tipo: 'operativo' },
-  policia: { path: 'policia-tokens', nombre: 'Policia de Tokens', emoji: '🚨', tipo: 'interno' },
-  orquesta: { path: 'orquestador', nombre: 'Orquestador', emoji: '🎯', tipo: 'interno' },
+  marcos: { path: 'marcos-desarrollo', nombre: 'Marcos Fernández', inicial: 'M', color: 'from-cyan-500 to-teal-600', tipo: 'operativo' },
+  policia: { path: 'policia-tokens', nombre: 'Policia de Tokens', inicial: 'PT', color: 'from-red-500 to-orange-600', tipo: 'interno' },
+  orquesta: { path: 'orquestador', nombre: 'Orquestador', inicial: 'O', color: 'from-indigo-500 to-purple-600', tipo: 'interno' },
 };
 
 /**
@@ -31,7 +31,8 @@ function listarAgentes() {
   return Object.entries(AGENTS).map(([key, config]) => ({
     id: key,
     nombre: config.nombre,
-    emoji: config.emoji,
+    inicial: config.inicial,
+    color: config.color,
     tipo: config.tipo || 'operativo',
     activo: esAgenteActivo(key),
   }));
@@ -170,7 +171,8 @@ function getAgenteInfo(agenteId) {
   return {
     id: agenteId,
     nombre: config.nombre,
-    emoji: config.emoji,
+    inicial: config.inicial,
+    color: config.color,
     path: config.path,
     activo: esAgenteActivo(agenteId),
     archivos: fs.existsSync(agentPath)

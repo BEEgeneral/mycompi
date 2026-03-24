@@ -60,7 +60,7 @@ function AgentNode({ agent, isRoot = false }) {
             {expanded ? '▲' : '▼'}
           </div>
         )}
-        <div className="text-3xl mb-2">{agent.emoji}</div>
+        <div className="text-3xl mb-2">{agent.inicial}</div>
         <div className="font-bold text-sm">{agent.nombre}</div>
         <div className="text-[10px] opacity-80 mt-0.5">{agent.rol}</div>
       </div>

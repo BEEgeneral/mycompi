@@ -33,7 +33,7 @@ function LoginScreen({ onLogin }) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
       <div className="w-full max-w-[380px]">
         <div className="text-center mb-10">
-          <img loading="lazy" decoding="async"/>
+          
           <h1 className="text-2xl font-extrabold text-gray-900">Panel de Administración</h1>
           <p className="text-sm text-gray-500 mt-2">Accede con tu cuenta MyCompi</p>
         </div>
@@ -115,7 +115,7 @@ function AgentList({ agentes, selected, onSelect, loading }) {
           className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
             selected?.id === a.id ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-gray-50 border border-transparent'
           }`}>
-          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-lg flex-shrink-0">{a.emoji}</div>
+          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-lg flex-shrink-0">{a.inicial}</div>
           <div className="flex-1 min-w-0">
             <div className="font-bold text-sm text-gray-900 truncate">{a.nombre}</div>
             <div className="text-xs text-gray-400 truncate">{a.tipo}</div>
@@ -233,7 +233,7 @@ function AgentDetail({ agente, apiCall }) {
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         <div className="flex items-center gap-4 p-6 border-b border-gray-100">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl">
-            {agente.emoji}
+            {agente.inicial}
           </div>
           <div className="flex-1">
             <div className="font-extrabold text-lg text-gray-900">{agente.nombre}</div>
@@ -463,7 +463,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
       <nav className="h-16 bg-white border-b border-gray-200 flex items-center px-6 gap-4 sticky top-0 z-50 shadow-sm">
-        <a href="/" className="h-9"><img loading="lazy" decoding="async"/></a>
+        <a href="/" className="h-9"></a>
         <div className="flex-1 flex items-center gap-2">
           <span className="text-xs font-bold text-gray-400">ADMIN</span>
         </div>

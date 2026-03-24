@@ -42,7 +42,7 @@ function AgentCard({ agent, expanded, onToggle }) {
       <div className="relative bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg transition-all">
         <div className="flex items-center gap-3 mb-3">
           <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-xl shadow-lg`}>
-            {agent.emoji}
+            {agent.inicial}
           </div>
           <div>
             <div className="font-bold text-sm text-gray-900">{agent.nombre}</div>

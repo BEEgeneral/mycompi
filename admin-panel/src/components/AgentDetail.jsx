@@ -18,7 +18,7 @@ export default function AgentDetail({ agente, apiCall, onRecargar }) {
       <div className="flex items-center justify-between px-7 py-6 border-b border-gray-100">
         <div className="flex items-center gap-4">
           <div className="w-13 h-13 rounded-xl bg-sky-100 flex items-center justify-center text-2xl">
-            {agente.emoji}
+            {agente.inicial}
           </div>
           <div>
             <div className="font-extrabold text-lg text-primary">{agente.nombre}</div>

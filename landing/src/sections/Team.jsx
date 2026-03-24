@@ -18,7 +18,8 @@ export default function Team() {
         <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
           {miembros.map(m => (
             <div key={m.nombre} className="text-center">
-              <img loading="lazy" decoding="async"/>
+              
+              <img loading="lazy" decoding="async" src={m.img} alt={m.nombre} className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-full mx-auto mb-2" />
               <h4 className="text-[12px] md:text-[13px] font-bold text-brand-text">{m.nombre}</h4>
               <p className="text-[10px] md:text-[11px] text-brand-muted mt-1 uppercase tracking-wide font-semibold">{m.rol}</p>
             </div>

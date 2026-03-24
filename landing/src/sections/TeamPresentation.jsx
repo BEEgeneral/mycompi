@@ -113,7 +113,7 @@ function AgentCard({ agent, expanded, onClick }) {
       {/* Header */}
       <div className="flex items-start gap-4 mb-4">
         <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-2xl shadow-lg flex-shrink-0`}>
-          {agent.emoji}
+          {agent.inicial}
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-bold text-base text-gray-900">{agent.nombre}</div>
@@ -187,7 +187,7 @@ export default function TeamPresentation() {
                 <div className="flex -space-x-2">
                   {equipo.slice(1).map(a => (
                     <div key={a.id} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-gray-800 flex items-center justify-center text-lg shadow-lg" title={a.nombre}>
-                      {a.emoji}
+                      {a.inicial}
                     </div>
                   ))}
                 </div>

@@ -38,7 +38,7 @@ export default function Sidebar({ agentes, agenteActual, onSelect, loading, conn
             }`}
           >
             <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-xl flex-shrink-0">
-              {a.emoji}
+              {a.inicial}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-bold text-sm text-primary truncate">{a.nombre}</div>

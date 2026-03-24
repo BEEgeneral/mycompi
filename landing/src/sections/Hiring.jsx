@@ -67,7 +67,7 @@ function AgentRow({ agent, expanded, onToggle }) {
     >
       <div className="flex items-center gap-4">
         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-xl shadow`}>
-          {agent.emoji}
+          {agent.inicial}
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-bold text-sm text-gray-900">{agent.nombre}</div>
@@ -149,7 +149,7 @@ export default function Hiring() {
                   <div className="flex -space-x-2">
                     {equipo.slice(1).map(a => (
                       <div key={a.nombre} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-gray-800 flex items-center justify-center text-lg shadow" title={a.nombre}>
-                        {a.emoji}
+                        {a.inicial}
                       </div>
                     ))}
                   </div>
