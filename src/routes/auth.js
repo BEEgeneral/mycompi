@@ -169,7 +169,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: err.errors[0].message })
     }
     console.error('Error en login:', err)
-    res.status(500).json({ error: 'Error al iniciar sesión' })
+    res.status(500).json({ error: 'Error al iniciar sesión', detail: err.message })
   }
 })
 
