@@ -1,26 +1,105 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
-import Footer from '../sections/Footer'
 
-const plans = [
-  { name: 'Profesional Agéntico', price: 10, desc: 'Para empezar a automatizar', popular: false, features: ['1 Profesional Agéntico especializado', 'Reportes mensuales', 'Soporte por email', 'Automatización esencial'] },
-  { name: 'Equipo Agéntico', price: 49, desc: 'Manager + 5 especializados', popular: true, features: ['Manager Agéntico', '5 Profesionales especializados', 'Coordinación y supervisión', 'Reportes semanales', 'Soporte prioritario'] },
-  { name: 'Equipos con Dirección', price: 147, desc: 'Varios equipos + dirección', popular: false, features: ['Profesionales ilimitados', 'Equipo de dirección', 'Soporte 24/7', 'Consultoría avanzada', 'Reporting completo'] },
+const equipo = [
+  {
+    nombre: 'Alberto Gala',
+    emoji: '🎯',
+    rol: 'Director de Equipo',
+    color: 'from-gray-800 to-gray-900',
+    funciones: ['Coordina todo tu equipo agéntico', 'Toma decisiones estratégicas contigo', 'Supervisa que cada agente cumpla sus objetivos', 'Te reporta el progreso semanal'],
+    ejemplo: 'Cada lunes te envía un resumen de lo que hizo cada agente durante la semana.',
+  },
+  {
+    nombre: 'Enzo Herrera',
+    emoji: '📊',
+    rol: 'Marketing',
+    color: 'from-blue-500 to-indigo-600',
+    funciones: ['Crea contenido para redes sociales y blog', 'Gestiona campañas de publicidad (Meta, Google Ads)', 'Optimiza SEO de tu web para atraer tráfico', 'Analiza métricas y propone mejoras'],
+    ejemplo: 'Te prepara 30 posts para el mes y los publica automáticamente.',
+  },
+  {
+    nombre: 'Carlos Mendoza',
+    emoji: '💼',
+    rol: 'Ventas',
+    color: 'from-green-500 to-emerald-600',
+    funciones: ['Captura y qualification leads nuevos', 'Hace seguimiento automático de prospects', 'Cierra deals y gestiona objeciones', 'Te alerta cuando hay una oportunidad caliente'],
+    ejemplo: 'Te ha contactado alguien por Instagram. Carlos le manda un mensaje personalizado y agenda una llamada contigo.',
+  },
+  {
+    nombre: 'Laura Montes',
+    emoji: '💬',
+    rol: 'Atención al Cliente',
+    color: 'from-pink-500 to-rose-600',
+    funciones: ['Responde dudas de tus clientes al instante', 'Gestiona quejas y escala cuando es necesario', 'Recoge feedback y lo sintetiza para ti', 'Disponible 24/7 — no descansa ni en festivos'],
+    ejemplo: 'Un cliente te pregunta a las 11pm si hacéis envíos a Andorra. Laura responde al momento.',
+  },
+  {
+    nombre: 'Elena Ortega',
+    emoji: '⚙️',
+    rol: 'Operaciones',
+    color: 'from-orange-500 to-amber-600',
+    funciones: ['Automatiza procesos repetitivos de tu negocio', 'Conecta herramientas que no hablan entre sí', 'Detecta cuellos de botella y propone soluciones', 'Genera informes operativos'],
+    ejemplo: 'Cada viernes te envía un excel con el resumen de ventas, stock y métricas del semana.',
+  },
+  {
+    nombre: 'Diana Palau',
+    emoji: '📈',
+    rol: 'Data & Growth',
+    color: 'from-purple-500 to-violet-600',
+    funciones: ['Analiza datos de tu negocio para encontrar oportunidades', 'Identifica patrones de comportamiento de clientes', 'Te ayuda a entender qué funciona y qué no', 'Construye dashboards con métricas clave'],
+    ejemplo: 'Descubre que los clientes que compran los martes tienen un ticket 40% mayor. Te lo comunica y propone una acción.',
+  },
 ]
 
-const faqs = [
-  { q: '¿Qué es un Profesional Agéntico?', a: 'Es un agente de IA especializado en un área concreta (marketing, ventas, atención al cliente, operaciones o data) que trabaja para tu negocio de forma autónoma, 24/7.' },
-  { q: '¿Necesito conocimientos técnicos?', a: 'No. Lo configuramos todo nosotros. Tú solo nos dices qué necesitas.' },
-  { q: '¿Puedo cancelar cuando quiera?', a: 'Sí. Sin permanencias ni penalizaciones. Cancela cuando quieras desde tu panel.' },
-  { q: '¿Cómo funcionan los agentes?', a: 'Les defines objetivos y trabajan de forma autónoma. Recibes reportes periódicos y puedes hablar con ellos en cualquier momento.' },
-  { q: '¿Qué incluye el soporte?', a: 'Email en Básico, prioritario en Equipo, y dedicado 24/7 en Dirección. Siempre tienes a alguien disponible.' },
+const planes = [
+  { id: 'BASICO', name: 'Profesional Agéntico', price: 10, agents: 1, desc: '1 agente especializado' },
+  { id: 'EQUIPO', name: 'Equipo Agéntico', price: 49, agents: 6, desc: '1 manager + 5 especializados', popular: true },
+  { id: 'DIRECCION', name: 'Equipos con Dirección', price: 147, agents: 'Ilimitados', desc: 'Equipos + dirección 24/7' },
 ]
+
+function AgentRow({ agent, expanded, onToggle }) {
+  return (
+    <div
+      onClick={onToggle}
+      className={`border rounded-2xl p-5 cursor-pointer transition-all hover:shadow-md ${expanded ? 'border-brand-yellow bg-brand-yellow/5' : 'border-gray-200 bg-white'}`}
+    >
+      <div className="flex items-center gap-4">
+        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-xl shadow`}>
+          {agent.emoji}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="font-bold text-sm text-gray-900">{agent.nombre}</div>
+          <div className="text-xs text-gray-500">{agent.rol}</div>
+        </div>
+        <div className="text-brand-yellow text-lg">{expanded ? '−' : '+'}</div>
+      </div>
+      {expanded && (
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+            {agent.funciones.map((f, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="text-brand-yellow text-xs mt-0.5">-</span>
+                <span className="text-xs text-gray-600">{f}</span>
+              </div>
+            ))}
+          </div>
+          <div className={`p-4 rounded-xl bg-gradient-to-br ${agent.color}`}>
+            <div className="text-[10px] font-bold uppercase text-white/70 tracking-wider mb-1">Ejemplo de tarea</div>
+            <div className="text-sm text-white font-medium">{agent.ejemplo}</div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function Hiring() {
-  const [openFaq, setOpenFaq] = useState(null)
-  const [form, setForm] = useState({ nombre: '', email: '', mensaje: '' })
+  const [openAgent, setOpenAgent] = useState(null)
+  const [selectedPlan, setSelectedPlan] = useState('EQUIPO')
 
-  const handleSubmit = (e) => { e.preventDefault() }
+  const plan = planes.find(p => p.id === selectedPlan)
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -30,129 +109,138 @@ export default function Hiring() {
         <section className="pt-[100px] pb-16 px-6 bg-white">
           <div className="max-w-[800px] mx-auto text-center">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-yellow mb-4 block">Profesionales Agénticos Especializados</span>
-            <h1 className="text-[28px] md:text-[52px] font-extrabold text-brand-text tracking-tight leading-tight mb-6">
+            <h1 className="text-[28px] md:text-[clamp(36px,5vw,56px)] font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
               Tu próximo empleado estrella no duerme, no cobra IRPF y no pide vacaciones.
             </h1>
-            <p className="text-base md:text-lg text-brand-secondary leading-relaxed mb-8 max-w-[600px] mx-auto">
+            <p className="text-base md:text-lg text-gray-500 leading-relaxed mb-8 max-w-[600px] mx-auto">
               Contrata profesionales agénticos que trabajan 24/7. Sin contratos, sin nóminas, sin papeleo.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#planes" className="bg-brand-yellow text-brand-text font-bold px-8 py-4 rounded-xl hover:bg-brand-yellow-dark transition-all inline-block">Ver planes</a>
-              <a href="#faq" className="border border-brand-border text-brand-secondary font-semibold px-8 py-4 rounded-xl hover:border-brand-text transition-all inline-block">Preguntas frecuentes</a>
+              <a href="#equipo" className="bg-brand-yellow text-gray-900 font-bold px-8 py-4 rounded-xl hover:bg-brand-yellow-dark transition-all inline-block">
+                Ver equipo
+              </a>
+              <a href="#planes" className="border border-gray-300 text-gray-600 font-semibold px-8 py-4 rounded-xl hover:border-gray-900 hover:text-gray-900 transition-all inline-block">
+                Ver precios
+              </a>
             </div>
           </div>
         </section>
 
-        {/* Cómo funciona */}
-        <section id="como-funciona" className="py-16 px-6 bg-brand-bg-section border-t border-b border-brand-border">
-          <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center text-2xl md:text-3xl font-bold text-brand-text mb-12">¿Cómo funciona?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { step: '1', title: 'Elige tu plan', desc: '1 agente, un equipo o varios. Desde €10/mes. Sin alta de autónomos, nóminas ni papeleo.' },
-                { step: '2', title: 'Los configuramos nosotros', desc: 'Te asignamos profesionales agénticos especializados. Activos en menos de 24h.' },
-                { step: '3', title: 'Trabajan para ti', desc: 'Le dices qué necesitas y ellos lo hacen. Reportes semanales incluidos. Tú sigues enfocado en tu negocio.' },
-              ].map(s => (
-                <div key={s.step} className="text-center">
-                  <div className="w-16 h-16 bg-brand-yellow rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">{s.step}️⃣</div>
-                  <h3 className="font-bold text-brand-text mb-2">{s.title}</h3>
-                  <p className="text-sm text-brand-secondary leading-relaxed">{s.desc}</p>
+        {/* Equipo */}
+        <section id="equipo" className="py-16 px-6 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-[900px] mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Tu equipo agéntico</h2>
+              <p className="text-sm text-gray-500">Cada agente tiene un rol claro.-reportan a un director que los coordina. Tu delegas, ellos ejecutan.</p>
+            </div>
+
+            {/* Director highlight */}
+            <div className="mb-8 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-3xl shadow-2xl flex-shrink-0">
+                  {equipo[0].emoji}
                 </div>
+                <div className="flex-1">
+                  <div className="font-extrabold text-lg text-white">{equipo[0].nombre}</div>
+                  <div className="text-xs font-semibold text-brand-yellow uppercase tracking-wider mt-0.5">{equipo[0].rol}</div>
+                  <div className="text-sm text-gray-400 mt-2">{equipo[0].funciones[0]}</div>
+                </div>
+                <div className="hidden md:flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {equipo.slice(1).map(a => (
+                      <div key={a.nombre} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-gray-800 flex items-center justify-center text-lg shadow" title={a.nombre}>
+                        {a.emoji}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-xs text-gray-500 max-w-[100px]">Coordina a {equipo.length - 1} especialistas</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Resto de agentes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {equipo.slice(1).map((agent, i) => (
+                <AgentRow
+                  key={agent.nombre}
+                  agent={agent}
+                  expanded={openAgent === i + 1}
+                  onToggle={() => setOpenAgent(openAgent === i + 1 ? null : i + 1)}
+                />
               ))}
             </div>
           </div>
         </section>
 
-        {/* Pricing */}
-        <section id="planes" className="py-16 px-6 bg-white">
-          <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center text-2xl md:text-3xl font-bold text-brand-text mb-3">Planes transparentes</h2>
-            <p className="text-center text-brand-secondary mb-12 text-sm">Sin costes de contratación. Cancela cuando quieras.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {plans.map(p => (
-                <div key={p.name} className={`rounded-xl p-8 ${p.popular ? 'border-2 border-brand-yellow shadow-lg' : 'border border-brand-border'}`}>
-                  {p.popular && <span className="inline-block bg-brand-yellow text-brand-text text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">Popular</span>}
-                  <div className="font-bold text-lg text-brand-text mb-1">{p.name}</div>
-                  <div className="text-sm text-brand-secondary mb-4">{p.desc}</div>
-                  <div className="text-[40px] font-extrabold text-brand-text leading-none mb-1">
+        {/* Precios */}
+        <section id="planes" className="py-16 px-6 bg-white border-t border-gray-100">
+          <div className="max-w-[900px] mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Planes transparentes</h2>
+              <p className="text-sm text-gray-500">Sin costes de contratación. Cancela cuando quieras.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              {planes.map(p => (
+                <div
+                  key={p.id}
+                  onClick={() => setSelectedPlan(p.id)}
+                  className={`rounded-2xl p-6 cursor-pointer border-2 transition-all ${selectedPlan === p.id ? 'border-brand-yellow shadow-lg' : 'border-gray-200 hover:border-gray-300'}`}
+                >
+                  {p.popular && (
+                    <div className="text-[10px] font-bold bg-brand-yellow text-gray-900 px-3 py-1 rounded-full inline-block mb-3">Popular</div>
+                  )}
+                  <div className="font-bold text-base text-gray-900 mb-1">{p.name}</div>
+                  <div className="text-xs text-gray-500 mb-4">{p.desc}</div>
+                  <div className="text-[32px] font-extrabold text-gray-900 leading-none">
                     <sup className="text-lg align-top">€</sup>{p.price}
                   </div>
-                  <div className="text-sm text-brand-muted mb-6">/mes</div>
-                  <ul className="space-y-2 mb-6">
-                    {p.features.map(f => (
-                      <li key={f} className="text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:font-bold"> {f}</li>
-                    ))}
-                  </ul>
-                  <a href="#contacto" className={`block text-center font-bold text-sm py-3 rounded-xl transition-all ${p.popular ? 'bg-brand-yellow text-brand-text hover:bg-brand-yellow-dark' : 'bg-brand-bg-section border border-brand-border text-brand-text hover:border-brand-text'}`}>
-                    Elegir este plan
-                  </a>
+                  <div className="text-xs text-gray-400 mt-1 mb-4">por mes</div>
+                  <div className="text-xs text-gray-600">{p.agents} agente{p.agents !== 1 ? 's' : ''}</div>
                 </div>
               ))}
+            </div>
+
+            <div className="text-center">
+              <Link
+                to="/checkout"
+                className="inline-block bg-brand-yellow text-gray-900 font-bold px-10 py-4 rounded-xl hover:bg-brand-yellow-dark transition-all text-base"
+              >
+                Contratar plan {plan.name} — {plan.price}/mes
+              </Link>
+              <p className="text-xs text-gray-400 mt-3">Sin compromiso. Cancela cuando quieras.</p>
             </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="py-16 px-6 bg-brand-bg border-t border-brand-border">
-          <div className="max-w-[700px] mx-auto">
-            <h2 className="text-center text-2xl font-bold text-brand-text mb-8">Preguntas frecuentes</h2>
-            <div className="space-y-3">
-              {faqs.map((f, i) => (
-                <div key={i} className="border border-brand-border rounded-xl overflow-hidden">
-                  <button
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex justify-between items-center gap-4 px-6 py-4.5 text-left font-semibold text-sm text-brand-text hover:bg-brand-bg-section transition-colors"
-                  >
-                    <span>{f.q}</span>
-                    <span className="text-brand-muted text-lg flex-shrink-0">{openFaq === i ? '−' : '+'}</span>
-                  </button>
-                  {openFaq === i && (
-                    <div className="px-6 pb-4.5 text-sm text-brand-secondary leading-relaxed border-t border-brand-border">
-                      <div className="pt-4">{f.a}</div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section id="contacto" className="py-16 px-6 bg-brand-yellow">
-          <div className="max-w-[480px] mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-brand-text mb-4">¿Hablamos de tu proyecto?</h2>
-            <p className="text-brand-secondary mb-6 text-sm">Rellena el formulario y te respondemos en menos de 24h.</p>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <input
-                type="text"
-                placeholder="Tu nombre"
-                value={form.nombre}
-                onChange={e => setForm({ ...form, nombre: e.target.value })}
-                className="w-full border border-brand-border rounded-xl px-4 py-3.5 text-sm text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-text bg-white"
-              />
-              <input
-                type="email"
-                placeholder="tu@empresa.com"
-                value={form.email}
-                onChange={e => setForm({ ...form, email: e.target.value })}
-                className="w-full border border-brand-border rounded-xl px-4 py-3.5 text-sm text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-text bg-white"
-              />
-              <textarea
-                rows="4"
-                placeholder="Cuéntanos qué necesitas..."
-                value={form.mensaje}
-                onChange={e => setForm({ ...form, mensaje: e.target.value })}
-                className="w-full border border-brand-border rounded-xl px-4 py-3.5 text-sm text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-text bg-white resize-y"
-              />
-              <button type="submit" className="bg-brand-text text-white font-bold py-3.5 rounded-xl hover:opacity-90 transition-all">
-                Enviar mensaje
-              </button>
-              <p className="text-xs text-brand-secondary">Sin compromiso. Respondemos en menos de 24h.</p>
-            </form>
+        <section className="py-16 px-6 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-[600px] mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Preguntas frecuentes</h2>
+            {[
+              { q: '¿Qué es un Profesional Agéntico?', a: 'Es un agente de IA especializado en un área concreta (marketing, ventas, atención al cliente, operaciones o data) que trabaja para tu negocio de forma autónoma, 24/7.' },
+              { q: '¿Necesito conocimientos técnicos?', a: 'No. Lo configuramos todo nosotros. Tú solo nos dices qué necesitas.' },
+              { q: '¿Puedo cancelar cuando quiera?', a: 'Sí. Sin permanencias ni penalizaciones. Cancela cuando quieras desde tu panel.' },
+              { q: '¿Cómo funcionan los agentes?', a: 'Les defines objetivos y trabajan de forma autónoma. Recibes reportes periódicos y puedes hablar con ellos en cualquier momento.' },
+              { q: '¿Qué incluye el soporte?', a: 'Email en Básico, prioritario en Equipo, y dedicado 24/7 en Dirección. Siempre tienes a alguien disponible.' },
+            ].map((f, i) => (
+              <div key={i} className="border border-gray-200 rounded-xl mb-2 bg-white overflow-hidden">
+                <div className="px-6 py-4 font-semibold text-sm text-gray-900">{f.q}</div>
+                <div className="px-6 pb-4 text-xs text-gray-500 leading-relaxed">{f.a}</div>
+              </div>
+            ))}
           </div>
         </section>
       </main>
-      <Footer />
+
+      {/* Footer mínimo */}
+      <footer className="py-8 px-6 border-t border-gray-100 text-center">
+        <a href="/" className="text-xs text-gray-400 hover:text-gray-600">MyCompi</a>
+        <span className="mx-3 text-gray-300">·</span>
+        <a href="/login" className="text-xs text-gray-400 hover:text-gray-600">Iniciar sesión</a>
+        <span className="mx-3 text-gray-300">·</span>
+        <span className="text-xs text-gray-400">© 2026 MyCompi</span>
+      </footer>
     </div>
   )
 }
