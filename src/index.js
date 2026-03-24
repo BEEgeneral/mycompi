@@ -6,7 +6,15 @@ const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// ─────────────────────────────────────────
+// RAW BODY para webhook de Stripe
+// Necesita el body sin parsear para verificar la firma HMAC
+// ─────────────────────────────────────────
+app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
+
+// ─────────────────────────────────────────
+// MIDDLEWARE global (para todas las demás rutas)
+// ─────────────────────────────────────────
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
@@ -17,7 +25,7 @@ console.log('🚀 MyCompi starting...');
 console.log('Environment:', process.env.NODE_ENV);
 console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'set' : 'NOT SET');
 
-// Inicializar DB (optional - app works without)
+// Inicializar DB
 if (process.env.DATABASE_URL) {
   const { initDB } = require('./models/db');
   initDB().then(() => {
@@ -40,17 +48,22 @@ const adminRoutes = require('./routes/admin');
 const digestRoutes = require('./routes/digest');
 const stripeRoutes = require('./routes/stripe');
 
+const { AGENTS } = require('./services/agentLoader');
+
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/agentes', agentesRoutes);
 app.use('/api/trabajos', trabajosRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use('/api/auth', authRoutes.router);
 app.use('/api/chat', chatRoutes);
-// Exponer AGENTS para que las rutas puedan acceder
+app.use('/api/stripe', stripeRoutes);
+
+// Exponer AGENTS para las rutas
 app.use((req, res, next) => {
   req.app.set('AGENTS', AGENTS);
   next();
 });
+
 app.use('/api/admin', adminRoutes);
 app.use('/api/orchestrator', digestRoutes);
 
@@ -59,11 +72,8 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// SPA catch-all — cualquier ruta desconocida sirve index.html para que HashRouter funcione
-// IMPORTANTE: excluimos /api/* que ya están manejadas por las rutas acima
+// SPA catch-all
 app.get('*', (req, res) => {
-  // Si la petición es para una ruta de API, no debería llegar aquí
-  // Pero si llega, devolvemos 404
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'Not found' });
   }
