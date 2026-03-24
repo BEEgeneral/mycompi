@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const links = [
-  { href: '/#servicios', label: 'Servicios' },
-  { href: '/#equipo', label: 'Equipo' },
-  { href: '/#precios', label: 'Precios' },
-  { href: '/#faq', label: 'FAQ' },
+  { href: '#servicios', label: 'Servicios' },
+  { href: '#equipo', label: 'Equipo' },
+  { href: '#precios', label: 'Precios' },
+  { href: '#faq', label: 'FAQ' },
   { href: '/contratacion', label: 'Contratar' },
 ]
 
