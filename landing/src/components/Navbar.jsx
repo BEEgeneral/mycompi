@@ -82,9 +82,9 @@ export default function Navbar() {
           {loggedIn ? (
             <>
               {isAdmin && (
-                <Link to="/admin" className="text-sm font-semibold text-brand-secondary hover:text-brand-text transition-colors">
+                <a href="/admin" className="text-sm font-semibold text-brand-secondary hover:text-brand-text transition-colors">
                   Admin
-                </Link>
+                </a>
               )}
               <div className="flex items-center gap-3">
                 <span className="text-sm text-brand-secondary">Hola, {userName}</span>
@@ -136,9 +136,9 @@ export default function Navbar() {
           {loggedIn ? (
             <>
               {isAdmin && (
-                <Link to="/admin" onClick={() => setOpen(false)} className="text-sm font-semibold text-brand-secondary hover:text-brand-text py-2">
+                <a href="/admin" onClick={() => setOpen(false)} className="text-sm font-semibold text-brand-secondary hover:text-brand-text py-2">
                   Admin
-                </Link>
+                </a>
               )}
               <button onClick={logout} className="text-sm text-brand-secondary hover:text-brand-text py-2 text-left">
                 Salir ({userName})
