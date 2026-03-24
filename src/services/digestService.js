@@ -24,11 +24,10 @@ function getActivitiesByAgent(logs) {
   logs.forEach(log => {
     const agent = log.agente || 'unknown'
     if (!byAgent[agent]) {
-      byAgent[agent] = { count: 0, tokens: 0, costo: 0, lastActivity: null }
+      byAgent[agent] = { count: 0, sessions: [], lastActivity: null }
     }
     byAgent[agent].count++
-    byAgent[agent].tokens += log.tokens?.total || 0
-    byAgent[agent].costo += log.costoEstimado || 0
+    byAgent[agent].sessions.push({ timestamp: log.timestamp, tipo: log.tipo || 'consulta' })
     byAgent[agent].lastActivity = log.timestamp
   })
   return byAgent
@@ -36,13 +35,8 @@ function getActivitiesByAgent(logs) {
 
 function formatAgentLine(agentId, data) {
   const name = AGENT_NAMES[agentId] || agentId
-  const lines = []
-  
-  if (data.count > 0) {
-    lines.push(`  - ${name}: ${data.count} sesión${data.count !== 1 ? 'es' : ''}, ${Math.round(data.tokens).toLocaleString()} tokens`)
-  }
-  
-  return lines.join('\n')
+  if (data.count === 0) return null
+  return `  - ${name}: ${data.count} sesión${data.count !== 1 ? 'es' : ''}`
 }
 
 /**
