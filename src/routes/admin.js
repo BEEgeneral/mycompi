@@ -18,13 +18,22 @@ const router = express.Router();
 
 const AGENTS_PATH = path.join(__dirname, '../../agents');
 
-// Middleware: solo owner puede acceder
+// Middleware: solo owner o ADMIN puede acceder
 async function ownerOnly(req, res, next) {
-  // Por ahora, verificamos por header o IP localhost
-  // En producción usar auth con rol específico
+  // Soporta X-Owner-Key (legacy) o Bearer JWT
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith('Bearer ')) {
+    const jwt = require('jsonwebtoken');
+    try {
+      const decoded = jwt.verify(auth.slice(7), process.env.JWT_SECRET);
+      if (decoded.rol_platform === 'ADMIN' || decoded.rol_platform === 'OWNER') {
+        req.usuario = decoded;
+        return next();
+      }
+    } catch {}
+  }
   const isLocalhost = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1';
   const isOwner = req.headers['x-owner-key'] === process.env.OWNER_KEY;
-  
   if (!isLocalhost && !isOwner) {
     return res.status(403).json({ error: 'Acceso denegado. Solo el owner.' });
   }
@@ -71,9 +80,12 @@ router.get('/agentes/:id', ownerOnly, (req, res) => {
       }
     });
     
+    // Métricas del agente (desde tracking en memoria)
+    const metricas = req.app.get('metricas')?.agentes?.find(a => a.agenteId === id) || {};
+    
     res.json({
       ok: true,
-      agente: { ...info, archivos },
+      agente: { ...info, archivos, metricas },
     });
   } catch (err) {
     console.error('Error obteniendo agente:', err);
@@ -332,6 +344,47 @@ router.put('/agentes/:id/clientes/:clienteId', ownerOnly, (req, res) => {
 // GET /api/admin/metrics/dashboard
 // ─────────────────────────────────────────
 
+
+// ─────────────────────────────────────────
+// OBTENER ARCHIVOS DE UN AGENTE
+// GET /api/admin/agentes/:id/archivos
+// ─────────────────────────────────────────
+router.get('/agentes/:id/archivos', ownerOnly, (req, res) => {
+  const { id } = req.params;
+  const agentPath = path.join(AGENTS_PATH, id);
+  if (!fs.existsSync(agentPath)) {
+    return res.status(404).json({ error: 'Agente no encontrado' });
+  }
+  const archivos = {};
+  ['SOUL.md', 'IDENTITY.md', 'AGENTS.md', 'MEMORY.md', 'HEARTBEAT.md'].forEach(file => {
+    const filePath = path.join(agentPath, file);
+    if (fs.existsSync(filePath)) {
+      archivos[file] = fs.readFileSync(filePath, 'utf8');
+    }
+  });
+  res.json({ archivos });
+});
+
+// ─────────────────────────────────────────
+// GUARDAR ARCHIVO DE UN AGENTE
+// PUT /api/admin/agentes/:id/archivos/:file
+// ─────────────────────────────────────────
+router.put('/agentes/:id/archivos/:file', ownerOnly, (req, res) => {
+  const { id, file } = req.params;
+  const { contenido } = req.body;
+  if (!contenido) return res.status(400).json({ error: 'Falta contenido' });
+  const allowed = ['SOUL.md', 'IDENTITY.md', 'AGENTS.md', 'MEMORY.md', 'HEARTBEAT.md', 'SKILL.md', 'TOOLS.md', 'USER.md'];
+  if (!allowed.includes(file)) {
+    return res.status(400).json({ error: 'Archivo no permitido' });
+  }
+  const agentPath = path.join(AGENTS_PATH, id);
+  if (!fs.existsSync(agentPath)) {
+    return res.status(404).json({ error: 'Agente no encontrado' });
+  }
+  const filePath = path.join(agentPath, file);
+  fs.writeFileSync(filePath, contenido, 'utf8');
+  res.json({ ok: true, archivo: file });
+});
 router.get('/metrics/dashboard', ownerOnly, (req, res) => {
   try {
     const tokenController = require('../services/tokenController');
