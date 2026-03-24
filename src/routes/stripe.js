@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
-const { requireAuth } = require('./auth');
+const { authMiddleware } = require('./auth');
 const prisma = require('../lib/db');
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
@@ -37,7 +37,7 @@ router.post('/create-checkout', async (req, res) => {
     const priceId = prices[planId];
     if (!priceId) return res.status(400).json({ error: 'Plan no válido' });
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
       customer_email: email,
@@ -61,14 +61,14 @@ router.post('/create-checkout', async (req, res) => {
 // GET SUBSCRIPTION STATUS
 // GET /api/stripe/subscription
 // ─────────────────────────────────────────
-router.get('/subscription', requireAuth, async (req, res) => {
+router.get('/subscription', authMiddleware, async (req, res) => {
   try {
     const cliente = await prisma.cliente.findUnique({ where: { email: req.usuario.email } });
     if (!cliente?.stripeCustomerId) {
       return res.json({ subscription: null });
     }
 
-    const subscriptions = await stripe.subscriptions.list({
+    const subscriptions = await getStripe().subscriptions.list({
       customer: cliente.stripeCustomerId,
       limit: 1,
     });
@@ -95,14 +95,14 @@ router.get('/subscription', requireAuth, async (req, res) => {
 // CANCEL SUBSCRIPTION
 // POST /api/stripe/cancel
 // ─────────────────────────────────────────
-router.post('/cancel', requireAuth, async (req, res) => {
+router.post('/cancel', authMiddleware, async (req, res) => {
   try {
     const cliente = await prisma.cliente.findUnique({ where: { email: req.usuario.email } });
     if (!cliente?.stripeCustomerId) {
       return res.status(400).json({ error: 'No hay suscripción activa' });
     }
 
-    const subscriptions = await stripe.subscriptions.list({
+    const subscriptions = await getStripe().subscriptions.list({
       customer: cliente.stripeCustomerId,
       limit: 1,
     });
@@ -110,7 +110,7 @@ router.post('/cancel', requireAuth, async (req, res) => {
     const sub = subscriptions.data[0];
     if (!sub) return res.status(400).json({ error: 'No se encontró suscripción' });
 
-    const deleted = await stripe.subscriptions.cancel(sub.id);
+    const deleted = await getStripe().subscriptions.cancel(sub.id);
     res.json({ ok: true, status: deleted.status });
   } catch (err) {
     console.error('Stripe cancel error:', err);
@@ -122,14 +122,14 @@ router.post('/cancel', requireAuth, async (req, res) => {
 // CREATE CUSTOMER PORTAL SESSION
 // POST /api/stripe/portal
 // ─────────────────────────────────────────
-router.post('/portal', requireAuth, async (req, res) => {
+router.post('/portal', authMiddleware, async (req, res) => {
   try {
     const cliente = await prisma.cliente.findUnique({ where: { email: req.usuario.email } });
     if (!cliente?.stripeCustomerId) {
       return res.status(400).json({ error: 'No hay cuenta de Stripe' });
     }
 
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
       customer: cliente.stripeCustomerId,
       return_url: `${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/dashboard`,
     });
@@ -150,7 +150,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('Webhook signature error:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
