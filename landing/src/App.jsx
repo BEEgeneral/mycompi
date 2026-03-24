@@ -15,6 +15,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Recuperar from './pages/Recuperar'
 import ResetPassword from './pages/ResetPassword'
+import Checkout from './pages/Checkout'
 
 function HomePage() {
   return (
@@ -25,7 +26,6 @@ function HomePage() {
         <Stats />
         <Services />
         <TeamPresentation />
-        <Pricing />
         <Testimonials />
         <FAQ />
         <Contact />
