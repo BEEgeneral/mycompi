@@ -29,9 +29,9 @@ router.post('/create-checkout', async (req, res) => {
   try {
     // Price IDs de Stripe (crear en dashboard o vía API)
     const prices = {
-      basico: 'price_1TEXKkFnOlGTfuoBP7zBsGfX',      // €147/mes
-      profesional: 'price_1TEXKkFnOlGTfuoBDG0DMKbu', // €597/mes
-      enterprise: 'price_1TEXKlFnOlGTfuoBFCGCqZE5',  // €1320/mes
+      basico: 'price_1TEXi9FnOlGTfuoBl8zSYAZL',       // €10/mes
+      profesional: 'price_1TEXiAFnOlGTfuoBgSv2DSR8',  // €49/mes
+      enterprise: 'price_1TEXiAFnOlGTfuoBetVGAB8Q',   // €147/mes
     };
 
     const priceId = prices[planId];
