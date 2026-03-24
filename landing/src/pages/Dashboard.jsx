@@ -1,176 +1,196 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
-// Agent definitions (from DB)
-const AGENTS = [
-  { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-pink-400 to-rose-500' },
-  { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-blue-400 to-indigo-500' },
-  { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-green-400 to-emerald-500' },
-  { id: 'elena', nombre: 'Elena Ortega', rol: 'Operaciones', emoji: '⚙️', color: 'from-orange-400 to-amber-500' },
-  { id: 'diana', nombre: 'Diana Palau', rol: 'Data & Growth', emoji: '📈', color: 'from-purple-400 to-violet-500' },
-  { id: 'alberto', nombre: 'Alberto Gala', rol: 'Desarrollo', emoji: '💻', color: 'from-cyan-400 to-teal-500' },
-]
+const API = ''
 
-const STATUS_CONFIG = {
-  activo: { label: 'Activo', dot: 'bg-green-400', glow: 'shadow-green-400/50', text: 'text-green-600', bg: 'bg-green-50 border-green-200' },
-  descansando: { label: 'Descansando', dot: 'bg-yellow-400', glow: 'shadow-yellow-400/50', text: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-200' },
-  offline: { label: 'Offline', dot: 'bg-gray-400', glow: '', text: 'text-gray-500', bg: 'bg-gray-50 border-gray-200' },
+// Agentes disponibles por plan
+const AGENTES_POR_PLAN = {
+  BASICO: [
+    { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-pink-400 to-rose-500' },
+  ],
+  EQUIPO: [
+    { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-pink-400 to-rose-500' },
+    { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-blue-400 to-indigo-500' },
+    { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-green-400 to-emerald-500' },
+  ],
+  DIRECCION: [
+    { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-pink-400 to-rose-500' },
+    { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-blue-400 to-indigo-500' },
+    { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-green-400 to-emerald-500' },
+    { id: 'elena', nombre: 'Elena Ortega', rol: 'Operaciones', emoji: '⚙️', color: 'from-orange-400 to-amber-500' },
+    { id: 'diana', nombre: 'Diana Palau', rol: 'Data & Growth', emoji: '📈', color: 'from-purple-400 to-violet-500' },
+    { id: 'marcos', nombre: 'Marcos Fernández', rol: 'Desarrollo Web', emoji: '💻', color: 'from-cyan-400 to-teal-500' },
+  ],
 }
 
-// Demo activity feed
-const DEMO_ACTIVITY = [
-  { agent: 'laura', text: 'Respondió 12 conversaciones', time: 'Hace 5 min', emoji: '💬' },
-  { agent: 'enzo', text: 'Generó informe semanal de marketing', time: 'Hace 2h', emoji: '📊' },
-  { agent: 'diana', text: 'Procesó 34 leads nuevos', time: 'Hace 5h', emoji: '📈' },
-  { agent: 'carlos', text: 'Cerró 3 deals por €2.400', time: 'Ayer', emoji: '💼' },
-  { agent: 'elena', text: 'Automatizó 8 procesos internos', time: 'Ayer', emoji: '⚙️' },
-]
-
-// Demo metrics
-const DEMO_METRICS = {
-  agentesActivos: 5,
-  conversaciones: 142,
-  tokensUsados: '28.4K',
-  costoMensual: '€23.40',
+const TIPO_LABELS = {
+  CREAR_CONTENIDO: 'Crear contenido',
+  CONSULTAR_INFO: 'Consultar',
+  MODIFICAR_SOLICITUD: 'Modificar',
+  QUEJA: 'Queja',
+  ALERTA: 'Alerta',
+  OTRO: 'Otro',
 }
 
-function AgentCard({ agent, status = 'activo', messages = 0 }) {
-  const s = STATUS_CONFIG[status] || STATUS_CONFIG.offline
+function AgentCard({ agent, expanded, onToggle }) {
   return (
     <div className="relative group">
-      {/* Glow effect when active */}
-      {status === 'activo' && (
-        <div className={`absolute inset-0 bg-gradient-to-br ${agent.color} rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity`} />
+      {agent.status === 'activo' && (
+        <div className={`absolute inset-0 bg-gradient-to-br ${agent.color} rounded-2xl blur-xl opacity-20`} />
       )}
-      <div className="relative bg-white border border-gray-100 rounded-2xl p-5 hover:border-gray-200 hover:shadow-lg transition-all">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-2xl shadow-lg`}>
+      <div className="relative bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg transition-all">
+        <div className="flex items-center gap-3 mb-3">
+          <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-xl shadow-lg`}>
             {agent.emoji}
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className={`w-2.5 h-2.5 rounded-full ${s.dot} ${s.glow ? `shadow-md ${s.glow}` : ''}`} />
-            <span className={`text-xs font-semibold ${s.text}`}>{s.label}</span>
+          <div>
+            <div className="font-bold text-sm text-gray-900">{agent.nombre}</div>
+            <div className="text-xs text-gray-400">{agent.rol}</div>
           </div>
         </div>
-
-        {/* Info */}
-        <div className="mb-3">
-          <div className="font-bold text-sm text-gray-900">{agent.nombre}</div>
-          <div className="text-xs text-gray-500 mt-0.5">{agent.rol}</div>
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${agent.status === 'activo' ? 'bg-green-400' : agent.status === 'descansando' ? 'bg-yellow-400' : 'bg-gray-300'}`} />
+          <span className="text-xs text-gray-500 capitalize">{agent.status || 'offline'}</span>
         </div>
-
-        {/* Stats */}
-        {status === 'activo' && (
-          <div className="flex items-center gap-3 text-xs text-gray-400">
-            <span className="flex items-center gap-1">💬 {messages}</span>
-            <span className="w-px h-3 bg-gray-200" />
-            <span className="flex items-center gap-1">⚡ Online</span>
-          </div>
-        )}
-
-        {/* Action */}
-        <Link
-          to="/chat"
-          className={`mt-4 block text-center text-xs font-bold py-2 rounded-lg transition-all ${
-            status === 'activo'
-              ? 'bg-gray-900 text-white hover:bg-gray-800'
-              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          {status === 'activo' ? 'Chatear' : 'Offline'}
-        </Link>
       </div>
     </div>
   )
 }
 
-function ActivityFeed({ activities }) {
+function ChatWidget({ usuario, token }) {
+  const [mensajes, setMensajes] = useState([])
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const bottomRef = useRef(null)
+
+  useEffect(() => {
+    if (!token) return
+    fetch('/api/chat/interacciones?limit=20', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { if (d.interacciones) setMensajes(d.interacciones.reverse()) })
+      .catch(() => {})
+  }, [token])
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [mensajes])
+
+  const enviar = async (e) => {
+    e.preventDefault()
+    if (!input.trim() || loading) return
+    setLoading(true)
+    const texto = input.trim()
+    setInput('')
+
+    // Optimistic update
+    setMensajes(prev => [...prev, {
+      tipoPeticion: 'CONSULTAR_INFO',
+      mensajeOriginal: texto,
+      createdAt: new Date().toISOString(),
+    }])
+
+    try {
+      const res = await fetch('/api/chat/interaccion', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipoPeticion: 'CONSULTAR_INFO', mensajeOriginal: texto }),
+      })
+      const d = await res.json()
+      if (d.ok && d.interaccion) {
+        // Replace optimistic with real
+        setMensajes(prev => prev.map((m, i) => i === prev.length - 1 && m.mensajeOriginal === texto ? d.interaccion : m))
+      }
+    } catch {}
+
+    setLoading(false)
+  }
+
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-        <h3 className="font-bold text-sm text-gray-900">Actividad reciente</h3>
-        <span className="text-xs text-gray-400">Live</span>
+    <div className="bg-white rounded-2xl border border-gray-200 flex flex-col" style={{ height: '480px' }}>
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-lg">🎯</div>
+        <div>
+          <div className="font-bold text-sm text-gray-900">Orquestador</div>
+          <div className="text-xs text-gray-400">Tu asistente de equipo</div>
+        </div>
       </div>
-      <div className="divide-y divide-gray-50">
-        {activities.map((a, i) => {
-          const agent = AGENTS.find(g => g.id === a.agent)
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+        {mensajes.length === 0 && (
+          <div className="text-center py-8 text-sm text-gray-400">
+            <div className="text-3xl mb-2">🎯</div>
+            <div>Sin mensajes aún. ¡Escríbele al Orquestador!</div>
+          </div>
+        )}
+        {mensajes.map((m, i) => {
+          const isUser = !m.agenteId || m.agenteId === 'cliente'
           return (
-            <div key={i} className="px-6 py-3.5 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-sm flex-shrink-0">
-                {agent?.emoji || '🤖'}
+            <div key={m.id || i} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+                isUser
+                  ? 'bg-indigo-600 text-white rounded-br-md'
+                  : 'bg-gray-100 text-gray-800 rounded-bl-md'
+              }`}>
+                <div>{m.mensajeOriginal || m.respuestaAgente}</div>
+                <div className={`text-[10px] mt-1 ${isUser ? 'text-indigo-200' : 'text-gray-400'} text-right`}>
+                  {new Date(m.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs text-gray-700 font-medium">{a.text}</div>
-                <div className="text-[10px] text-gray-400 mt-0.5">{a.time}</div>
-              </div>
-              <div className="text-sm flex-shrink-0">{a.emoji}</div>
             </div>
           )
         })}
+        <div ref={bottomRef} />
       </div>
+
+      {/* Input */}
+      <form onSubmit={enviar} className="border-t border-gray-100 p-3 flex gap-2">
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Escríbele al Orquestador..."
+          className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+        />
+        <button type="submit" disabled={loading || !input.trim()}
+          className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+          {loading ? '...' : 'Enviar'}
+        </button>
+      </form>
     </div>
   )
 }
 
-function MetricCard({ icon, value, label, trend }) {
+function InteraccionesList({ interacciones }) {
+  if (!interacciones?.length) {
+    return (
+      <div className="text-center py-8 text-sm text-gray-400">
+        Sin actividad todavía. Tu Orquestador te mantendrá informado.
+      </div>
+    )
+  }
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5">
-      <div className="flex items-start justify-between mb-3">
-        <span className="text-2xl">{icon}</span>
-        {trend && (
-          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${trend.up ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
-            {trend.up ? '↑' : '↓'} {trend.val}
-          </span>
-        )}
-      </div>
-      <div className="text-2xl font-extrabold text-gray-900 tabular-nums">{value}</div>
-      <div className="text-xs text-gray-500 mt-1">{label}</div>
-    </div>
-  )
-}
-
-function StatusOverview({ active, resting, offline }) {
-  const total = active + resting + offline
-  const activePct = Math.round((active / total) * 100)
-  const restingPct = Math.round((resting / total) * 100)
-  return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold text-sm text-gray-900">Estado del equipo</h3>
-        <span className="text-xs text-gray-400">{total} agentes</span>
-      </div>
-
-      {/* Bar */}
-      <div className="h-3 bg-gray-100 rounded-full overflow-hidden flex mb-4">
-        {active > 0 && (
-          <div className="bg-green-400 h-full" style={{ width: `${activePct}%` }} title={`Activos: ${active}`} />
-        )}
-        {resting > 0 && (
-          <div className="bg-yellow-400 h-full" style={{ width: `${restingPct}%` }} title={`Descansando: ${resting}`} />
-        )}
-        {offline > 0 && (
-          <div className="bg-gray-300 h-full flex-1" title={`Offline: ${offline}`} />
-        )}
-      </div>
-
-      {/* Legend */}
-      <div className="space-y-2">
-        {[
-          { key: 'activo', label: 'Activos', count: active, color: 'bg-green-400', text: 'text-green-600' },
-          { key: 'descansando', label: 'Descansando', count: resting, color: 'bg-yellow-400', text: 'text-yellow-600' },
-          { key: 'offline', label: 'Offline', count: offline, color: 'bg-gray-300', text: 'text-gray-500' },
-        ].map(item => (
-          <div key={item.key} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
-              <span className="text-xs text-gray-600">{item.label}</span>
-            </div>
-            <span className={`text-xs font-bold ${item.text}`}>{item.count}</span>
+    <div className="space-y-2">
+      {interacciones.map(m => (
+        <div key={m.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+          <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-sm flex-shrink-0">
+            {m.clienteAcepta === true ? '✅' : m.clienteAcepta === false ? '❌' : '⏳'}
           </div>
-        ))}
-      </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">
+                {TIPO_LABELS[m.tipoPeticion] || m.tipoPeticion}
+              </span>
+              <span className="text-[10px] text-gray-400">
+                {new Date(m.createdAt).toLocaleDateString('es-ES')}
+              </span>
+            </div>
+            <div className="text-sm text-gray-700 truncate">{m.mensajeOriginal}</div>
+            {m.respuestaAgente && (
+              <div className="text-xs text-gray-500 mt-1 truncate">→ {m.respuestaAgente}</div>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -178,176 +198,182 @@ function StatusOverview({ active, resting, offline }) {
 export default function Dashboard() {
   const navigate = useNavigate()
   const [usuario, setUsuario] = useState(null)
+  const [token, setToken] = useState(localStorage.getItem('mycompi_token'))
+  const [subscription, setSubscription] = useState(null)
+  const [interacciones, setInteracciones] = useState([])
+  const [tab, setTab] = useState('equipo') // equipo | actividad | cuenta
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all') // all | activo | descansando | offline
 
   useEffect(() => {
-    const token = localStorage.getItem('mycompi_token')
-    const saved = localStorage.getItem('mycompi_usuario')
-    if (!token) {
-      navigate('/login')
-      return
-    }
-    if (saved) {
-      setUsuario(JSON.parse(saved))
-    }
-    setLoading(false)
-  }, [navigate])
+    if (!token) { navigate('/#/login'); return }
+
+    const stored = localStorage.getItem('mycompi_usuario')
+    if (stored) setUsuario(JSON.parse(stored))
+
+    Promise.all([
+      fetch('/api/stripe/subscription', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => ({})),
+      fetch('/api/chat/interacciones?limit=20', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => ({})),
+    ]).then(([subData, chatData]) => {
+      if (subData.subscription) setSubscription(subData.subscription)
+      if (chatData.interacciones) setInteracciones(chatData.interacciones)
+    }).finally(() => setLoading(false))
+  }, [token, navigate])
 
   const logout = () => {
     localStorage.removeItem('mycompi_token')
     localStorage.removeItem('mycompi_usuario')
-    navigate('/login')
+    navigate('/#/login')
   }
 
-  if (loading) return null
-
-  // Simulated agent statuses (in prod this comes from API)
-  const agentStatuses = {
-    laura: 'activo',
-    enzo: 'activo',
-    carlos: 'descansando',
-    elena: 'offline',
-    diana: 'activo',
-    alberto: 'activo',
-  }
-
-  const agentMessages = {
-    laura: 14,
-    enzo: 6,
-    carlos: 0,
-    elena: 0,
-    diana: 9,
-    alberto: 3,
-  }
-
-  const filteredAgents = AGENTS.filter(a => {
-    if (filter === 'all') return true
-    return agentStatuses[a.id] === filter
-  })
-
-  const activeCount = Object.values(agentStatuses).filter(s => s === 'activo').length
-  const restingCount = Object.values(agentStatuses).filter(s => s === 'descansando').length
-  const offlineCount = Object.values(agentStatuses).filter(s => s === 'offline').length
+  const plan = subscription?.planId || 'basico'
+  const agentes = AGENTES_POR_PLAN[plan?.toUpperCase()] || AGENTES_POR_PLAN.BASICO
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      <main className="max-w-[1200px] mx-auto px-6 pt-[88px] pb-16">
+      <div className="max-w-[1100px] mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-extrabold text-gray-900">
-              Hola, {usuario?.nombre?.split(' ')[0] || 'Usuario'}
+              ¡Hola, {usuario?.nombre?.split(' ')[0] || 'Cliente'}!
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Aquí tienes el estado de tu equipo agéntico
+              Plan <span className="font-bold text-indigo-600">{plan?.toUpperCase()}</span>
+              {subscription?.status === 'active' && (
+                <span className="ml-2 text-green-600 text-xs font-semibold">● Suscrito</span>
+              )}
             </p>
           </div>
-          <button
-            onClick={logout}
-            className="text-sm text-gray-500 hover:text-gray-900 border border-gray-200 px-4 py-2 rounded-xl transition-colors self-start"
-          >
+          <button onClick={logout} className="text-sm text-gray-500 hover:text-red-600 transition-colors">
             Cerrar sesión
           </button>
         </div>
 
-        {/* Plan banner */}
-        <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-6 mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Tu plan</div>
-              <div className="text-xl font-extrabold text-white">
-                {(usuario?.cliente?.plan || 'EQUIPO')} —{' '}
-                <span className="text-brand-yellow">€49/mes</span>
-              </div>
-              <div className="text-xs text-gray-400 mt-1">
-                {activeCount}/{AGENTS.length} agentes activos · Renovación en 14 días
-              </div>
-            </div>
-            <a
-              href="#"
-              className="bg-brand-yellow text-gray-900 font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-yellow-300 transition-all self-start"
-            >
-              Gestionar plan
-            </a>
-          </div>
-        </div>
-
-        {/* Metrics row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <MetricCard icon="🤖" value={activeCount} label="Agentes activos" trend={{ up: true, val: '100%' }} />
-          <MetricCard icon="💬" value={DEMO_METRICS.conversaciones} label="Conversaciones" trend={{ up: true, val: '+12%' }} />
-          <MetricCard icon="⚡" value={DEMO_METRICS.tokensUsados} label="Tokens usados" trend={{ up: true, val: '+8%' }} />
-          <MetricCard icon="💰" value={DEMO_METRICS.costoMensual} label="Costo del mes" />
-        </div>
-
-        {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Left: Agent grid */}
-          <div className="lg:col-span-2">
-            {/* Filter tabs */}
-            <div className="flex items-center gap-2 mb-4">
-              {[
-                { key: 'all', label: 'Todos' },
-                { key: 'activo', label: 'Activos' },
-                { key: 'descansando', label: 'Descansando' },
-                { key: 'offline', label: 'Offline' },
-              ].map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setFilter(tab.key)}
-                  className={`text-xs font-semibold px-4 py-2 rounded-full transition-all ${
-                    filter === tab.key
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Agent cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {filteredAgents.map(agent => (
-                <AgentCard
-                  key={agent.id}
-                  agent={agent}
-                  status={agentStatuses[agent.id]}
-                  messages={agentMessages[agent.id]}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Status + Activity */}
-          <div className="space-y-6">
-            <StatusOverview active={activeCount} resting={restingCount} offline={offlineCount} />
-            <ActivityFeed activities={DEMO_ACTIVITY} />
-          </div>
-        </div>
-
-        {/* Quick actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6">
           {[
-            { label: 'Añadir agente', icon: '➕', desc: 'Expandir equipo' },
-            { label: 'Ver chats', icon: '💬', desc: 'Historial completo' },
-            { label: 'Reportes', icon: '📊', desc: 'Informes semanales' },
-            { label: 'Configurar', icon: '⚙️', desc: 'Ajustes del plan' },
-          ].map(action => (
-            <button
-              key={action.label}
-              className="bg-white border border-gray-100 rounded-xl p-4 text-left hover:border-gray-200 hover:shadow-md transition-all"
-            >
-              <div className="text-xl mb-2">{action.icon}</div>
-              <div className="font-bold text-sm text-gray-900">{action.label}</div>
-              <div className="text-xs text-gray-500 mt-0.5">{action.desc}</div>
+            { id: 'equipo', label: 'Mi equipo' },
+            { id: 'actividad', label: 'Actividad' },
+            { id: 'cuenta', label: 'Mi cuenta' },
+          ].map(t => (
+            <button key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                tab === t.id ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'
+              }`}>
+              {t.label}
             </button>
           ))}
         </div>
-      </main>
+
+        {loading ? (
+          <div className="text-center py-20 text-gray-400 text-sm">Cargando...</div>
+        ) : (
+          <>
+            {/* TAB: EQUIPO */}
+            {tab === 'equipo' && (
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+                <div>
+                  <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
+                    <h2 className="text-base font-bold text-gray-900 mb-1">Tu equipo agéntico</h2>
+                    <p className="text-xs text-gray-400 mb-5">Profesionales trabajando 24/7 para tu negocio</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {agentes.map(a => (
+                        <AgentCard key={a.id} agent={{ ...a, status: 'activo' }} />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Chat con Orquestador */}
+                  <ChatWidget usuario={usuario} token={token} />
+                </div>
+
+                {/* Sidebar derecha */}
+                <div className="space-y-4">
+                  {/* Métricas rápidas */}
+                  <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                    <h3 className="text-sm font-bold text-gray-700 mb-3">Resumen</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <div className="text-xl font-extrabold text-gray-900">{interacciones.length}</div>
+                        <div className="text-[10px] text-gray-400">Interacciones</div>
+                      </div>
+                      <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <div className="text-xl font-extrabold text-gray-900">{agentes.length}</div>
+                        <div className="text-[10px] text-gray-400">Agentes</div>
+                      </div>
+                      <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <div className="text-xl font-extrabold text-green-600">{interacciones.filter(i => i.clienteAcepta).length}</div>
+                        <div className="text-[10px] text-gray-400">Aceptadas</div>
+                      </div>
+                      <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <div className="text-xl font-extrabold text-indigo-600">{plan?.toUpperCase()}</div>
+                        <div className="text-[10px] text-gray-400">Plan</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Últimas interacciones */}
+                  <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                    <h3 className="text-sm font-bold text-gray-700 mb-3">Última actividad</h3>
+                    <InteraccionesList interacciones={interacciones.slice(0, 5)} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: ACTIVIDAD */}
+            {tab === 'actividad' && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                <h2 className="text-base font-bold text-gray-900 mb-4">Historial de actividad</h2>
+                <InteraccionesList interacciones={interacciones} />
+              </div>
+            )}
+
+            {/* TAB: CUENTA */}
+            {tab === 'cuenta' && (
+              <div className="max-w-lg space-y-4">
+                <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                  <h3 className="text-sm font-bold text-gray-700 mb-4">Datos de cuenta</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Nombre</span>
+                      <span className="font-semibold text-gray-900">{usuario?.nombre}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Email</span>
+                      <span className="text-gray-700">{usuario?.email}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Plan</span>
+                      <span className="font-bold text-indigo-600">{plan?.toUpperCase()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Estado</span>
+                      <span className="text-green-600 font-semibold text-xs">● Activo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                  <h3 className="text-sm font-bold text-gray-700 mb-4">Gestionar suscripción</h3>
+                  <a href="https://billing.stripe.com/p/login/test" target="_blank" rel="noreferrer"
+                    className="block w-full text-center bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition-colors text-sm">
+                    Abrir portal de Stripe
+                  </a>
+                </div>
+
+                <button onClick={logout}
+                  className="w-full text-center text-sm text-red-500 hover:text-red-700 py-3 border border-red-200 rounded-xl hover:border-red-300 transition-colors">
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
