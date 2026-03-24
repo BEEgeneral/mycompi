@@ -37,6 +37,7 @@ const pagosRoutes = require('./routes/pagos');
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
+const digestRoutes = require('./routes/digest');
 
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/agentes', agentesRoutes);
@@ -45,6 +46,7 @@ app.use('/api/pagos', pagosRoutes);
 app.use('/api/auth', authRoutes.router);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/orchestrator', digestRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
