@@ -57,7 +57,7 @@ export default function Activar() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <img src="/assets/logo.png" alt="MyCompi" className="h-12 mx-auto mb-5" />
+          <img loading="lazy" decoding="async" src="/assets/logo.png" alt="MyCompi" className="h-12 mx-auto mb-5" />
           <h1 className="text-2xl font-extrabold text-gray-900">Activa tu cuenta</h1>
           <p className="text-sm text-gray-500 mt-2">Crea tu contraseña para acceder a MyCompi</p>
         </div>

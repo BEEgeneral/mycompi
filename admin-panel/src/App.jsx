@@ -33,7 +33,7 @@ function LoginScreen({ onLogin }) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
       <div className="w-full max-w-[380px]">
         <div className="text-center mb-10">
-          <img src="/assets/logo.png" alt="MyCompi" className="h-14 mx-auto mb-5" />
+          <img loading="lazy" decoding="async"/>
           <h1 className="text-2xl font-extrabold text-gray-900">Panel de Administración</h1>
           <p className="text-sm text-gray-500 mt-2">Accede con tu cuenta MyCompi</p>
         </div>
@@ -463,7 +463,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
       <nav className="h-16 bg-white border-b border-gray-200 flex items-center px-6 gap-4 sticky top-0 z-50 shadow-sm">
-        <a href="/" className="h-9"><img src="/assets/logo.png" alt="MyCompi" className="h-full" /></a>
+        <a href="/" className="h-9"><img loading="lazy" decoding="async"/></a>
         <div className="flex-1 flex items-center gap-2">
           <span className="text-xs font-bold text-gray-400">ADMIN</span>
         </div>

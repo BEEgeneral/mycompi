@@ -20,7 +20,7 @@ export default function Hero() {
           </div>
         </div>
         <div>
-          <img src="/assets/dashboard.jpg" alt="MyCompi Dashboard" className="rounded-2xl shadow-lg w-full block" />
+          <img loading="lazy" decoding="async" src="/assets/dashboard.jpg" alt="MyCompi Dashboard" className="rounded-2xl shadow-lg w-full block" />
         </div>
       </div>
     </section>

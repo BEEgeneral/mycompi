@@ -68,7 +68,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-brand-border">
       <div className="h-[68px] max-w-[1200px] mx-auto px-6 md:px-10 flex items-center justify-between">
         <Link to="/">
-          <img src="/assets/logo.png" alt="MyCompi" className="h-[34px]" />
+          <img loading="lazy" decoding="async" src="/assets/logo.png" alt="MyCompi" className="h-[34px]" />
         </Link>
 
         {/* Desktop links */}
