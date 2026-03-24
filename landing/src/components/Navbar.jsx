@@ -124,14 +124,14 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden bg-white border-t border-brand-border px-6 py-4 flex flex-col gap-3">
           {links.map(l => (
-            <Link
+            <a
               key={l.href}
-              to={l.href}
+              href={l.href}
               onClick={() => setOpen(false)}
               className="text-sm font-semibold text-brand-secondary hover:text-brand-text py-2"
             >
               {l.label}
-            </Link>
+            </a>
           ))}
           {loggedIn ? (
             <>
