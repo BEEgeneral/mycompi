@@ -110,7 +110,7 @@ function ChatWidget({ usuario, token }) {
       <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-lg">🎯</div>
         <div>
-          <div className="font-bold text-sm text-gray-900">Orquestador</div>
+          <div className="font-bold text-sm text-gray-900">Paco</div>
           <div className="text-xs text-gray-400">Tu asistente de equipo</div>
         </div>
       </div>
@@ -120,7 +120,7 @@ function ChatWidget({ usuario, token }) {
         {mensajes.length === 0 && (
           <div className="text-center py-8 text-sm text-gray-400">
             <div className="text-3xl mb-2">🎯</div>
-            <div>Sin mensajes aún. ¡Escríbele al Orquestador!</div>
+            <div>Sin mensajes aún. ¡Escríbele al Paco!</div>
           </div>
         )}
         {mensajes.map((m, i) => {
@@ -148,7 +148,7 @@ function ChatWidget({ usuario, token }) {
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
-          placeholder="Escríbele al Orquestador..."
+          placeholder="Escríbele al Paco..."
           className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
         />
         <button type="submit" disabled={loading || !input.trim()}
@@ -240,7 +240,7 @@ function DecisionesPanel({ token }) {
                 <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl">
                   <div className="text-4xl mb-3">📋</div>
                   <div className="text-sm font-bold text-gray-600">Sin standups todavía</div>
-                  <div className="text-xs text-gray-400 mt-1">Tu Orquestador escribe su primer standup esta noche</div>
+                  <div className="text-xs text-gray-400 mt-1">Tu Paco escribe su primer standup esta noche</div>
                 </div>
               )}
               {standups.map(s => <StandupCard key={s.fecha} standup={s} />)}
@@ -296,7 +296,7 @@ function InteraccionesList({ interacciones }) {
   if (!interacciones?.length) {
     return (
       <div className="text-center py-8 text-sm text-gray-400">
-        Sin actividad todavía. Tu Orquestador te mantendrá informado.
+        Sin actividad todavía. Tu Paco te mantendrá informado.
       </div>
     )
   }
@@ -419,7 +419,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Chat con Orquestador */}
+                  {/* Chat con Paco */}
                   <ChatWidget usuario={usuario} token={token} />
                 </div>
 

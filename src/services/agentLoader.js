@@ -23,7 +23,7 @@ const AGENTS = {
   // Agentes internos (sin overlay - uso interno MyCompi)
   marcos: { path: 'marcos-desarrollo', nombre: 'Marcos Fernández', inicial: 'M', color: 'from-cyan-500 to-teal-600', tipo: 'operativo' },
   policia: { path: 'policia-tokens', nombre: 'Policia de Tokens', inicial: 'PT', color: 'from-red-500 to-orange-600', tipo: 'interno' },
-  orquesta: { path: 'orquestador', nombre: 'Orquestador', inicial: 'O', color: 'from-indigo-500 to-purple-600', tipo: 'interno' },
+  orquesta: { path: 'paco', nombre: 'Paco', inicial: 'P', color: 'from-indigo-500 to-purple-600', tipo: 'interno' },
 };
 
 /**

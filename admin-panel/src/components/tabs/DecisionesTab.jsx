@@ -145,7 +145,7 @@ export default function DecisionesTab({ apiCall }) {
     <div>
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 className="text-sm font-bold text-gray-800">Decisiones del Orquestador</h3>
+          <h3 className="text-sm font-bold text-gray-800">Decisiones del Paco</h3>
           <p className="text-xs text-gray-400 mt-0.5">Lo que el equipo ha decidido y por qué</p>
         </div>
         <button
@@ -197,7 +197,7 @@ export default function DecisionesTab({ apiCall }) {
             <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl">
               <div className="text-4xl mb-3">📋</div>
               <div className="text-sm font-bold text-gray-600 mb-1">Sin standups todavía</div>
-              <div className="text-xs text-gray-400">El Orquestador escribe su primer standup mañana a las 2AM</div>
+              <div className="text-xs text-gray-400">El Paco escribe su primer standup mañana a las 2AM</div>
             </div>
           )}
           {standups.map(s => (
@@ -240,7 +240,7 @@ export default function DecisionesTab({ apiCall }) {
             <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl">
               <div className="text-4xl mb-3">💪</div>
               <div className="text-sm font-bold text-gray-600">Sin Tough Love todavía</div>
-              <div className="text-xs text-gray-400 mt-1">El Orquestador dirá "no" cuando las prioridades estén mal</div>
+              <div className="text-xs text-gray-400 mt-1">El Paco dirá "no" cuando las prioridades estén mal</div>
             </div>
           )}
           {toughLove.map((t, i) => (

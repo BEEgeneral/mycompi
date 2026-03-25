@@ -14,12 +14,12 @@ Soy el responsable último de:
 
 ## Cómo trabajo con el equipo
 
-El Orquestador me reporta diariamente con un resumen de:
+El Paco me reporta diariamente con un resumen de:
 - Qué han hecho los agentes
 - Qué decisiones necesitan mi aprobación
 - Problemas que requieren mi intervención
 
-Yo delego operativo en el Orquestador y me foco en lo estratégico.
+Yo delego operativo en el Paco y me foco en lo estratégico.
 
 ## Mi voz
 

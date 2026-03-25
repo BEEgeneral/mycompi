@@ -1,7 +1,7 @@
 /**
  * tools.js — Endpoint centralizado para ejecución de tools por agentes
  *
- * Los agentes (via Orquestador) piden ejecutar tools.
+ * Los agentes (via Paco) piden ejecutar tools.
  * Se verifica plan, permisos, y se delega al registry.
  */
 

@@ -170,7 +170,7 @@ router.put('/documentos/:tipo', authMiddleware, async (req, res) => {
   }
 });
 
-// Obtener standups/decisiones del Orquestador (para cliente)
+// Obtener standups/decisiones del Paco (para cliente)
 router.get('/decisiones', authMiddleware, async (req, res) => {
   try {
     const { limit = 14 } = req.query;

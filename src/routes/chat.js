@@ -1,5 +1,5 @@
 /**
- * chat.js — Chat del cliente con el Orquestador
+ * chat.js — Chat del cliente con el Paco
  */
 const express = require('express');
 const router = express.Router();
@@ -20,7 +20,7 @@ router.post('/interaccion', authMiddleware, async (req, res) => {
     const interaccion = await prisma.interaccionChat.create({
       data: {
         clienteId: req.clienteId,
-        agenteId: 'orquestador',
+        agenteId: 'paco',
         tipoPeticion,
         mensajeOriginal,
         respuestaAgente,

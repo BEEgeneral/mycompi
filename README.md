@@ -23,7 +23,7 @@ mycompi/
 │   ├── routes/
 │   │   ├── auth.js            # Login, register, activate, recover
 │   │   ├── stripe.js          # Checkout, webhook, portal
-│   │   ├── chat.js            # Interacciones cliente-Orquestador
+│   │   ├── chat.js            # Interacciones cliente-Paco
 │   │   ├── digest.js          # Daily digest emails
 │   │   ├── admin.js          # Admin panel API
 │   │   ├── agentes.js         # Agentes
@@ -44,7 +44,7 @@ mycompi/
 │   ├── operaciones/
 │   ├── data/
 │   ├── marcos-desarrollo/
-│   ├── orquestador/
+│   ├── paco/
 │   ├── policia-tokens/
 │   └── personal-asistente/
 ├── landing/                   # Frontend landing (React + Vite)
@@ -77,7 +77,7 @@ Agente           — agentes operativos por cliente
 Trabajo          — tareas asignadas
 Pago             — historial de pagos
 Documento        — documentos subeidos
-InteraccionChat  — aprendizaje del chat cliente-Orquestador
+InteraccionChat  — aprendizaje del chat cliente-Paco
 Mensaje          — mensajes internos entre agentes
 ```
 

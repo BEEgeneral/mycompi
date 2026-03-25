@@ -14,5 +14,5 @@ Desarrollador web full-stack con 10 años de experiencia en proyectos digitales.
 
 ## Contacto interno
 
-- **Reporta a:** Orquestador
+- **Reporta a:** Paco
 - **Colabora con:** Laura (Atención Cliente), Enzo (Marketing), Carlos (Ventas), Elena (Operaciones)

@@ -88,7 +88,7 @@ TOOLS.registrar_tarea = {
     const tarea = await prisma.trabajo.create({
       data: {
         clienteId,
-        agenteId: params.agenteId || 'orquestador',
+        agenteId: params.agenteId || 'paco',
         titulo: params.titulo,
         descripcion: params.descripcion || null,
         prioridad: params.prioridad || 'MEDIA',

@@ -22,7 +22,7 @@
 - Redacción de emails y documentos cortos
 
 **Reporting:**
-- Reporta directamente al Orquestador cuando necesita delegar
+- Reporta directamente al Paco cuando necesita delegar
 - Delega a: Enzo (Marketing), Carlos (Ventas), Laura (Atención Cliente), Elena (Operaciones), Diana (Data)
 - Nunca delega a Alberto (es para desarrollo técnico)
 
