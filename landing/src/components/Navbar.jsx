@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+// ——— Scroll in-page a un anchor (funciona con HashRouter) ———
+function scrollToAnchor(id) {
+  const el = document.getElementById(id)
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
 // ——— Rutas ———
 const LANDING_LINKS = [
-  { href: '#servicios', label: 'Servicios' },
-  { href: '#equipo', label: 'Equipo' },
-  { href: '#precios', label: 'Precios' },
-  { href: '#faq', label: 'FAQ' },
+  { href: 'servicios', label: 'Servicios' },
+  { href: 'equipo', label: 'Equipo' },
+  { href: 'precios', label: 'Precios' },
+  { href: 'faq', label: 'FAQ' },
 ]
 
 const LOGGED_OUT_LINKS = [
@@ -55,15 +63,15 @@ function DesktopNav({ user, onLogout }) {
 
   return (
     <div className="hidden md:flex items-center gap-6">
-      {/* Links comunes */}
+      {/* Links comunes — scroll in-page (no href para evitar blanco con HashRouter) */}
       {LANDING_LINKS.map(l => (
-        <a
+        <button
           key={l.href}
-          href={l.href}
-          className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"
+          onClick={() => scrollToAnchor(l.href)}
+          className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
         >
           {l.label}
-        </a>
+        </button>
       ))}
 
       {/* Divider */}
@@ -164,17 +172,32 @@ function MobileMenu({ user, onLogout, onClose }) {
             {group.label}
           </div>
           <div className="flex flex-col gap-1">
-            {group.links.map(l => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={onClose}
-                className="text-sm font-semibold text-gray-700 hover:text-gray-900 py-1.5"
-                {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              >
-                {l.label}
-              </a>
-            ))}
+            {group.links.map(l => {
+              // Landing links → scroll in-page
+              if (['servicios', 'equipo', 'precios', 'faq'].includes(l.href)) {
+                return (
+                  <button
+                    key={l.href}
+                    onClick={() => { scrollToAnchor(l.href); onClose() }}
+                    className="text-sm font-semibold text-gray-700 hover:text-gray-900 py-1.5 text-left"
+                  >
+                    {l.label}
+                  </button>
+                )
+              }
+              // Todos los demás → link normal
+              return (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={onClose}
+                  className="text-sm font-semibold text-gray-700 hover:text-gray-900 py-1.5"
+                  {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
+                  {l.label}
+                </a>
+              )
+            })}
           </div>
         </div>
       ))}
