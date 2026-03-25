@@ -160,6 +160,138 @@ function ChatWidget({ usuario, token }) {
   )
 }
 
+function StandupCard({ standup }) {
+  const [expanded, setExpanded] = useState(false)
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <button className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 text-left" onClick={() => setExpanded(!expanded)}>
+        <span className="text-sm font-bold text-gray-700">📅 {standup.fecha}</span>
+        <span className="text-xs text-gray-400">{expanded ? '▲' : '▼'}</span>
+      </button>
+      {expanded && (
+        <div className="px-4 pb-4 border-t border-gray-100">
+          <pre className="text-xs text-gray-600 whitespace-pre-wrap font-sans bg-gray-50 rounded-lg p-3 mt-2">{standup.contenido}</pre>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DecisionesPanel({ token }) {
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState(null)
+  const [tab, setTab] = useState('standups')
+
+  const cargar = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/clientes/decisiones', { headers: { Authorization: `Bearer ${token}` } })
+      const d = await res.json()
+      if (d.ok) setData(d)
+    } catch {} finally { setLoading(false) }
+  }
+
+  useEffect(() => { cargar() }, [])
+
+  const { standups = [], decisiones = [], prioridades = [], toughLove = [] } = data || {}
+
+  return (
+    <div className="space-y-4">
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+          <div className="text-2xl font-extrabold text-blue-700">{standups.length}</div>
+          <div className="text-[10px] text-blue-600 font-semibold">Standups</div>
+        </div>
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+          <div className="text-2xl font-extrabold text-amber-700">{prioridades.length}</div>
+          <div className="text-[10px] text-amber-600 font-semibold">Prioridades</div>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+          <div className="text-2xl font-extrabold text-red-700">{toughLove.length}</div>
+          <div className="text-[10px] text-red-600 font-semibold">Alertas</div>
+        </div>
+      </div>
+
+      {/* Sub-tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+        {[
+          { id: 'standups', label: '📋 Standups', count: standups.length },
+          { id: 'decisiones', label: '✅ Decisiones', count: decisiones.length },
+          { id: 'tough', label: '💪 Recomendaciones', count: toughLove.length },
+        ].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              tab === t.id ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+            }`}>
+            {t.label}
+            {t.count > 0 && <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${tab === t.id ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-500'}`}>{t.count}</span>}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="text-center py-16 text-sm text-gray-400">Cargando...</div>
+      ) : (
+        <>
+          {tab === 'standups' && (
+            <div className="space-y-2">
+              {standups.length === 0 && (
+                <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl">
+                  <div className="text-4xl mb-3">📋</div>
+                  <div className="text-sm font-bold text-gray-600">Sin standups todavía</div>
+                  <div className="text-xs text-gray-400 mt-1">Tu Orquestador escribe su primer standup esta noche</div>
+                </div>
+              )}
+              {standups.map(s => <StandupCard key={s.fecha} standup={s} />)}
+            </div>
+          )}
+
+          {tab === 'decisiones' && (
+            <div className="space-y-2">
+              {decisiones.length === 0 && (
+                <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl">
+                  <div className="text-4xl mb-3">✅</div>
+                  <div className="text-sm font-bold text-gray-600">Sin decisiones aún</div>
+                </div>
+              )}
+              {decisiones.map((d, i) => (
+                <div key={i} className="flex gap-3 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <div>
+                    <div className="text-sm text-blue-800 font-semibold">{d.texto}</div>
+                    <div className="text-[10px] text-gray-400 mt-1">{d.fecha}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === 'tough' && (
+            <div className="space-y-2">
+              {toughLove.length === 0 && (
+                <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl">
+                  <div className="text-4xl mb-3">💪</div>
+                  <div className="text-sm font-bold text-gray-600">Todo bajo control</div>
+                </div>
+              )}
+              {toughLove.map((t, i) => (
+                <div key={i} className="flex gap-3 p-3 bg-red-50 border border-red-200 rounded-xl">
+                  <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
+                  <div>
+                    <div className="text-sm text-red-800 font-semibold">{t.texto}</div>
+                    <div className="text-[10px] text-gray-400 mt-1">{t.fecha}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
 function InteraccionesList({ interacciones }) {
   if (!interacciones?.length) {
     return (
@@ -255,6 +387,7 @@ export default function Dashboard() {
         <div className="flex gap-2 mb-6">
           {[
             { id: 'equipo', label: 'Mi equipo' },
+            { id: 'decisiones', label: 'Decisiones' },
             { id: 'actividad', label: 'Actividad' },
             { id: 'cuenta', label: 'Mi cuenta' },
           ].map(t => (
@@ -322,6 +455,11 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* TAB: DECISIONES */}
+            {tab === 'decisiones' && (
+              <DecisionesPanel token={token} />
             )}
 
             {/* TAB: ACTIVIDAD */}

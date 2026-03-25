@@ -170,4 +170,59 @@ router.put('/documentos/:tipo', authMiddleware, async (req, res) => {
   }
 });
 
+// Obtener standups/decisiones del Orquestador (para cliente)
+router.get('/decisiones', authMiddleware, async (req, res) => {
+  try {
+    const { limit = 14 } = req.query;
+    const fs = require('fs');
+    const path = require('path');
+    const standupsDir = path.join(__dirname, '../../memory/daily-standups');
+
+    if (!fs.existsSync(standupsDir)) {
+      return res.json({ ok: true, standups: [], decisiones: [], toughLove: [] });
+    }
+
+    const files = fs.readdirSync(standupsDir)
+      .filter(f => f.endsWith('.md'))
+      .sort()
+      .reverse()
+      .slice(0, parseInt(limit));
+
+    const standups = files.map(f => ({
+      fecha: f.replace('.md', ''),
+      contenido: fs.readFileSync(path.join(standupsDir, f), 'utf8'),
+    }));
+
+    // Extraer solo lo que el cliente necesita ver
+    const decisiones = [];
+    const toughLove = [];
+    const prioridades = [];
+
+    standups.forEach(s => {
+      const lines = s.contenido.split('\n');
+      let seccion = null;
+      lines.forEach(line => {
+        if (line.startsWith('### Decisiones')) seccion = 'decisiones';
+        else if (line.startsWith('### Prioridades')) seccion = 'prioridades';
+        else if (line.startsWith('### Tough Love')) seccion = 'tough';
+        else if (line.startsWith('### Email enviado')) seccion = null;
+        else if (seccion === 'decisiones' && line.trim().startsWith('- ')) {
+          decisiones.push({ fecha: s.fecha, texto: line.trim().slice(2) });
+        }
+        else if (seccion === 'prioridades' && line.trim().startsWith('- ')) {
+          prioridades.push({ fecha: s.fecha, texto: line.trim().slice(2) });
+        }
+        else if (seccion === 'tough' && line.trim().startsWith('>')) {
+          toughLove.push({ fecha: s.fecha, texto: line.trim().slice(1).trim() });
+        }
+      });
+    });
+
+    res.json({ ok: true, standups, decisiones, prioridades, toughLove });
+  } catch (err) {
+    console.error('Error obteniendo decisiones:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 module.exports = router;
