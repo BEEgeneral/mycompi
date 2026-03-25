@@ -25,6 +25,7 @@ export default function Login() {
       }
       localStorage.setItem('mycompi_token', data.token)
       localStorage.setItem('mycompi_usuario', JSON.stringify(data.usuario))
+      window.dispatchEvent(new Event('mycompi_auth_change'))
       // Redirect based on role — admin va a URL absoluta (no HashRouter)
       if (data.usuario.rol_platform === 'ADMIN') {
         window.location.href = '/admin'
