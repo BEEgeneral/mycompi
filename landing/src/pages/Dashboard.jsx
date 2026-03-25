@@ -61,14 +61,14 @@ function AgentCard({ agent, expanded, onToggle }) {
 function ChatWidget({ usuario, token }) {
   const [mensajes, setMensajes] = useState([])
   const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [enviando, setEnviando] = useState(false)
   const bottomRef = useRef(null)
 
   useEffect(() => {
     if (!token) return
-    fetch('/api/chat/interacciones?limit=20', { headers: { Authorization: `Bearer ${token}` } })
+    fetch('/api/chat?limit=20', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
-      .then(d => { if (d.interacciones) setMensajes(d.interacciones.reverse()) })
+      .then(d => { if (d.historial) setMensajes(d.historial) })
       .catch(() => {})
   }, [token])
 
@@ -76,32 +76,33 @@ function ChatWidget({ usuario, token }) {
 
   const enviar = async (e) => {
     e.preventDefault()
-    if (!input.trim() || loading) return
-    setLoading(true)
+    if (!input.trim() || enviando) return
+    setEnviando(true)
     const texto = input.trim()
     setInput('')
 
     // Optimistic update
     setMensajes(prev => [...prev, {
-      tipoPeticion: 'CONSULTAR_INFO',
-      mensajeOriginal: texto,
-      createdAt: new Date().toISOString(),
+      id: `opt-${Date.now()}`,
+      role: 'user',
+      content: texto,
+      timestamp: new Date().toISOString(),
     }])
 
     try {
-      const res = await fetch('/api/chat/interaccion', {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tipoPeticion: 'CONSULTAR_INFO', mensajeOriginal: texto }),
+        body: JSON.stringify({ mensaje: texto }),
       })
       const d = await res.json()
-      if (d.ok && d.interaccion) {
-        // Replace optimistic with real
-        setMensajes(prev => prev.map((m, i) => i === prev.length - 1 && m.mensajeOriginal === texto ? d.interaccion : m))
+      if (d.ok) {
+        // Replace optimistic with confirmed
+        setMensajes(prev => prev.map((m, i) => m.id?.startsWith('opt-') && i === prev.length - 1 ? { ...m, id: `user-${d.interaccionId}` } : m))
       }
     } catch {}
 
-    setLoading(false)
+    setEnviando(false)
   }
 
   return (
@@ -124,7 +125,7 @@ function ChatWidget({ usuario, token }) {
           </div>
         )}
         {mensajes.map((m, i) => {
-          const isUser = !m.agenteId || m.agenteId === 'cliente'
+          const isUser = m.role === 'user'
           return (
             <div key={m.id || i} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
@@ -132,9 +133,9 @@ function ChatWidget({ usuario, token }) {
                   ? 'bg-indigo-600 text-white rounded-br-md'
                   : 'bg-gray-100 text-gray-800 rounded-bl-md'
               }`}>
-                <div>{m.mensajeOriginal || m.respuestaAgente}</div>
+                <div>{m.content}</div>
                 <div className={`text-[10px] mt-1 ${isUser ? 'text-indigo-200' : 'text-gray-400'} text-right`}>
-                  {new Date(m.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(m.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
             </div>
@@ -151,9 +152,9 @@ function ChatWidget({ usuario, token }) {
           placeholder="Escríbele al Paco..."
           className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
         />
-        <button type="submit" disabled={loading || !input.trim()}
+        <button type="submit" disabled={enviando || !input.trim()}
           className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-700 disabled:opacity-50 transition-colors">
-          {loading ? '...' : 'Enviar'}
+          {enviando ? '...' : 'Enviar'}
         </button>
       </form>
     </div>
@@ -344,10 +345,23 @@ export default function Dashboard() {
 
     Promise.all([
       fetch('/api/stripe/subscription', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => ({})),
-      fetch('/api/chat/interacciones?limit=20', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => ({})),
+      fetch('/api/chat?limit=20', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => ({})),
     ]).then(([subData, chatData]) => {
       if (subData.subscription) setSubscription(subData.subscription)
-      if (chatData.interacciones) setInteracciones(chatData.interacciones)
+      if (chatData.historial) {
+        // Convertir historial a formato interacciones para las stats
+        const interaccionesFormateadas = chatData.historial
+          .filter(m => m.role === 'user')
+          .map(m => ({
+            id: m.id,
+            mensajeOriginal: m.content,
+            createdAt: m.timestamp,
+            respuestaAgente: chatData.historial.find(a => a.role === 'assistant' && a.timestamp === m.timestamp)?.content || null,
+            tipoPeticion: 'CONSULTAR_INFO',
+            clienteAcepta: null,
+          }))
+        setInteracciones(interaccionesFormateadas)
+      }
     }).finally(() => setLoading(false))
   }, [token, navigate])
 
