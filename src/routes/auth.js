@@ -192,6 +192,7 @@ router.post('/refresh', async (req, res) => {
 
 // Middleware auth
 function authMiddleware(req, res, next) {
+  req.prisma = prisma
   const authHeader = req.headers.authorization
   if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token requerido' })

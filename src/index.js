@@ -47,6 +47,7 @@ const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const digestRoutes = require('./routes/digest');
 const stripeRoutes = require('./routes/stripe');
+const toolsRoutes = require('./routes/tools');
 
 const { AGENTS } = require('./services/agentLoader');
 
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/orchestrator', digestRoutes);
+app.use('/api/tools', toolsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
