@@ -15,7 +15,7 @@ const MYCOMPI_PATH = path.join(__dirname, '../../..');
 // Agentes disponibles (directorios)
 const AGENTS = {
   // Agentes operativos (con overlay por cliente)
-  luna: { path: 'atencion-cliente', nombre: 'Laura', inicial: 'L', color: 'from-pink-500 to-rose-600', tipo: 'operativo' },
+  luna: { path: 'atencion-cliente', nombre: 'Laura Montes', inicial: 'L', color: 'from-pink-500 to-rose-600', tipo: 'operativo' },
   enzo: { path: 'marketing', nombre: 'Enzo Herrera', inicial: 'E', color: 'from-blue-500 to-indigo-600', tipo: 'operativo' },
   carlos: { path: 'ventas', nombre: 'Carlos Mendoza', inicial: 'C', color: 'from-green-500 to-emerald-600', tipo: 'operativo' },
   elena: { path: 'operaciones', nombre: 'Elena Ortega', inicial: 'E', color: 'from-orange-500 to-amber-600', tipo: 'operativo' },
