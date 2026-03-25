@@ -1,23 +1,23 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 // ─────────────────────────────────────────
-// AGENTES del sistema
+// AGENTES
 // ─────────────────────────────────────────
 const AGENTES = [
-  { id: 'paco',    nombre: 'Paco',          emoji: '🎯', rol: 'Orquestador',     color: 'from-indigo-500 to-purple-600', desc: 'Coordinador de tu equipo' },
-  { id: 'laura',   nombre: 'Laura Montes',  emoji: '💬', rol: 'Atención Cliente', color: 'from-pink-500 to-rose-600',    desc: 'Soporte y atención al cliente' },
-  { id: 'enzo',    nombre: 'Enzo Herrera',   emoji: '📊', rol: 'Marketing',        color: 'from-blue-500 to-indigo-600',   desc: 'Campañas, contenido, SEO' },
-  { id: 'carlos',  nombre: 'Carlos Mendoza', emoji: '💼', rol: 'Ventas',           color: 'from-green-500 to-emerald-600', desc: 'Leads, cierre, seguimiento' },
-  { id: 'elena',   nombre: 'Elena Ortega',   emoji: '⚙️', rol: 'Operaciones',      color: 'from-orange-500 to-amber-600',  desc: 'Automatizaciones y procesos' },
-  { id: 'diana',   nombre: 'Diana Palau',   emoji: '📈', rol: 'Data',             color: 'from-purple-500 to-violet-600', desc: 'Métricas y análisis' },
-  { id: 'marcos',  nombre: 'Marcos Fernández', emoji: '💻', rol: 'Desarrollo',     color: 'from-cyan-500 to-teal-600',    desc: 'Web y e-commerce' },
-  { id: 'pelayo',  nombre: 'Pelayo',         emoji: '🤖', rol: 'Asistente',        color: 'from-gray-500 to-slate-600',   desc: 'Tu asistente personal' },
+  { id: 'paco',    nombre: 'Paco',            emoji: '🎯', rol: 'Orquestador',     color: 'from-indigo-500 to-purple-600', desc: 'Coordinador de tu equipo' },
+  { id: 'laura',   nombre: 'Laura Montes',    emoji: '💬', rol: 'Atención Cliente', color: 'from-pink-500 to-rose-600',    desc: 'Soporte y atención al cliente' },
+  { id: 'enzo',    nombre: 'Enzo Herrera',    emoji: '📊', rol: 'Marketing',        color: 'from-blue-500 to-indigo-600',   desc: 'Campañas, contenido, SEO' },
+  { id: 'carlos',  nombre: 'Carlos Mendoza',  emoji: '💼', rol: 'Ventas',           color: 'from-green-500 to-emerald-600', desc: 'Leads, cierre, seguimiento' },
+  { id: 'elena',   nombre: 'Elena Ortega',    emoji: '⚙️', rol: 'Operaciones',      color: 'from-orange-500 to-amber-600',  desc: 'Automatizaciones y procesos' },
+  { id: 'diana',   nombre: 'Diana Palau',     emoji: '📈', rol: 'Data',             color: 'from-purple-500 to-violet-600', desc: 'Métricas y análisis' },
+  { id: 'marcos',  nombre: 'Marcos Fernández', emoji: '💻', rol: 'Desarrollo',       color: 'from-cyan-500 to-teal-600',    desc: 'Web y e-commerce' },
+  { id: 'pelayo',  nombre: 'Pelayo',          emoji: '🤖', rol: 'Asistente',        color: 'from-gray-500 to-slate-600',   desc: 'Tu asistente personal' },
 ]
 
 const API_URL = ''
 
 // ─────────────────────────────────────────
-// COMPONENTE: Login
+// Login
 // ─────────────────────────────────────────
 function Login({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -60,33 +60,28 @@ function Login({ onLogin }) {
           <h1 className="text-xl font-bold text-white mb-1">MyCompi Chat</h1>
           <p className="text-sm text-gray-400">Accede a tu equipo de agentes</p>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="bg-red-900/30 border border-red-800 text-red-400 px-4 py-3 rounded-xl text-sm">
               {error}
             </div>
           )}
-          <div>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="tu@empresa.com"
-              required
-              className="w-full bg-[#12121a] border border-[#2a2a3a] text-white rounded-xl px-4 py-3 text-sm placeholder:text-gray-500 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Contraseña"
-              required
-              className="w-full bg-[#12121a] border border-[#2a2a3a] text-white rounded-xl px-4 py-3 text-sm placeholder:text-gray-500 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="tu@empresa.com"
+            required
+            className="w-full bg-[#12121a] border border-[#2a2a3a] text-white rounded-xl px-4 py-3 text-sm placeholder:text-gray-500 focus:outline-none focus:border-indigo-500"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Contraseña"
+            required
+            className="w-full bg-[#12121a] border border-[#2a2a3a] text-white rounded-xl px-4 py-3 text-sm placeholder:text-gray-500 focus:outline-none focus:border-indigo-500"
+          />
           <button
             type="submit"
             disabled={loading}
@@ -95,7 +90,6 @@ function Login({ onLogin }) {
             {loading ? 'Conectando...' : 'Entrar'}
           </button>
         </form>
-
         <p className="text-center text-xs text-gray-500 mt-6">
           ¿No tienes cuenta? <a href="#/registro" className="text-indigo-400 hover:underline">Regístrate</a>
         </p>
@@ -105,10 +99,9 @@ function Login({ onLogin }) {
 }
 
 // ─────────────────────────────────────────
-// COMPONENTE: Mensaje de un agente
+// Helpers
 // ─────────────────────────────────────────
-function AgenteAvatar({ agente, size = 'md' }) {
-  const sizeClass = size === 'sm' ? 'w-7 h-7 text-xs' : 'w-9 h-9 text-sm'
+function AgenteAvatar({ agente }) {
   return (
     <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${agente.color} flex items-center justify-center text-sm flex-shrink-0`}>
       {agente.emoji}
@@ -116,10 +109,10 @@ function AgenteAvatar({ agente, size = 'md' }) {
   )
 }
 
-function TypingIndicator({ agente }) {
+function TypingIndicator() {
   return (
     <div className="flex gap-3">
-      <AgenteAvatar agente={agente} />
+      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm">🎯</div>
       <div className="bg-[#1e1e2e] border border-[#2a2a3a] rounded-2xl rounded-tl-sm px-4 py-3">
         <div className="flex gap-1">
           <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" />
@@ -131,8 +124,21 @@ function TypingIndicator({ agente }) {
   )
 }
 
+function QueuedMessage({ agente }) {
+  return (
+    <div className="flex gap-3">
+      <AgenteAvatar agente={agente} />
+      <div className="bg-[#1e1e2e] border border-[#2a2a3a] rounded-2xl rounded-tl-sm px-4 py-3 max-w-md">
+        <p className="text-sm text-gray-400 italic">
+          ⏳ Recibido, procesando respuesta...
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // ─────────────────────────────────────────
-// COMPONENTE PRINCIPAL: Chat
+// Chat principal
 // ─────────────────────────────────────────
 export default function App() {
   const [usuario, setUsuario] = useState(null)
@@ -143,22 +149,113 @@ export default function App() {
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
   const [token, setToken] = useState(localStorage.getItem('mycompi_token'))
+  const [sseConnected, setSseConnected] = useState(false)
+  const [pendingIds, setPendingIds] = useState(new Set())
   const bottomRef = useRef(null)
-  const textareaRef = useRef(null)
+  const eventSourceRef = useRef(null)
 
   // ─────────────────────────────────────────
-  // Auth check
+  // Auth
   // ─────────────────────────────────────────
   useEffect(() => {
     if (!token) return
-    const usuarioRaw = localStorage.getItem('mycompi_usuario')
-    const clienteRaw = localStorage.getItem('mycompi_cliente')
-    if (usuarioRaw) setUsuario(JSON.parse(usuarioRaw))
-    if (clienteRaw) setCliente(JSON.parse(clienteRaw))
+    const u = localStorage.getItem('mycompi_usuario')
+    const c = localStorage.getItem('mycompi_cliente')
+    if (u) setUsuario(JSON.parse(u))
+    if (c) setCliente(JSON.parse(c))
   }, [token])
 
   // ─────────────────────────────────────────
-  // Cargar historial al iniciar
+  // SSE connection
+  // ─────────────────────────────────────────
+  useEffect(() => {
+    if (!token) return
+
+    const es = new EventSource(`${API_URL}/api/chat/stream`, {
+      withCredentials: true,
+    })
+
+    eventSourceRef.current = es
+
+    es.addEventListener('connected', () => {
+      setSseConnected(true)
+    })
+
+    // Nuevo mensaje en cola
+    es.addEventListener('queued', (e) => {
+      const data = JSON.parse(e.data)
+      // El mensaje de "procesando" ya se añadió al historial tras el send
+    })
+
+    // Processing
+    es.addEventListener('processing', (e) => {
+      const data = JSON.parse(e.data)
+      // Update pending message in historial
+      setHistorial(prev => prev.map(m =>
+        m.tempId === data.interaccionId
+          ? { ...m, estado: 'processing' }
+          : m
+      ))
+    })
+
+    // Respuesta definitiva
+    es.addEventListener('respuesta', (e) => {
+      const data = JSON.parse(e.data)
+      // Reemplazar el mensaje pendiente con la respuesta real
+      setHistorial(prev => {
+        const idx = prev.findLastIndex(m => m.tempId === data.interaccionId)
+        if (idx === -1) {
+          // Fallback: añadir al final
+          return [...prev, {
+            id: `agent-${data.interaccionId}`,
+            role: 'assistant',
+            content: data.respuesta,
+            timestamp: new Date(),
+            agenteId: data.agenteId,
+            estado: 'completed',
+          }]
+        }
+        const updated = [...prev]
+        updated[idx] = {
+          id: `agent-${data.interaccionId}`,
+          role: 'assistant',
+          content: data.respuesta,
+          timestamp: new Date(),
+          agenteId: data.agenteId,
+          estado: 'completed',
+        }
+        return updated
+      })
+      setPendingIds(prev => {
+        const next = new Set(prev)
+        next.delete(data.interaccionId)
+        return next
+      })
+      setCargando(false)
+    })
+
+    // Heartbeat
+    es.addEventListener('heartbeat', () => {})
+
+    es.onerror = () => {
+      setSseConnected(false)
+      es.close()
+      // Reconnect after 5s
+      setTimeout(() => {
+        if (token) {
+          const newEs = new EventSource(`${API_URL}/api/chat/stream`, { withCredentials: true })
+          eventSourceRef.current = newEs
+        }
+      }, 5000)
+    }
+
+    return () => {
+      es.close()
+    }
+  }, [token])
+
+  // ─────────────────────────────────────────
+  // Cargar historial
   // ─────────────────────────────────────────
   useEffect(() => {
     if (!token) return
@@ -172,13 +269,13 @@ export default function App() {
 
   const cargarHistorial = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/chat/historial?limit=50`, {
+      const res = await fetch(`${API_URL}/api/chat?limit=50`, {
         headers: { 'Authorization': `Bearer ${token}` },
       })
       if (res.ok) {
         const data = await res.json()
         if (data.historial?.length > 0) {
-          setHistorial(data.historial)
+          setHistorial(data.historial.map(m => ({ ...m, tempId: m.id })))
         }
       }
     } catch (err) {
@@ -193,6 +290,7 @@ export default function App() {
   }
 
   const handleLogout = () => {
+    eventSourceRef.current?.close()
     localStorage.removeItem('mycompi_token')
     localStorage.removeItem('mycompi_refresh')
     localStorage.removeItem('mycompi_usuario')
@@ -201,6 +299,7 @@ export default function App() {
     setUsuario(null)
     setCliente(null)
     setHistorial([])
+    setSseConnected(false)
   }
 
   const enviar = async (e) => {
@@ -212,13 +311,29 @@ export default function App() {
     setError('')
     setCargando(true)
 
-    // Añadir mensaje del usuario inmediatamente
-    setHistorial(prev => [...prev, {
-      id: `temp-${Date.now()}`,
-      role: 'user',
-      content: texto,
-      timestamp: new Date(),
-    }])
+    const tempId = `temp-${Date.now()}`
+
+    // Añadir mensaje del usuario Y un placeholder del agente
+    setHistorial(prev => [
+      ...prev,
+      {
+        id: `user-${tempId}`,
+        role: 'user',
+        content: texto,
+        timestamp: new Date(),
+        tempId,
+      },
+      {
+        id: `agent-${tempId}`,
+        role: 'assistant',
+        content: '⏳ Procesando...',
+        timestamp: new Date(),
+        agenteId: 'paco',
+        estado: 'queued',
+        tempId,
+        isPlaceholder: true,
+      }
+    ])
 
     try {
       const res = await fetch(`${API_URL}/api/chat`, {
@@ -237,24 +352,19 @@ export default function App() {
 
       if (!res.ok) {
         setError(data.error || 'Error al procesar mensaje')
-        // Quitar el mensaje de usuario si hay error
-        setHistorial(prev => prev.slice(0, -1))
+        // Quitar ambos mensajes
+        setHistorial(prev => prev.slice(0, -2))
+        setCargando(false)
         return
       }
 
-      // Añadir respuesta del agente
-      setHistorial(prev => [...prev, {
-        id: `agent-${Date.now()}`,
-        role: 'assistant',
-        content: data.respuesta,
-        timestamp: new Date(),
-        agenteId: 'paco',
-      }])
+      // El SSE actualizará el placeholder cuando llegue la respuesta
+      // Añadir el tempId a pending para tracking
+      setPendingIds(prev => new Set([...prev, data.interaccionId]))
 
     } catch (err) {
       setError('No se pudo conectar con el servidor')
-      setHistorial(prev => prev.slice(0, -1))
-    } finally {
+      setHistorial(prev => prev.slice(0, -2))
       setCargando(false)
     }
   }
@@ -267,14 +377,14 @@ export default function App() {
   }
 
   // ─────────────────────────────────────────
-  // NO AUTENTICADO — mostrar login
+  // NO AUTH
   // ─────────────────────────────────────────
   if (!token) {
     return <Login onLogin={handleLogin} />
   }
 
   // ─────────────────────────────────────────
-  // AUTENTICADO — mostrar chat
+  // AUTH + CHAT
   // ─────────────────────────────────────────
   return (
     <div className="h-full flex flex-col bg-[#0a0a0f]">
@@ -296,6 +406,10 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Connection status */}
+          <div className={`w-2 h-2 rounded-full ${sseConnected ? 'bg-green-500' : 'bg-red-500'}`}
+               title={sseConnected ? 'Conectado' : 'Reconectando...'} />
+
           {/* Selector de agente */}
           <select
             value={agente.id}
@@ -307,18 +421,13 @@ export default function App() {
             ))}
           </select>
 
-          {/* Logout */}
-          <button
-            onClick={handleLogout}
-            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-            title="Cerrar sesión"
-          >
+          <button onClick={handleLogout} className="text-xs text-gray-500 hover:text-gray-300 transition-colors" title="Cerrar sesión">
             🚪
           </button>
         </div>
       </header>
 
-      {/* Agente info bar */}
+      {/* Agente info */}
       <div className="bg-[#12121a] border-b border-[#2a2a3a] px-4 py-2 flex items-center gap-2 flex-shrink-0">
         <div className={`w-6 h-6 rounded-lg bg-gradient-to-br ${agente.color} flex items-center justify-center text-xs`}>
           {agente.emoji}
@@ -354,9 +463,28 @@ export default function App() {
         {/* Historial */}
         {historial.map((msg, i) => {
           const agenteMsg = msg.agenteId ? AGENTES.find(a => a.id === msg.agenteId) : AGENTES[0]
+
+          if (msg.isPlaceholder && msg.estado === 'queued') {
+            return (
+              <div key={msg.id || i} className="flex gap-3">
+                <AgenteAvatar agente={agenteMsg} />
+                <div className="bg-[#1e1e2e] border border-[#2a2a3a] rounded-2xl rounded-tl-sm px-4 py-3 max-w-md">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+                    <span className="text-sm text-gray-400 italic">Procesando respuesta...</span>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+
+          if (msg.isPlaceholder && msg.estado === 'processing') {
+            return <TypingIndicator key={msg.id || i} />
+          }
+
           return (
             <div key={msg.id || i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-              {msg.role === 'assistant' && <AgenteAvatar agente={agenteMsg || AGENTES[0]} />}
+              {msg.role === 'assistant' && <AgenteAvatar agente={agenteMsg} />}
               <div className={`max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'bg-indigo-600 text-white rounded-tr-sm'
@@ -368,27 +496,22 @@ export default function App() {
           )
         })}
 
-        {/* Loading */}
-        {cargando && <TypingIndicator agente={AGENTES[0]} />}
-
-        {/* Error */}
-        {error && (
-          <div className="flex gap-3">
-            <div className="w-9 h-9 rounded-xl bg-red-900/50 flex items-center justify-center text-sm">⚠</div>
-            <div className="bg-red-900/30 border border-red-800 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-red-400">
-              {error}
-            </div>
-          </div>
-        )}
-
         <div ref={bottomRef} />
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="px-4 pb-2">
+          <div className="bg-red-900/30 border border-red-800 rounded-xl px-4 py-3 text-sm text-red-400">
+            {error}
+          </div>
+        </div>
+      )}
 
       {/* Input */}
       <form onSubmit={enviar} className="flex-shrink-0 px-4 py-4 border-t border-[#2a2a3a]">
         <div className="flex gap-3 bg-[#12121a] border border-[#2a2a3a] rounded-2xl px-4 py-3 focus-within:border-indigo-500 transition-colors">
           <textarea
-            ref={textareaRef}
             value={mensaje}
             onChange={e => setMensaje(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -407,7 +530,11 @@ export default function App() {
           </button>
         </div>
         <p className="text-center text-xs text-gray-600 mt-2">
-          {agente.id === 'paco' ? 'Paco coordina tu equipo automáticamente' : `Chat directo con ${agente.nombre}`}
+          {sseConnected
+            ? 'Conexión en tiempo real activa'
+            : 'Conectando...'}
+          {' · '}
+          {agente.id === 'paco' ? 'Paco coordina tu equipo' : `Chat directo con ${agente.nombre}`}
         </p>
       </form>
     </div>

@@ -167,6 +167,8 @@ model InteraccionChat {
   mensajeOriginal  String   @db.Text
   resumen         String?  @db.VarChar(250)
   respuestaAgente  String? @db.Text
+  estadoChat       EstadoChat @default(PENDING)
+  streamId         String?
   clienteAcepta   Boolean?
   resultadoExitoso Boolean?
   createdAt       DateTime @default(now())
@@ -219,6 +221,13 @@ enum EstadoAgente {
   ACTIVO
   DESCANSANDO
   OFFLINE
+}
+
+enum EstadoChat {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
 }
 
 enum EstadoTrabajo {
