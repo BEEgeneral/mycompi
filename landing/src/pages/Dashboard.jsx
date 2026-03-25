@@ -58,105 +58,281 @@ function AgentCard({ agent, expanded, onToggle }) {
   )
 }
 
-function ChatWidget({ usuario, token }) {
+// ─────────────────────────────────────────
+// CHATGPT-STYLE CHAT PANEL
+// ─────────────────────────────────────────
+function ChatPanel({ agentesActivos, token }) {
   const [mensajes, setMensajes] = useState([])
   const [input, setInput] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [agenteActivo, setAgenteActivo] = useState('paco')
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const bottomRef = useRef(null)
+  const textareaRef = useRef(null)
+
+  // Agentes para el sidebar
+  const agentes = [
+    { id: 'paco', nombre: 'Paco', emoji: '🎯', color: 'from-indigo-500 to-purple-600', rol: 'Orquestador' },
+    ...agentesActivos,
+  ]
 
   useEffect(() => {
     if (!token) return
-    fetch('/api/chat?limit=20', { headers: { Authorization: `Bearer ${token}` } })
+    fetch('/api/chat?limit=50', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => { if (d.historial) setMensajes(d.historial) })
       .catch(() => {})
   }, [token])
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [mensajes])
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [mensajes])
 
   const enviar = async (e) => {
-    e.preventDefault()
+    e?.preventDefault()
     if (!input.trim() || enviando) return
+
     setEnviando(true)
     const texto = input.trim()
     setInput('')
+    textareaRef.current?.style.removeProperty('height')
+    textareaRef.current?.focus()
 
-    // Optimistic update
+    // Optimistic
     setMensajes(prev => [...prev, {
       id: `opt-${Date.now()}`,
       role: 'user',
       content: texto,
       timestamp: new Date().toISOString(),
+      agenteId: agenteActivo,
     }])
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mensaje: texto }),
+        body: JSON.stringify({ mensaje: texto, agenteId: agenteActivo }),
       })
       const d = await res.json()
       if (d.ok) {
-        // Replace optimistic with confirmed
-        setMensajes(prev => prev.map((m, i) => m.id?.startsWith('opt-') && i === prev.length - 1 ? { ...m, id: `user-${d.interaccionId}` } : m))
+        setMensajes(prev => prev.map((m, i) =>
+          m.id?.startsWith('opt-') && i === prev.length - 1
+            ? { ...m, id: `user-${d.interaccionId}` }
+            : m
+        ))
       }
     } catch {}
 
     setEnviando(false)
   }
 
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      enviar()
+    }
+  }
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value)
+    // Auto-resize textarea
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 200) + 'px'
+    }
+  }
+
+  const agenteInfo = agentes.find(a => a.id === agenteActivo) || agentes[0]
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 flex flex-col" style={{ height: '480px' }}>
-      {/* Header */}
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-lg">🎯</div>
-        <div>
-          <div className="font-bold text-sm text-gray-900">Paco</div>
-          <div className="text-xs text-gray-400">Tu asistente de equipo</div>
+    <div className="flex h-full bg-[#202020] rounded-2xl overflow-hidden border border-gray-700">
+      {/* ── Sidebar ── */}
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} flex-shrink-0 bg-[#111] border-r border-gray-800 flex flex-col transition-all duration-200 overflow-hidden`}>
+        {/* Header sidebar */}
+        <div className="px-4 py-4 border-b border-gray-800">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Agentes</span>
+            <button onClick={() => setSidebarOpen(false)} className="text-gray-500 hover:text-white text-xs">✕</button>
+          </div>
+          <button
+            onClick={() => setMensajes([])}
+            className="w-full flex items-center gap-2 px-3 py-2 bg-[#2a2a2a] hover:bg-[#333] rounded-lg text-xs text-gray-300 transition-colors"
+          >
+            <span>＋</span> Nuevo chat
+          </button>
+        </div>
+
+        {/* Lista de agentes */}
+        <div className="flex-1 overflow-y-auto py-2 px-2">
+          <p className="text-[10px] font-bold text-gray-600 uppercase px-2 mb-2">Tu equipo</p>
+          {agentes.map(a => (
+            <button
+              key={a.id}
+              onClick={() => setAgenteActivo(a.id)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-left transition-colors ${
+                agenteActivo === a.id
+                  ? 'bg-[#2a2a2a] text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
+              }`}
+            >
+              <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${a.color} flex items-center justify-center text-xs flex-shrink-0`}>
+                {a.emoji}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold truncate">{a.nombre}</div>
+                <div className="text-[10px] text-gray-600 truncate">{a.rol}</div>
+              </div>
+              {a.id === 'paco' && (
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Footer sidebar */}
+        <div className="px-3 py-3 border-t border-gray-800">
+          <div className="flex items-center gap-2 px-2 py-2">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xs">👤</div>
+            <div className="text-xs text-gray-400 truncate">Mi cuenta</div>
+          </div>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-        {mensajes.length === 0 && (
-          <div className="text-center py-8 text-sm text-gray-400">
-            <div className="text-3xl mb-2">🎯</div>
-            <div>Sin mensajes aún. ¡Escríbele al Paco!</div>
+      {/* ── Área de chat ── */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top bar */}
+        <div className="flex items-center gap-3 px-5 py-3 border-b border-[#333] bg-[#1a1a1a]">
+          {!sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="text-gray-400 hover:text-white transition-colors mr-2"
+            >
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+            </button>
+          )}
+          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${agenteInfo.color} flex items-center justify-center text-sm flex-shrink-0`}>
+            {agenteInfo.emoji}
           </div>
-        )}
-        {mensajes.map((m, i) => {
-          const isUser = m.role === 'user'
-          return (
-            <div key={m.id || i} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
-                isUser
-                  ? 'bg-indigo-600 text-white rounded-br-md'
-                  : 'bg-gray-100 text-gray-800 rounded-bl-md'
-              }`}>
-                <div>{m.content}</div>
-                <div className={`text-[10px] mt-1 ${isUser ? 'text-indigo-200' : 'text-gray-400'} text-right`}>
-                  {new Date(m.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+          <div>
+            <div className="text-sm font-semibold text-white">{agenteInfo.nombre}</div>
+            <div className="text-xs text-gray-500">{agenteInfo.rol}</div>
+          </div>
+        </div>
+
+        {/* Mensajes */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+          {mensajes.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center px-4">
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${agenteInfo.color} flex items-center justify-center text-3xl mb-6`}>
+                {agenteInfo.emoji}
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">¿En qué te ayudo hoy?</h2>
+              <p className="text-sm text-gray-500 max-w-md">
+                Soy {agenteInfo.nombre}, {agenteInfo.rol.toLowerCase()} de tu equipo. Puedo ayudarte con cualquier consulta o tarea.
+              </p>
+              <div className="grid grid-cols-2 gap-2 mt-8 w-full max-w-md">
+                {[
+                  '¿Qué han hecho mis agentes hoy?',
+                  'Crear una campaña de marketing',
+                  'Resumen de mis leads activos',
+                  'Automatizar un proceso',
+                ].map((suggestion, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setInput(suggestion); textareaRef.current?.focus() }}
+                    className="text-left text-xs text-gray-400 bg-[#2a2a2a] hover:bg-[#333] border border-[#333] hover:border-gray-600 rounded-xl px-4 py-3 transition-all"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {mensajes.map((m, i) => {
+            const isUser = m.role === 'user'
+            const agenteMsg = m.agenteId ? agentes.find(a => a.id === m.agenteId) : agentes[0]
+            return (
+              <div key={m.id || i} className={`flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}>
+                {!isUser && (
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${agenteMsg?.color || 'from-gray-500 to-gray-600'} flex items-center justify-center text-sm flex-shrink-0 mt-1`}>
+                    {agenteMsg?.emoji || '🤖'}
+                  </div>
+                )}
+                {isUser && (
+                  <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-sm flex-shrink-0 mt-1">
+                    👤
+                  </div>
+                )}
+                <div className={`flex-1 max-w-2xl ${isUser ? 'text-right' : ''}`}>
+                  <div className={`inline-block text-sm leading-relaxed ${
+                    isUser
+                      ? 'bg-indigo-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm'
+                      : 'text-gray-200'
+                  }`}>
+                    {m.content}
+                  </div>
+                  <div className="text-[10px] text-gray-600 mt-1">
+                    {new Date(m.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+
+          {enviando && (
+            <div className="flex gap-4">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm">🎯</div>
+              <div className="flex-1 max-w-2xl">
+                <div className="inline-block bg-[#2a2a2a] border border-[#333] text-gray-300 px-4 py-3 rounded-2xl rounded-tl-sm">
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" />
+                    <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:.15s]" />
+                    <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:.3s]" />
+                  </div>
                 </div>
               </div>
             </div>
-          )
-        })}
-        <div ref={bottomRef} />
-      </div>
+          )}
 
-      {/* Input */}
-      <form onSubmit={enviar} className="border-t border-gray-100 p-3 flex gap-2">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Escríbele al Paco..."
-          className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
-        />
-        <button type="submit" disabled={enviando || !input.trim()}
-          className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-700 disabled:opacity-50 transition-colors">
-          {enviando ? '...' : 'Enviar'}
-        </button>
-      </form>
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Input — estilo ChatGPT */}
+        <div className="px-4 pb-4">
+          <form onSubmit={enviar} className="relative">
+            <div className="flex items-end bg-[#2a2a2a] border border-[#333] rounded-2xl px-4 py-3 focus-within:border-gray-600 transition-colors">
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+                placeholder={`Pregúntale a ${agenteInfo.nombre}...`}
+                rows={1}
+                className="flex-1 bg-transparent text-white text-sm placeholder:text-gray-500 focus:outline-none resize-none max-h-[200px] overflow-y-auto"
+                style={{ minHeight: '24px' }}
+              />
+              <button
+                type="submit"
+                disabled={!input.trim() || enviando}
+                className="ml-3 w-8 h-8 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-center text-[10px] text-gray-600 mt-2">
+              {agenteInfo.id === 'paco'
+                ? 'Paco coordina automáticamente con el agente más adecuado'
+                : `Chat directo con ${agenteInfo.nombre}`}
+            </p>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
@@ -421,44 +597,55 @@ export default function Dashboard() {
           <>
             {/* TAB: EQUIPO */}
             {tab === 'equipo' && (
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
-                <div>
-                  <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
-                    <h2 className="text-base font-bold text-gray-900 mb-1">Tu equipo agéntico</h2>
-                    <p className="text-xs text-gray-400 mb-5">Profesionales trabajando 24/7 para tu negocio</p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {agentes.map(a => (
-                        <AgentCard key={a.id} agent={{ ...a, status: 'activo' }} />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Chat con Paco */}
-                  <ChatWidget usuario={usuario} token={token} />
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+                {/* Chat principal estilo ChatGPT */}
+                <div style={{ height: 'calc(100vh - 220px)' }}>
+                  <ChatPanel agentesActivos={agentes} token={token} />
                 </div>
 
                 {/* Sidebar derecha */}
                 <div className="space-y-4">
-                  {/* Métricas rápidas */}
+                  {/* Plan + estado */}
                   <div className="bg-white rounded-2xl border border-gray-200 p-5">
-                    <h3 className="text-sm font-bold text-gray-700 mb-3">Resumen</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-gray-50 rounded-xl p-3 text-center">
-                        <div className="text-xl font-extrabold text-gray-900">{interacciones.length}</div>
-                        <div className="text-[10px] text-gray-400">Interacciones</div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-lg">🎯</div>
+                      <div>
+                        <div className="font-bold text-sm text-gray-900">{usuario?.cliente?.nombre || 'Tu empresa'}</div>
+                        <div className="text-xs text-gray-400">Plan {plan?.toUpperCase()}</div>
                       </div>
-                      <div className="bg-gray-50 rounded-xl p-3 text-center">
-                        <div className="text-xl font-extrabold text-gray-900">{agentes.length}</div>
-                        <div className="text-[10px] text-gray-400">Agentes</div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-500">Estado</span>
+                        <span className="text-green-600 font-semibold">● Activo</span>
                       </div>
-                      <div className="bg-gray-50 rounded-xl p-3 text-center">
-                        <div className="text-xl font-extrabold text-green-600">{interacciones.filter(i => i.clienteAcepta).length}</div>
-                        <div className="text-[10px] text-gray-400">Aceptadas</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-500">Interacciones</span>
+                        <span className="text-gray-900 font-bold">{interacciones.length}</span>
                       </div>
-                      <div className="bg-gray-50 rounded-xl p-3 text-center">
-                        <div className="text-xl font-extrabold text-indigo-600">{plan?.toUpperCase()}</div>
-                        <div className="text-[10px] text-gray-400">Plan</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-500">Agentes activos</span>
+                        <span className="text-gray-900 font-bold">{agentes.length + 1}</span>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Tu equipo */}
+                  <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                    <h3 className="text-sm font-bold text-gray-700 mb-3">Tu equipo</h3>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[10px]">🎯</div>
+                        <span className="text-xs text-gray-700 font-medium">Paco</span>
+                        <span className="text-[10px] text-gray-400 ml-auto">Orquestador</span>
+                      </div>
+                      {agentes.map(a => (
+                        <div key={a.id} className="flex items-center gap-2">
+                          <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${a.color} flex items-center justify-center text-[10px]`}>{a.emoji}</div>
+                          <span className="text-xs text-gray-700 font-medium">{a.nombre}</span>
+                          <span className="text-[10px] text-gray-400 ml-auto">{a.rol}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
