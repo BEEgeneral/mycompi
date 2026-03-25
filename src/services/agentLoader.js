@@ -67,8 +67,12 @@ function getOverlayPath(agenteId, clienteId) {
 /**
  * Obtiene el contexto completo de un agente para un cliente específico
  * (Core Común + Overlay del cliente)
+ * @param {string} agenteId
+ * @param {string} clienteId
+ * @param {Object} opts — { plan, includeTools }
  */
-function buildContext(agenteId, clienteId) {
+function buildContext(agenteId, clienteId, opts = {}) {
+  const { plan = 'BASICO', includeTools = true } = opts
   const config = AGENTS[agenteId];
   if (!config) throw new Error(`Agente ${agenteId} no encontrado`);
 
@@ -137,6 +141,8 @@ ${overlay.user}
 
 ## HISTORIAL CON ESTE CLIENTE
 ${overlay.memoria.join('\n\n---\n\n')}
+
+${includeTools ? buildToolsContext(plan) : ''}
 `.trim();
 }
 
@@ -297,6 +303,46 @@ ${aprendizaje.contenido}
 }
 
 /**
+ * Construye la sección de herramientas disponibles para el contexto del agente.
+ * Muestra las tools que el agente puede invocar via la API.
+ */
+function buildToolsContext(plan) {
+  // Lazy load para evitar circular require
+  const { getToolsDisponibles } = require('./toolRegistry')
+  const tools = getToolsDisponibles(plan)
+
+  if (!tools.length) return ''
+
+  const lines = ['\n\n---\n\n## 🛠️ HERRAMIENTAS DISPONIBLES\n']
+  lines.push(`**Plan actual:** ${plan}`)
+  lines.push('Usa estas herramientas cuando necesites ejecutar acciones reales. ')
+  lines.push('Para invocar una tool, incluye en tu respuesta el bloque JSON siguiente:\n')
+  lines.push('```json\n{ "tool": "nombre_de_tool", "params": { ... } }\n```\n')
+  lines.push('**Tools disponibles:**\n')
+
+  tools.forEach(t => {
+    lines.push(`\n### ${t.nombre} \`${t.id}\``)
+    lines.push(t.descripcion)
+    if (t.args?.properties) {
+      const required = t.args.required || []
+      lines.push('\nArgumentos:')
+      Object.entries(t.args.properties).forEach(([key, prop]) => {
+        const req = required.includes(key) ? '**(requerido)**' : '(opcional)'
+        const def = prop.default ? ` [default: ${prop.default}]` : ''
+        const max = prop.maxLength ? ` [max: ${prop.maxLength}]` : ''
+        lines.push(`  - \`${key}\`: ${prop.description} ${req}${def}${max}`)
+      })
+    }
+  })
+
+  lines.push('\n**Ejemplo de uso:**')
+  lines.push('```json\n{ "tool": "send_email", "params": { "para": "cliente@email.com", "asunto": "Bienvenida", "html": "<h1>Hola</h1>" } }\n```')
+  lines.push('\nSolo invoca UNA tool por respuesta. El resultado te llegará en el siguiente mensaje.')
+
+  return lines.join('\n')
+}
+
+/**
  * Construye el texto de memoria para inyectar en el prompt de un agente.
  * Llamar antes de cada tarea para que el agente tenga contexto de aprendizajes previos.
  */
@@ -334,4 +380,6 @@ module.exports = {
   obtenerAprendizadosCompartidos,
   guardarAprendidoCompartido,
   buildMemoryContext,
+  // Tools
+  buildToolsContext,
 };
