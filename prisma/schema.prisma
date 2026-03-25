@@ -29,6 +29,7 @@ model Cliente {
   pagos       Pago[]
   documentos  Documento[]
   interacciones InteraccionChat[]
+  emails        Email[]
 }
 
 // ============================================
@@ -175,6 +176,36 @@ model InteraccionChat {
 
   cliente         Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   agente          Agente  @relation(fields: [agenteId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// EMAILS — Bandeja de entrada de Paco
+// ============================================
+model Email {
+  id             String      @id @default(cuid())
+  messageId      String?     @unique  // ID de Resend para tracking
+  de             String      // email del remitente
+  para           String      // paco@mycompi.com
+  asunto         String      @db.VarChar(500)
+  texto          String      @db.Text
+  html           String?     @db.Text
+  raw            String?     @db.Text  // raw MIME
+  EstadoEmail    EstadoEmail @default(RECIBIDO)
+  clienteId      String?     // si se identifica al cliente
+  interaccionId  String?     // linked InteraccionChat si se creó desde chat
+  respuestaA     String?     @default(cuid())  // ID del email al que responde
+  agenteId      String?     @default("paco")
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  cliente        Cliente?    @relation(fields: [clienteId], references: [id])
+}
+
+enum EstadoEmail {
+  RECIBIDO
+  PROCESANDO
+  RESPONDIDO
+  FALLIDO
 }
 
 enum TipoPeticion {

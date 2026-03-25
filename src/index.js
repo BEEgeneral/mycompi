@@ -45,6 +45,7 @@ const trabajosRoutes = require('./routes/trabajos');
 const pagosRoutes = require('./routes/pagos');
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
+const emailRoutes = require('./routes/email');
 const adminRoutes = require('./routes/admin');
 const digestRoutes = require('./routes/digest');
 const stripeRoutes = require('./routes/stripe');
@@ -58,6 +59,7 @@ app.use('/api/trabajos', trabajosRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use('/api/auth', authRoutes.router);
 app.use('/api/chat', chatRoutes);
+app.use('/api/email', emailRoutes);
 app.use('/api/stripe', stripeRoutes);
 
 // Exponer AGENTS para las rutas
