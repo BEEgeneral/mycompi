@@ -8,6 +8,7 @@ const equipo = [
     rol: 'Director de Equipo',
     color: 'from-gray-800 to-gray-900',
     borde: 'border-gray-900',
+    foto: 'https://randomuser.me/api/portraits/men/32.jpg',
     jefe: null,
     funciones: [
       'Coordina todo tu equipo agéntico',
@@ -24,6 +25,7 @@ const equipo = [
     rol: 'Marketing',
     color: 'from-blue-500 to-indigo-600',
     borde: 'border-blue-400',
+    foto: 'https://randomuser.me/api/portraits/men/75.jpg',
     jefe: 'Alberto Gala',
     funciones: [
       'Crea contenido para redes sociales y blog',
@@ -40,6 +42,7 @@ const equipo = [
     rol: 'Ventas',
     color: 'from-green-500 to-emerald-600',
     borde: 'border-green-400',
+    foto: 'https://randomuser.me/api/portraits/men/54.jpg',
     jefe: 'Alberto Gala',
     funciones: [
       'Captura y qualification leads nuevos',
@@ -56,6 +59,7 @@ const equipo = [
     rol: 'Atención al Cliente',
     color: 'from-pink-500 to-rose-600',
     borde: 'border-pink-400',
+    foto: 'https://randomuser.me/api/portraits/women/44.jpg',
     jefe: 'Alberto Gala',
     funciones: [
       'Responde dudas de tus clientes al instante',
@@ -72,6 +76,7 @@ const equipo = [
     rol: 'Operaciones',
     color: 'from-orange-500 to-amber-600',
     borde: 'border-orange-400',
+    foto: 'https://randomuser.me/api/portraits/women/28.jpg',
     jefe: 'Alberto Gala',
     funciones: [
       'Automatiza procesos repetitivos de tu negocio',
@@ -88,6 +93,7 @@ const equipo = [
     rol: 'Data & Growth',
     color: 'from-purple-500 to-violet-600',
     borde: 'border-purple-400',
+    foto: 'https://randomuser.me/api/portraits/women/65.jpg',
     jefe: 'Alberto Gala',
     funciones: [
       'Analiza datos de tu negocio para encontrar oportunidades',
@@ -112,9 +118,17 @@ function AgentCard({ agent, expanded, onClick }) {
 
       {/* Avatar circular — encima de la tarjeta, centrado */}
       <div className="flex justify-center -mt-2 mb-4">
-        <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${agent.color} flex items-center justify-center text-2xl shadow-lg ring-4 ring-white ${expanded ? 'ring-brand-yellow' : 'ring-gray-100'}`}>
-          {agent.inicial}
-        </div>
+        {agent.foto ? (
+          <img
+            src={agent.foto}
+            alt={agent.nombre}
+            className={`w-20 h-20 rounded-full object-cover shadow-lg ring-4 ring-white ${expanded ? 'ring-brand-yellow' : 'ring-gray-100'}`}
+          />
+        ) : (
+          <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${agent.color} flex items-center justify-center text-2xl shadow-lg ring-4 ring-white ${expanded ? 'ring-brand-yellow' : 'ring-gray-100'}`}>
+            {agent.inicial}
+          </div>
+        )}
       </div>
 
       {/* Nombre y rol — centrados */}
@@ -174,9 +188,11 @@ export default function TeamPresentation() {
           <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8">
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-brand-yellow/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/4" />
             <div className="relative flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-4xl shadow-2xl flex-shrink-0 ring-4 ring-brand-yellow/30">
-                🎯
-              </div>
+              <img
+                src={equipo[0].foto}
+                alt={equipo[0].nombre}
+                className="w-20 h-20 rounded-full object-cover shadow-2xl flex-shrink-0 ring-4 ring-brand-yellow/30"
+              />
               <div className="flex-1">
                 <div className="text-lg font-extrabold text-white">{equipo[0].nombre}</div>
                 <div className="text-xs font-semibold text-brand-yellow uppercase tracking-wider mt-0.5">{equipo[0].rol}</div>
@@ -185,9 +201,13 @@ export default function TeamPresentation() {
               <div className="hidden md:flex items-center gap-3">
                 <div className="flex -space-x-3">
                   {equipo.slice(1).map(a => (
-                    <div key={a.id} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-gray-800 flex items-center justify-center text-lg shadow-lg" title={a.nombre}>
-                      {a.inicial}
-                    </div>
+                    a.foto ? (
+                      <img key={a.id} src={a.foto} alt={a.nombre} className="w-10 h-10 rounded-full object-cover border-2 border-gray-800 shadow-lg" title={a.nombre} />
+                    ) : (
+                      <div key={a.id} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-gray-800 flex items-center justify-center text-lg shadow-lg" title={a.nombre}>
+                        {a.emoji}
+                      </div>
+                    )
                   ))}
                 </div>
                 <div className="text-xs text-gray-500 max-w-[120px]">Coordina a {equipo.length - 1} agentes</div>
