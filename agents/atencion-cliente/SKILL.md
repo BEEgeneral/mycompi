@@ -66,3 +66,19 @@ logInteraction('pizzeriacliente', 'Cliente preguntó por pizza sin gluten. Respo
 - Solicitud comercial → derivar a equipo de ventas
 - Problema de pago → equipo de billing
 - Situación fuera de lo normal → consultar con supervisor
+
+---
+
+## 📚 Memoria — Después de cada tarea
+
+Después de completar cada tarea, escribe un aprendizaje en `memory/`:
+
+```
+## [Título del aprendizaje]
+**Fecha:** 2026-03-25
+**Tarea:** [qué te pidieron]
+**Resultado:** [qué conseguiste / qué no]
+**Para recordar:** [lección aprendida]
+```
+
+Los aprendizajes se leen automáticamente antes de tu próxima tarea.

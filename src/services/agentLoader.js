@@ -1,7 +1,8 @@
 /**
- * agentLoader.js — Gestor centralizado de agentes
- * 
- * Carga, valida y proporciona acceso a todos los agentes del sistema
+ * agentLoader.js - Gestor centralizado de agentes
+ *
+ * Carga, valida y proporciona acceso a todos los agentes del sistema.
+ * También gestiona la memoria distribuida (aprendizajes por agente).
  */
 
 const fs = require('fs');
@@ -9,6 +10,7 @@ const path = require('path');
 
 // Rutas
 const AGENTS_PATH = path.join(__dirname, '../../agents');
+const MYCOMPI_PATH = path.join(__dirname, '../../..');
 
 // Agentes disponibles (directorios)
 const AGENTS = {
@@ -44,11 +46,11 @@ function listarAgentes() {
 function esAgenteActivo(agenteId) {
   const config = AGENTS[agenteId];
   if (!config) return false;
-  
+
   const agentPath = path.join(AGENTS_PATH, config.path);
   const required = ['SOUL.md', 'IDENTITY.md'];
-  
-  return required.every(file => 
+
+  return required.every(file =>
     fs.existsSync(path.join(agentPath, file))
   );
 }
@@ -69,9 +71,9 @@ function getOverlayPath(agenteId, clienteId) {
 function buildContext(agenteId, clienteId) {
   const config = AGENTS[agenteId];
   if (!config) throw new Error(`Agente ${agenteId} no encontrado`);
-  
+
   const agentPath = path.join(AGENTS_PATH, config.path);
-  
+
   // Cargar archivos del Core
   const core = {
     soul: fs.existsSync(path.join(agentPath, 'SOUL.md'))
@@ -87,16 +89,16 @@ function buildContext(agenteId, clienteId) {
       ? fs.readFileSync(path.join(agentPath, 'MEMORY.md'), 'utf8')
       : '',
   };
-  
+
   // Cargar overlay del cliente
   const overlayPath = path.join(agentPath, 'overlays', clienteId);
   let overlay = { user: '', memoria: [] };
-  
+
   if (fs.existsSync(overlayPath)) {
     if (fs.existsSync(path.join(overlayPath, 'USER.md'))) {
       overlay.user = fs.readFileSync(path.join(overlayPath, 'USER.md'), 'utf8');
     }
-    
+
     const memoriaPath = path.join(overlayPath, 'memoria');
     if (fs.existsSync(memoriaPath)) {
       overlay.memoria = fs.readdirSync(memoriaPath)
@@ -104,7 +106,7 @@ function buildContext(agenteId, clienteId) {
         .map(f => fs.readFileSync(path.join(memoriaPath, f), 'utf8'));
     }
   }
-  
+
   // Ensamblar contexto
   return `
 ${core.soul}
@@ -124,6 +126,8 @@ ${core.skill}
 ## MEMORIA ACUMULADA
 ${core.memory}
 
+${buildMemoryContext(agenteId)}
+
 ---
 
 ## CONTEXTO DEL CLIENTE ACTUAL
@@ -142,20 +146,20 @@ ${overlay.memoria.join('\n\n---\n\n')}
 function logInteraction(agenteId, clienteId, interaction) {
   const overlayPath = getOverlayPath(agenteId, clienteId);
   if (!overlayPath) return;
-  
+
   const memoriaPath = path.join(overlayPath, 'memoria');
   if (!fs.existsSync(memoriaPath)) {
     fs.mkdirSync(memoriaPath, { recursive: true });
   }
-  
+
   const today = new Date().toISOString().split('T')[0];
   const logFile = path.join(memoriaPath, `${today}.md`);
-  
+
   const entry = `
 ### Interacción ${new Date().toISOString()}
 ${interaction}
 `;
-  
+
   fs.appendFileSync(logFile, entry);
 }
 
@@ -165,9 +169,9 @@ ${interaction}
 function getAgenteInfo(agenteId) {
   const config = AGENTS[agenteId];
   if (!config) return null;
-  
+
   const agentPath = path.join(AGENTS_PATH, config.path);
-  
+
   return {
     id: agenteId,
     nombre: config.nombre,
@@ -181,6 +185,141 @@ function getAgenteInfo(agenteId) {
   };
 }
 
+// =============================================
+// MEMORIA DISTRIBUIDA — Aprendizajes por agente
+// =============================================
+
+/**
+ * Obtiene la ruta de la carpeta de memoria de un agente
+ */
+function getAgentMemoryPath(agenteId) {
+  const config = AGENTS[agenteId];
+  if (!config) return null;
+  return path.join(AGENTS_PATH, config.path, 'memory');
+}
+
+/**
+ * Guarda un aprendizaje para un agente específico
+ * @param {string} agenteId - ID del agente (luna, enzo, carlos, etc.)
+ * @param {Object} aprendizaje - { titulo, contenido, tags }
+ */
+function guardarAprendizaje(agenteId, aprendizaje) {
+  const memoryPath = getAgentMemoryPath(agenteId);
+  if (!memoryPath) return false;
+
+  if (!fs.existsSync(memoryPath)) {
+    fs.mkdirSync(memoryPath, { recursive: true });
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const filename = `${today}.md`;
+  const filepath = path.join(memoryPath, filename);
+
+  const entry = `
+## ${aprendizaje.titulo || 'Aprendizaje sin título'}
+**Fecha:** ${new Date().toISOString()}
+**Tags:** ${(aprendizaje.tags || []).join(', ') || 'sin tags'}
+
+${aprendizaje.contenido}
+
+---
+`;
+
+  // Si el archivo de hoy ya existe, añadir al final
+  if (fs.existsSync(filepath)) {
+    fs.appendFileSync(filepath, entry);
+  } else {
+    // Crear con header
+    const header = `# Memoria Diaria — ${today}\n\n";
+    fs.writeFileSync(filepath, header + entry);
+  }
+
+  return true;
+}
+
+/**
+ * Obtiene todos los aprendizajes de un agente
+ * @param {string} agenteId
+ * @param {number} dias - cuántos días hacia atrás leer (default 7)
+ */
+function obtenerAprendizados(agenteId, dias = 7) {
+  const memoryPath = getAgentMemoryPath(agenteId);
+  if (!memoryPath || !fs.existsSync(memoryPath)) return [];
+
+  const cutoff = new Date(Date.now() - dias * 24 * 60 * 60 * 1000);
+  const files = fs.readdirSync(memoryPath)
+    .filter(f => f.endsWith('.md'))
+    .filter(f => {
+      const stats = fs.statSync(path.join(memoryPath, f));
+      return stats.mtime >= cutoff;
+    })
+    .sort()
+    .reverse();
+
+  return files.map(f => ({
+    fecha: f.replace('.md', ''),
+    contenido: fs.readFileSync(path.join(memoryPath, f), 'utf8'),
+  }));
+}
+
+/**
+ * Obtiene aprendizajes COMUNES (compartidos entre todos los agentes)
+ * Leídos desde mycompi/memory/aprendizajes-compartidos.md
+ */
+function obtenerAprendizadosCompartidos() {
+  const sharedPath = path.join(MYCOMPI_PATH, 'memory', 'aprendizajes-compartidos.md');
+  if (!fs.existsSync(sharedPath)) return '';
+  return fs.readFileSync(sharedPath, 'utf8');
+}
+
+/**
+ * Guarda un aprendizaje compartido (apuntes que todos los agentes deben conocer)
+ */
+function guardarAprendidoCompartido(aprendizaje) {
+  const sharedDir = path.join(MYCOMPI_PATH, 'memory');
+  if (!fs.existsSync(sharedDir)) {
+    fs.mkdirSync(sharedDir, { recursive: true });
+  }
+
+  const filepath = path.join(sharedDir, 'aprendizajes-compartidos.md');
+  const entry = `
+
+## ${aprendizaje.titulo}
+**Fecha:** ${new Date().toISOString()}
+**Autor:** ${aprendizaje.autor || 'Sistema'}
+**Tags:** ${(aprendizaje.tags || []).join(', ')}
+
+${aprendizaje.contenido}
+`;
+
+  fs.appendFileSync(filepath, entry);
+  return true;
+}
+
+/**
+ * Construye el texto de memoria para inyectar en el prompt de un agente.
+ * Llamar antes de cada tarea para que el agente tenga contexto de aprendizajes previos.
+ */
+function buildMemoryContext(agenteId) {
+  const personales = obtenerAprendizados(agenteId, 7);
+  const comunes = obtenerAprendizadosCompartidos();
+
+  let ctx = '';
+
+  if (personales.length > 0) {
+    ctx += `\n\n## TUS APRENDIZAJES RECIENTES (últimos 7 días)\n`;
+    personales.forEach(a => {
+      ctx += `\n### ${a.fecha}\n${a.contenido}\n`;
+    });
+  }
+
+  if (comunes) {
+    ctx += `\n\n## APRENDIZAJES COMPARTIDOS DEL EQUIPO\n${comunes}\n`;
+  }
+
+  return ctx;
+}
+
 module.exports = {
   AGENTS,
   listarAgentes,
@@ -189,4 +328,10 @@ module.exports = {
   buildContext,
   logInteraction,
   getAgenteInfo,
+  // Memoria distribuida
+  guardarAprendizaje,
+  obtenerAprendizados,
+  obtenerAprendizadosCompartidos,
+  guardarAprendidoCompartido,
+  buildMemoryContext,
 };

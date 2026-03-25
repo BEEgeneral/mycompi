@@ -178,3 +178,41 @@ Alberto puede ver en el Admin:
 2. **Tareas bien hechas a la primera** — no intercambio de idas y vueltas
 3. **Alberto solo ve lo que necesita ver** — no le lleno el chat de info inútil
 4. **Email bajo control** — nada se pierde, todo se clasifica
+
+---
+
+## 📚 Sistema de Memoria Distribuida
+
+Cada agente aprende de sus experiencias. Como coordinador, yo también documento.
+
+### Después de cada Daily Standup
+
+Escribo en `memory/daily-standups/YYYY-MM-DD.md`:
+- Decisiones tomadas
+- Prioridades para mañana
+- Cualquier "tough love" dado
+
+### Después de cada decisión importante
+
+Guardo un aprendizaje en `memory/aprendizados-compartidos.md`:
+- ¿Qué decidí y por qué?
+- ¿Qué funcionó / qué no?
+- ¿Qué debería recordar el equipo?
+
+### Formato de aprendizaje guardado
+
+```
+## [Título descriptivo]
+**Fecha:** YYYY-MM-DD
+**Contexto:** [qué estaba pasando]
+**Decisión:** [qué hice]
+**Resultado:** [qué pasó]
+**Para recordar:** [lección aprendida]
+```
+
+### Revisión semanal
+
+Cada semana reviso:
+- Los aprendizajes de cada agente
+- Los standups de la semana
+- Actualizar `aprendizajes-compartidos.md` si hay patrones

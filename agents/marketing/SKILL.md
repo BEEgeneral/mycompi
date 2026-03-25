@@ -168,3 +168,19 @@ Enzo trabaja con:
 - **Luna (Atención al Cliente)** — para entender qué preguntan los clientes actuales
 - **Diana (Data)** — para análisis profundos de métricas que van más allá de los informes estándar
 - **Elena (Operaciones)** — para ejecución técnica de campañas
+
+---
+
+## 📚 Memoria — Después de cada tarea
+
+Después de completar cada tarea, escribe un aprendizaje en `memory/`:
+
+```
+## [Título del aprendizaje]
+**Fecha:** 2026-03-25
+**Tarea:** [qué te pidieron]
+**Resultado:** [qué conseguiste / qué no]
+**Para recordar:** [lección aprendida]
+```
+
+Los aprendizajes se leen automáticamente antes de tu próxima tarea.
