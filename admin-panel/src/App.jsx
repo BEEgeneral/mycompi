@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import HierarchyView from './components/HierarchyView'
+import DecisionesTab from './components/tabs/DecisionesTab'
 
 const API = ''
 
@@ -483,6 +484,7 @@ export default function App() {
         {[
           { id: 'dashboard', label: 'Dashboard' },
           { id: 'jerarquia', label: 'Jerarquía' },
+          { id: 'decisiones', label: 'Decisiones' },
           { id: 'plataforma', label: 'Mi cuenta' },
         ].map(tab => (
           <button key={tab.id}
@@ -528,6 +530,12 @@ export default function App() {
         {vista === 'jerarquia' && (
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <HierarchyView />
+          </div>
+        )}
+
+        {vista === 'decisiones' && (
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <DecisionesTab apiCall={apiCall} />
           </div>
         )}
 

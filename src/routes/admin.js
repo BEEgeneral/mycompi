@@ -487,4 +487,72 @@ router.get('/metrics/planes', ownerOnly, (req, res) => {
   }
 });
 
+// ─────────────────────────────────────────
+// STANDUPS Y DECISIONES DEL ORQUESTADOR
+// GET /api/admin/decisiones
+// ─────────────────────────────────────────
+
+router.get('/decisiones', ownerOnly, (req, res) => {
+  try {
+    const { limit = 14 } = req.query;
+    const standupsDir = path.join(__dirname, '../../memory/daily-standups');
+
+    if (!fs.existsSync(standupsDir)) {
+      return res.json({ ok: true, standups: [], decisiones: [], toughLove: [] });
+    }
+
+    const files = fs.readdirSync(standupsDir)
+      .filter(f => f.endsWith('.md'))
+      .sort()
+      .reverse()
+      .slice(0, parseInt(limit));
+
+    const standups = files.map(f => ({
+      fecha: f.replace('.md', ''),
+      contenido: fs.readFileSync(path.join(standupsDir, f), 'utf8'),
+    }));
+
+    // Extraer decisiones, prioridades y tough love de cada standup
+    const decisiones = [];
+    const toughLove = [];
+    const prioridades = [];
+
+    standups.forEach(s => {
+      const lines = s.contenido.split('\n');
+      let seccion = null;
+      lines.forEach(line => {
+        if (line.startsWith('### Decisiones')) seccion = 'decisiones';
+        else if (line.startsWith('### Prioridades')) seccion = 'prioridades';
+        else if (line.startsWith('### Tough Love')) seccion = 'tough';
+        else if (seccion === 'decisiones' && line.startsWith('- ')) decisiones.push({ fecha: s.fecha, texto: line.slice(2) });
+        else if (seccion === 'prioridades' && line.startsWith('- ')) prioridades.push({ fecha: s.fecha, texto: line.slice(2) });
+        else if (seccion === 'tough' && line.startsWith('>')) toughLove.push({ fecha: s.fecha, texto: line.slice(2) });
+      });
+    });
+
+    res.json({ ok: true, standups, decisiones, prioridades, toughLove });
+  } catch (err) {
+    console.error('Error obteniendo decisiones:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// APRENDIZAJES COMPARTIDOS
+// GET /api/admin/aprendizajes
+// ─────────────────────────────────────────
+
+router.get('/aprendizajes', ownerOnly, (req, res) => {
+  try {
+    const aprendizajesFile = path.join(__dirname, '../../memory/aprendizajes-compartidos.md');
+    if (!fs.existsSync(aprendizajesFile)) {
+      return res.json({ ok: true, aprendizajes: '' });
+    }
+    res.json({ ok: true, aprendizajes: fs.readFileSync(aprendizajesFile, 'utf8') });
+  } catch (err) {
+    console.error('Error obteniendo aprendizajes:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 module.exports = router;
