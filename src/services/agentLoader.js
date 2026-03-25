@@ -236,7 +236,7 @@ ${aprendizaje.contenido}
     fs.appendFileSync(filepath, entry);
   } else {
     // Crear con header
-    const header = `# Memoria Diaria — ${today}\n\n";
+    const header = `# Memoria Diaria — ${today}\n\n`;
     fs.writeFileSync(filepath, header + entry);
   }
 
