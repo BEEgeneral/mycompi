@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -72,6 +73,19 @@ app.use('/api/tools', toolsRoutes);
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// ─────────────────────────────────────────
+// CHAT PANEL — static build del chat
+// ─────────────────────────────────────────
+const chatStatic = express.static(path.join(__dirname, '../public/chat'));
+app.use('/chat', (req, res, next) => {
+  // Servir index.html del chat para cualquier ruta /chat/*
+  req.url = req.url.split('?')[0];
+  if (!path.extname(req.url) || req.url === '/') {
+    return res.sendFile('index.html', { root: path.join(__dirname, '../public/chat') });
+  }
+  chatStatic(req, res, next);
 });
 
 // SPA catch-all
