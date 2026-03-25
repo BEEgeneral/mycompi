@@ -1,37 +1,74 @@
 const testimonios = [
-  { quote: 'Gracias a MyCompi, hemos automatizado nuestros procesos internos, resultando en un aumento del 35% en productividad.', initials: 'LM', name: 'Laura Martínez', role: 'Científica de Datos, DataFlow' },
-  { quote: 'La implementación de agentes ha mejorado significativamente la experiencia de nuestros clientes. Tasa de conversión +25%.', initials: 'CG', name: 'Carlos Gómez', role: 'Gerente de Marketing, TechWorld' },
-  { quote: 'BeeNoCode transformó la forma en que interactuamos con nuestros clientes. Servicio eficiente y personalizado.', initials: 'AB', name: 'Ana Beltrán', role: 'Responsable Att. Cliente, ServiPlus' },
-  { quote: 'La integración de las soluciones ha sido un cambio de juego. Reducimos costes operativos y mejoramos eficiencia.', initials: 'JR', name: 'Javier Ruiz', role: 'CEO, MarketLeaders' },
-  { quote: 'Trabajar con MyCompi ha sido excepcional. Soluciones que han optimizado nuestros procesos de forma impresionante.', initials: 'MF', name: 'María Fernández', role: 'Directiva General, EcoSolutions' },
-  { quote: 'Desde que incorporamos MyCompi, nuestra empresa ha visto una mejora notable en eficiencia y satisfacción de clientes.', initials: 'RS', name: 'Roberto Sánchez', role: 'Director de Tecnología, InnovaCorp' },
-  { quote: 'MyCompi nos permitió escalar sin incrementar costes operativos. Automatización real que funciona.', initials: 'EL', name: 'Elena López', role: 'Gerente de Proyectos, TechSolutions' },
-  { quote: 'La colaboración con MyCompi ha sido fundamental para nuestra transformación digital. Mejora medible.', initials: 'MT', name: 'Miguel Torres', role: 'Director de Operaciones, DigitalWave' },
+  {
+    quote: 'Laura respondía a nuestros clientes a las 2am cuando dormíamos. Nunca HubSpot hizo eso por nosotros.',
+    name: 'David Ruiz',
+    role: 'CEO, TiendaFarma',
+    result: '−60% tickets de soporte',
+    initials: 'DR',
+    color: 'from-pink-500 to-rose-600',
+  },
+  {
+    quote: 'Carlos recuperó 3 ventas que habían caído en el olvido. Ningún CRM lo habría hecho tan automáticamente.',
+    name: 'María Vega',
+    role: 'Comercial, Asesoría Contable',
+    result: '+€8.400 ventas/mes',
+    initials: 'MV',
+    color: 'from-green-500 to-emerald-600',
+  },
+  {
+    quote: 'Elena automatizó el envío de reportes semanales. Antes lo hacíamos entre 2 personas en 4 horas. Ahora, 0.',
+    name: 'Jordi Serra',
+    role: 'COO, LogiFast',
+    result: '4h → 0h/semana',
+    initials: 'JS',
+    color: 'from-orange-500 to-amber-600',
+  },
+  {
+    quote: 'Enzo encontró que nuestros posts del martes convertían 3x más. Cambió la estrategia en una semana.',
+    name: 'Lucía Torres',
+    role: 'CMO, ModaPaTi',
+    result: '3x CTR en contenido',
+    initials: 'LT',
+    color: 'from-blue-500 to-indigo-600',
+  },
 ]
 
 export default function Testimonials() {
   return (
-    <section className="bg-brand-bg-section border-t border-b border-brand-border py-16 md:py-[100px]">
-      <div className="max-w-[1200px] mx-auto px-6 md:px-10 mb-8 md:mb-[60px]">
-        <div className="text-center">
-          <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brand-yellow mb-2 md:mb-3">Testimonios</p>
-          <h2 className="text-[22px] md:text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-brand-text mb-2 md:mb-3">Lo que dicen nuestros clientes</h2>
-          <p className="text-sm text-brand-secondary max-w-[560px] mx-auto px-4">Empresas que ya están creciendo con MyCompi</p>
+    <section className="bg-gray-50 border-t border-gray-200 py-16 md:py-[80px]">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-10">
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-3">Casos reales</p>
+          <h2 className="text-[22px] md:text-[clamp(28px,3vw,40px)] font-bold tracking-tight text-gray-900">
+            Resultados que puedes verificar
+          </h2>
+          <p className="text-sm text-gray-500 mt-2">Con nombres, empresas y cifras concretas.</p>
         </div>
-      </div>
-      <div className="overflow-x-auto scrollbar-none pb-8">
-        <div className="flex gap-4 md:gap-5 px-6 md:px-10">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
           {testimonios.map(t => (
-            <div key={t.initials} className="flex-shrink-0 w-[280px] md:w-[300px] bg-brand-bg border border-brand-border rounded-xl p-5 md:p-7 transition-all duration-300 hover:shadow-md">
-              <blockquote className="text-[13px] md:text-sm text-brand-secondary leading-relaxed mb-3 md:mb-4">"{t.quote}"</blockquote>
-              <div className="text-amber-400 text-[12px] md:text-[13px] tracking-widest mb-3 md:mb-3.5">★★★★★</div>
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-brand-yellow text-brand-text flex items-center justify-center font-bold text-[12px] md:text-[13px] flex-shrink-0">
+            <div
+              key={t.initials}
+              className="bg-white border border-gray-200 rounded-2xl p-6 md:p-7 hover:shadow-lg transition-all"
+            >
+              {/* Result badge */}
+              <div className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 text-[11px] font-bold px-3 py-1 rounded-full mb-4">
+                <span>📈</span> {t.result}
+              </div>
+
+              {/* Quote */}
+              <blockquote className="text-[14px] md:text-[15px] text-gray-700 leading-relaxed mb-5 font-medium">
+                "{t.quote}"
+              </blockquote>
+
+              {/* Author */}
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center text-white font-bold text-sm`}>
                   {t.initials}
                 </div>
                 <div>
-                  <div className="font-bold text-[12px] md:text-[13px] text-brand-text">{t.name}</div>
-                  <div className="text-[10px] md:text-[11px] text-brand-muted">{t.role}</div>
+                  <div className="font-bold text-sm text-gray-900">{t.name}</div>
+                  <div className="text-xs text-gray-500">{t.role}</div>
                 </div>
               </div>
             </div>
