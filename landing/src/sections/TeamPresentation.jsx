@@ -110,21 +110,20 @@ function AgentCard({ agent, expanded, onClick }) {
         <div className={`absolute inset-0 bg-gradient-to-br ${agent.color} rounded-2xl opacity-5 -z-10`} />
       )}
 
-      {/* Header */}
-      <div className="flex items-start gap-4 mb-4">
-        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-2xl shadow-lg flex-shrink-0`}>
+      {/* Avatar circular — encima de la tarjeta, centrado */}
+      <div className="flex justify-center -mt-2 mb-4">
+        <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${agent.color} flex items-center justify-center text-2xl shadow-lg ring-4 ring-white ${expanded ? 'ring-brand-yellow' : 'ring-gray-100'}`}>
           {agent.inicial}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-bold text-base text-gray-900">{agent.nombre}</div>
-          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-0.5">{agent.rol}</div>
-          {agent.jefe && (
-            <div className="text-xs text-gray-400 mt-1">Reporta a: {agent.jefe}</div>
-          )}
-        </div>
-        <div className={`w-6 h-6 rounded-full border-2 ${expanded ? `border-brand-yellow bg-brand-yellow/10` : 'border-gray-200'} flex items-center justify-center flex-shrink-0 transition-colors`}>
-          {expanded && <span className="text-brand-yellow text-xs font-bold">✓</span>}
-        </div>
+      </div>
+
+      {/* Nombre y rol — centrados */}
+      <div className="text-center mb-4">
+        <div className="font-bold text-base text-gray-900">{agent.nombre}</div>
+        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-0.5">{agent.rol}</div>
+        {agent.jefe && (
+          <div className="text-xs text-gray-400 mt-1">Reporta a: {agent.jefe}</div>
+        )}
       </div>
 
       {/* Preview funciones */}
@@ -175,7 +174,7 @@ export default function TeamPresentation() {
           <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8">
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-brand-yellow/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/4" />
             <div className="relative flex items-center gap-6">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-4xl shadow-2xl flex-shrink-0">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-4xl shadow-2xl flex-shrink-0 ring-4 ring-brand-yellow/30">
                 🎯
               </div>
               <div className="flex-1">
@@ -184,14 +183,14 @@ export default function TeamPresentation() {
                 <div className="text-sm text-gray-400 mt-2 leading-relaxed">{equipo[0].funciones[0]}</div>
               </div>
               <div className="hidden md:flex items-center gap-3">
-                <div className="flex -space-x-2">
+                <div className="flex -space-x-3">
                   {equipo.slice(1).map(a => (
                     <div key={a.id} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-gray-800 flex items-center justify-center text-lg shadow-lg" title={a.nombre}>
                       {a.inicial}
                     </div>
                   ))}
                 </div>
-                <div className="text-xs text-gray-500 max-w-[120px]">Coordina a {equipo.length - 1} специалистов</div>
+                <div className="text-xs text-gray-500 max-w-[120px]">Coordina a {equipo.length - 1} agentes</div>
               </div>
             </div>
           </div>
