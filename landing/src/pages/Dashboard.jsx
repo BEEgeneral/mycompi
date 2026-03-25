@@ -574,17 +574,19 @@ export default function Dashboard() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-4">
           {[
-            { id: 'equipo', label: 'Mi equipo' },
-            { id: 'decisiones', label: 'Decisiones' },
-            { id: 'actividad', label: 'Actividad' },
-            { id: 'cuenta', label: 'Mi cuenta' },
+            { id: 'equipo', label: '💬 Chat con Paco', highlight: true },
+            { id: 'actividad', label: '📊 Actividad' },
+            { id: 'decisiones', label: '📋 Decisiones' },
+            { id: 'cuenta', label: '⚙️ Mi cuenta' },
           ].map(t => (
             <button key={t.id}
               onClick={() => setTab(t.id)}
               className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                tab === t.id ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'
+                tab === t.id
+                  ? t.highlight ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-gray-900 text-white'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'
               }`}>
               {t.label}
             </button>
@@ -595,65 +597,12 @@ export default function Dashboard() {
           <div className="text-center py-20 text-gray-400 text-sm">Cargando...</div>
         ) : (
           <>
-            {/* TAB: EQUIPO */}
+            {/* TAB: EQUIPO — Chat protagonista */}
             {tab === 'equipo' && (
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
-                {/* Chat principal estilo ChatGPT */}
-                <div style={{ height: 'calc(100vh - 220px)' }}>
+              <div className="flex flex-col" style={{ height: 'calc(100vh - 180px)' }}>
+                {/* Chat central — ocupa todo el espacio */}
+                <div className="flex-1 min-h-0">
                   <ChatPanel agentesActivos={agentes} token={token} />
-                </div>
-
-                {/* Sidebar derecha */}
-                <div className="space-y-4">
-                  {/* Plan + estado */}
-                  <div className="bg-white rounded-2xl border border-gray-200 p-5">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-lg">🎯</div>
-                      <div>
-                        <div className="font-bold text-sm text-gray-900">{usuario?.cliente?.nombre || 'Tu empresa'}</div>
-                        <div className="text-xs text-gray-400">Plan {plan?.toUpperCase()}</div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-500">Estado</span>
-                        <span className="text-green-600 font-semibold">● Activo</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-500">Interacciones</span>
-                        <span className="text-gray-900 font-bold">{interacciones.length}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-500">Agentes activos</span>
-                        <span className="text-gray-900 font-bold">{agentes.length + 1}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Tu equipo */}
-                  <div className="bg-white rounded-2xl border border-gray-200 p-5">
-                    <h3 className="text-sm font-bold text-gray-700 mb-3">Tu equipo</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[10px]">🎯</div>
-                        <span className="text-xs text-gray-700 font-medium">Paco</span>
-                        <span className="text-[10px] text-gray-400 ml-auto">Orquestador</span>
-                      </div>
-                      {agentes.map(a => (
-                        <div key={a.id} className="flex items-center gap-2">
-                          <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${a.color} flex items-center justify-center text-[10px]`}>{a.emoji}</div>
-                          <span className="text-xs text-gray-700 font-medium">{a.nombre}</span>
-                          <span className="text-[10px] text-gray-400 ml-auto">{a.rol}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Últimas interacciones */}
-                  <div className="bg-white rounded-2xl border border-gray-200 p-5">
-                    <h3 className="text-sm font-bold text-gray-700 mb-3">Última actividad</h3>
-                    <InteraccionesList interacciones={interacciones.slice(0, 5)} />
-                  </div>
                 </div>
               </div>
             )}
