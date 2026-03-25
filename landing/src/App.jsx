@@ -3,7 +3,7 @@ import Navbar from './components/Navbar'
 import Hero from './sections/Hero'
 import Stats from './sections/Stats'
 import Services from './sections/Services'
-import Team from './sections/Team'
+import Pricing from './sections/Pricing'
 import TeamPresentation from './sections/TeamPresentation'
 import Testimonials from './sections/Testimonials'
 import FAQ from './sections/FAQ'
@@ -26,6 +26,7 @@ function HomePage() {
         <Hero />
         <Stats />
         <Services />
+        <Pricing />
         <TeamPresentation />
         <Testimonials />
         <FAQ />
