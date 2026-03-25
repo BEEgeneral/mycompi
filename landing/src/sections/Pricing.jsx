@@ -32,7 +32,7 @@ const planes = [
     price: '147',
     popular: false,
     features: [
-      'Equipos Agénticos ilimitados',
+      '1 Director + 5 Managers + 25 agentes',
       'Equipo de dirección incluido',
       'Automatización total del negocio',
       'Soporte dedicado 24/7',

@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar'
 const PLANES = {
   BASICO: { name: 'Profesional Agéntico', price: 10, agents: 1, desc: '1 agente especializado', planId: 'basico' },
   EQUIPO: { name: 'Equipo Agéntico', price: 49, agents: 6, desc: '1 manager + 5 especializados', planId: 'profesional', popular: true },
-  DIRECCION: { name: 'Equipos con Dirección', price: 147, agents: 'Ilimitados', desc: 'Equipos + dirección 24/7', planId: 'enterprise' },
+  DIRECCION: { name: 'Equipos con Dirección', price: 147, agents: 31, desc: '1 Director + 5 Managers + 25 agentes', planId: 'enterprise' },
 }
 
 export default function Checkout() {
