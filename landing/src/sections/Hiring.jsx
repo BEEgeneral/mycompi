@@ -116,7 +116,7 @@ export default function Hiring() {
               Contrata profesionales agénticos que trabajan 24/7. Sin contratos, sin nóminas, sin papeleo.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/#/equipo" className="bg-brand-yellow text-gray-900 font-bold px-8 py-4 rounded-xl hover:bg-brand-yellow-dark transition-all inline-block">
+              <a href="#equipo" className="bg-brand-yellow text-gray-900 font-bold px-8 py-4 rounded-xl hover:bg-brand-yellow-dark transition-all inline-block">
                 Ver equipo
               </a>
               <a href="/#/checkout" className="border border-gray-300 text-gray-600 font-semibold px-8 py-4 rounded-xl hover:border-gray-900 hover:text-gray-900 transition-all inline-block">

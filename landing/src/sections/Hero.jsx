@@ -39,7 +39,7 @@ export default function Hero() {
               </svg>
             </a>
             <a
-              href="/#/equipo"
+              href="#equipo"
               className="text-brand-dark hover:text-brand-dark/70 font-semibold text-sm md:text-[15px] px-6 py-3.5 rounded-pill hover:bg-brand-pastel transition-all w-full sm:w-auto flex items-center justify-center gap-2"
             >
               Conoce a tu equipo
@@ -69,9 +69,9 @@ export default function Hero() {
             <div className="flex items-center gap-3">
               <div className="flex -space-x-2">
                 {[
-                  'https://randomuser.me/api/portraits/women/44.jpg',
-                  'https://randomuser.me/api/portraits/men/54.jpg',
-                  'https://randomuser.me/api/portraits/men/75.jpg',
+                  'https://ui-avatars.com/api/?name=Maria+Garcia&background=2D3261&color=FFD154&size=64&font-size=0.4&bold=true',
+                  'https://ui-avatars.com/api/?name=David+Ruiz&background=2D3261&color=FFD154&size=64&font-size=0.4&bold=true',
+                  'https://ui-avatars.com/api/?name=Pedro+Sanchez&background=2D3261&color=FFD154&size=64&font-size=0.4&bold=true',
                 ].map((src, i) => (
                   <img key={i} src={src} className="w-7 h-7 rounded-full object-cover border-2 border-white" alt="" />
                 ))}
