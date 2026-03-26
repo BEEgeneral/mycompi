@@ -2,10 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
-const API = ''
-
 // ─────────────────────────────────────────
-// CHATGPT-STYLE FULL SCREEN CHAT
+// CHAT PANEL — Colors: blanco cálido, azul marino
 // ─────────────────────────────────────────
 function ChatPanel({ agentesActivos, token, onLogout }) {
   const [mensajes, setMensajes] = useState([])
@@ -13,12 +11,13 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
   const [enviando, setEnviando] = useState(false)
   const [agenteActivo, setAgenteActivo] = useState('paco')
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [tab, setTab] = useState('chat') // chat | actividad | cuenta
+  const [tab, setTab] = useState('chat')
+  const [plan, setPlan] = useState('BASICO')
   const bottomRef = useRef(null)
   const textareaRef = useRef(null)
 
   const agentes = [
-    { id: 'paco', nombre: 'Paco', emoji: '🎯', color: 'from-indigo-500 to-purple-600', rol: 'Orquestador' },
+    { id: 'paco', nombre: 'Paco', emoji: '🎯', color: 'from-[#333863] to-[#4a5090]', rol: 'Orquestador' },
     ...agentesActivos,
   ]
 
@@ -29,7 +28,9 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
     if (!token) return
     fetch('/api/chat?limit=50', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
-      .then(d => { if (d.historial) setMensajes(d.historial) })
+      .then(d => {
+        if (d.historial) setMensajes(d.historial)
+      })
       .catch(() => {})
   }, [token])
 
@@ -45,9 +46,7 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
     setEnviando(true)
     const texto = input.trim()
     setInput('')
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-    }
+    if (textareaRef.current) textareaRef.current.style.height = 'auto'
 
     const tempId = `opt-${Date.now()}`
     setMensajes(prev => [...prev, {
@@ -66,10 +65,11 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
       })
       const d = await res.json()
       if (d.ok) {
+        // Reemplazar optimistic con ID real
         setMensajes(prev => prev.map(m =>
           m.id === tempId ? { ...m, id: `user-${d.interaccionId}` } : m
         ))
-        // Esperar respuesta real
+        // Esperar respuesta con polling
         await esperarRespuesta(d.interaccionId)
       }
     } catch (err) {
@@ -79,23 +79,21 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
     setEnviando(false)
   }
 
-  // Polling de la respuesta
   const esperarRespuesta = async (interaccionId) => {
-    const maxIntentos = 30
-    for (let i = 0; i < maxIntentos; i++) {
+    for (let i = 0; i < 60; i++) {
       await new Promise(r => setTimeout(r, 1000))
       try {
         const res = await fetch(`/api/chat/${interaccionId}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         const d = await res.json()
-        if (d.interaccion?.respuestaAgente) {
+        if (d.respuestaAgente) {
           setMensajes(prev => [...prev, {
             id: `resp-${interaccionId}`,
             role: 'assistant',
-            content: d.interaccion.respuestaAgente,
-            timestamp: new Date().toISOString(),
-            agenteId: agenteActivo,
+            content: d.respuestaAgente,
+            timestamp: d.createdAt || new Date().toISOString(),
+            agenteId: d.agenteId || 'paco',
           }])
           return
         }
@@ -124,137 +122,124 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
   }
 
   return (
-    <div className="flex h-full bg-[#212121] rounded-2xl overflow-hidden border border-gray-800">
+    <div className="flex h-full bg-[#FDF8F3] rounded-2xl overflow-hidden border border-[#e0d8cf] shadow-sm">
       {/* ── Sidebar ── */}
-      <div className={`${sidebarOpen ? 'w-72' : 'w-0'} flex-shrink-0 bg-[#111] border-r border-gray-800 flex flex-col transition-all duration-200 overflow-hidden`}>
-        <div className="px-4 py-4 border-b border-gray-800">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Tu equipo</span>
-            <button onClick={() => setSidebarOpen(false)} className="text-gray-500 hover:text-white text-xs">✕</button>
+      <div className={`${sidebarOpen ? 'w-80' : 'w-0'} flex-shrink-0 bg-white border-r border-[#e8e0d5] flex flex-col transition-all duration-200 overflow-hidden`}>
+        <div className="px-5 py-5 border-b border-[#f0e8df]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#333863] to-[#5a62a8] flex items-center justify-center">
+                <span className="text-white text-sm">🤖</span>
+              </div>
+              <span className="text-sm font-bold text-[#333863]">MyCompi</span>
+            </div>
+            <button onClick={() => setSidebarOpen(false)} className="text-[#b0a898] hover:text-[#333863] text-sm">✕</button>
           </div>
           <button
             onClick={() => setMensajes([])}
-            className="w-full flex items-center gap-2 px-3 py-2.5 bg-[#2a2a2a] hover:bg-[#333] rounded-xl text-sm text-gray-300 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#333863] hover:bg-[#3d4080] text-white rounded-xl text-sm font-semibold transition-colors shadow-sm"
           >
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
             Nuevo chat
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
+        <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
+          <p className="text-[10px] font-bold text-[#b0a898] uppercase tracking-widest px-2 mb-3">Tu equipo</p>
           {agentes.map(a => (
             <button
               key={a.id}
               onClick={() => { setAgenteActivo(a.id); setTab('chat') }}
               className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl mb-0.5 text-left transition-all ${
                 agenteActivo === a.id && tab === 'chat'
-                  ? 'bg-[#2a2a2a] text-white border border-gray-700'
-                  : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
+                  ? 'bg-[#F0EDFB] border border-[#D1E0F7] text-[#333863]'
+                  : 'text-[#6b6560] hover:bg-[#faf6f0] hover:text-[#333863]'
               }`}
             >
-              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-base flex-shrink-0`}>
+              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-base flex-shrink-0 shadow-sm`}>
                 {a.emoji}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-semibold truncate">{a.nombre}</div>
-                <div className="text-[11px] text-gray-600 truncate">{a.rol}</div>
+                <div className="text-[11px] text-[#b0a898] truncate">{a.rol}</div>
               </div>
               {a.id === 'paco' && (
-                <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-400 flex-shrink-0" />
               )}
             </button>
           ))}
         </div>
 
-        {/* Bottom nav */}
-        <div className="border-t border-gray-800 py-2 px-2 space-y-1">
-          <button
-            onClick={() => setTab('actividad')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${
-              tab === 'actividad' ? 'bg-[#2a2a2a] text-white' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
-            }`}
-          >
-            <span className="text-base">📊</span>
-            <span className="text-sm">Actividad</span>
+        <div className="border-t border-[#f0e8df] py-2 px-3 space-y-1">
+          <button onClick={() => setTab('actividad')} className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${tab === 'actividad' ? 'bg-[#F0EDFB] text-[#333863]' : 'text-[#6b6560] hover:bg-[#faf6f0]'}`}>
+            <span className="text-base">📊</span><span className="text-sm font-medium">Actividad</span>
           </button>
-          <button
-            onClick={() => setTab('cuenta')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${
-              tab === 'cuenta' ? 'bg-[#2a2a2a] text-white' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
-            }`}
-          >
-            <span className="text-base">⚙️</span>
-            <span className="text-sm">Mi cuenta</span>
+          <button onClick={() => setTab('decisiones')} className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${tab === 'decisiones' ? 'bg-[#F0EDFB] text-[#333863]' : 'text-[#6b6560] hover:bg-[#faf6f0]'}`}>
+            <span className="text-base">📋</span><span className="text-sm font-medium">Decisiones</span>
           </button>
-          <button
-            onClick={onLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-gray-500 hover:text-red-400 hover:bg-[#1a1a1a] transition-colors"
-          >
-            <span className="text-base">🚪</span>
-            <span className="text-sm">Cerrar sesión</span>
+          <button onClick={() => setTab('cuenta')} className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${tab === 'cuenta' ? 'bg-[#F0EDFB] text-[#333863]' : 'text-[#6b6560] hover:bg-[#faf6f0]'}`}>
+            <span className="text-base">⚙️</span><span className="text-sm font-medium">Mi cuenta</span>
+          </button>
+          <button onClick={onLogout} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left text-[#b0a090] hover:text-red-500 hover:bg-red-50 transition-colors">
+            <span className="text-base">🚪</span><span className="text-sm font-medium">Cerrar sesión</span>
           </button>
         </div>
       </div>
 
-      {/* ── Main area ── */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* ── Main chat ── */}
+      <div className="flex-1 flex flex-col min-w-0 bg-[#FDF8F3]">
         {/* Top bar */}
-        <div className="flex items-center gap-3 px-6 py-4 border-b border-[#2a2a2a] bg-[#1a1a1a]">
+        <div className="flex items-center gap-4 px-6 py-4 border-b border-[#ede5da] bg-white shadow-sm">
           {!sidebarOpen && (
-            <button onClick={() => setSidebarOpen(true)} className="text-gray-400 hover:text-white transition-colors mr-2">
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <button onClick={() => setSidebarOpen(true)} className="text-[#6b6560] hover:text-[#333863] transition-colors">
+              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7" />
               </svg>
             </button>
           )}
-          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${agenteInfo.color} flex items-center justify-center text-lg flex-shrink-0`}>
+          <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${agenteInfo.color} flex items-center justify-center text-lg shadow-md`}>
             {agenteInfo.emoji}
           </div>
           <div>
-            <div className="text-base font-semibold text-white">{agenteInfo.nombre}</div>
-            <div className="text-xs text-gray-500">{agenteInfo.rol}</div>
+            <div className="text-base font-bold text-[#333863]">{agenteInfo.nombre}</div>
+            <div className="text-xs text-[#b0a898]">{agenteInfo.rol}</div>
           </div>
           {agenteActivo === 'paco' && (
-            <div className="ml-4 px-3 py-1 bg-indigo-900/50 border border-indigo-700/50 rounded-full text-xs text-indigo-300">
-              Coordina automáticamente con el mejor agente
+            <div className="ml-3 px-3 py-1 bg-[#FFF9E6] border border-[#FFD54F]/40 rounded-full text-xs text-[#333863] font-medium">
+              ✨ Coordina automáticamente con el mejor agente
             </div>
           )}
         </div>
 
-        {/* Chat area */}
+        {/* Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-8 space-y-6">
           {mensajes.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-center -mt-8">
-              <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${agenteInfo.color} flex items-center justify-center text-4xl mb-8 shadow-2xl`}>
+              <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${agenteInfo.color} flex items-center justify-center text-4xl mb-8 shadow-lg`}>
                 {agenteInfo.emoji}
               </div>
-              <h2 className="text-2xl font-bold text-white mb-3">¿En qué te ayudo hoy?</h2>
-              <p className="text-gray-500 max-w-lg text-base leading-relaxed mb-10">
+              <h2 className="text-2xl font-extrabold text-[#333863] mb-3">¿En qué te ayudo hoy?</h2>
+              <p className="text-[#8b8075] max-w-lg text-base leading-relaxed mb-10">
                 {agenteActivo === 'paco'
-                  ? 'Soy Paco, tu orquestador. Puedo coordinarte con Laura, Enzo, Carlos, Elena, Diana o Marcos. Pregúntame lo que necesites.'
+                  ? 'Soy Paco, tu orquestador. Coordino automáticamente con Laura, Enzo, Carlos, Elena, Diana o Marcos. Pregúntame lo que necesites.'
                   : `Soy ${agenteInfo.nombre}, ${agenteInfo.rol.toLowerCase()}. ¿Qué necesitas?`}
               </p>
               <div className="grid grid-cols-2 gap-3 w-full max-w-xl">
-                {agenteActivo === 'paco' ? [
+                {(agenteActivo === 'paco' ? [
                   '¿Qué han hecho mis agentes hoy?',
                   'Crear una campaña de marketing',
                   'Resumen de mis leads activos',
                   'Automatizar un proceso',
                   'Revisar mi analítica',
                   'Ayuda con un cliente',
-                ].map((s, i) => (
-                  <button key={i} onClick={() => enviarSuggestion(s)}
-                    className="text-left text-sm text-gray-400 bg-[#2a2a2a] hover:bg-[#333] border border-[#333] hover:border-gray-600 rounded-xl px-4 py-3.5 transition-all">
-                    {s}
-                  </button>
-                )) : [
+                ] : [
                   '¿Qué puedes hacer por mí?',
                   'Ver estado de mis tareas',
                   'Generar un informe',
                   'Consultar métricas',
-                ].map((s, i) => (
+                ]).map((s, i) => (
                   <button key={i} onClick={() => enviarSuggestion(s)}
-                    className="text-left text-sm text-gray-400 bg-[#2a2a2a] hover:bg-[#333] border border-[#333] hover:border-gray-600 rounded-xl px-4 py-3.5 transition-all">
+                    className="text-left text-sm text-[#6b6560] bg-white hover:bg-[#F0EDFB] border border-[#e8e0d5] hover:border-[#D1E0F7] rounded-xl px-4 py-3.5 transition-all shadow-sm">
                     {s}
                   </button>
                 ))}
@@ -266,26 +251,26 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
             const isUser = m.role === 'user'
             const agenteMsg = !isUser ? (m.agenteId ? agentes.find(a => a.id === m.agenteId) : agenteInfo) : null
             return (
-              <div key={m.id || i} className={`flex gap-5 ${isUser ? 'flex-row-reverse' : ''}`}>
+              <div key={m.id || i} className={`flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}>
                 {!isUser && (
-                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${agenteMsg?.color || 'from-gray-500 to-gray-600'} flex items-center justify-center text-base flex-shrink-0 mt-0.5`}>
+                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${agenteMsg?.color || 'from-[#333863] to-[#5a62a8]'} flex items-center justify-center text-sm flex-shrink-0 mt-0.5 shadow-sm`}>
                     {agenteMsg?.emoji || '🤖'}
                   </div>
                 )}
                 {isUser && (
-                  <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-base flex-shrink-0 mt-0.5">
-                    👤
+                  <div className="w-9 h-9 rounded-xl bg-[#333863] flex items-center justify-center text-sm flex-shrink-0 mt-0.5">
+                    <span className="text-white text-sm">👤</span>
                   </div>
                 )}
                 <div className={`flex-1 max-w-2xl ${isUser ? 'text-right' : ''}`}>
                   <div className={`inline-block text-sm leading-relaxed ${
                     isUser
-                      ? 'bg-indigo-600 text-white px-5 py-3 rounded-2xl rounded-tr-sm text-left'
-                      : 'text-gray-200'
+                      ? 'bg-[#333863] text-white px-5 py-3 rounded-2xl rounded-tr-sm text-left'
+                      : 'text-[#3d3d3d]'
                   }`}>
                     {m.content}
                   </div>
-                  <div className="text-[10px] text-gray-600 mt-1.5">
+                  <div className="text-[10px] text-[#b0a898] mt-1.5">
                     {new Date(m.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -294,13 +279,13 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
           })}
 
           {enviando && (
-            <div className="flex gap-5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-base">🎯</div>
+            <div className="flex gap-4">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#333863] to-[#5a62a8] flex items-center justify-center text-sm">🎯</div>
               <div className="flex-1 max-w-2xl">
-                <div className="inline-flex items-center gap-2 bg-[#2a2a2a] border border-[#333] px-5 py-3 rounded-2xl rounded-tl-sm">
-                  <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" />
-                  <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:.15s]" />
-                  <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:.3s]" />
+                <div className="inline-flex items-center gap-2 bg-white border border-[#e8e0d5] px-5 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+                  <div className="w-1.5 h-1.5 bg-[#b0a898] rounded-full animate-bounce" />
+                  <div className="w-1.5 h-1.5 bg-[#b0a898] rounded-full animate-bounce [animation-delay:.15s]" />
+                  <div className="w-1.5 h-1.5 bg-[#b0a898] rounded-full animate-bounce [animation-delay:.3s]" />
                 </div>
               </div>
             </div>
@@ -311,7 +296,7 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
         {/* Input */}
         <div className="px-6 pb-6">
           <form onSubmit={enviar} className="relative">
-            <div className="flex items-end bg-[#2a2a2a] border border-[#383838] rounded-2xl px-5 py-4 focus-within:border-gray-600 transition-colors shadow-lg">
+            <div className="flex items-end bg-white border-2 border-[#e0d8cf] focus-within:border-[#333863] rounded-2xl px-5 py-4 transition-colors shadow-sm">
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -319,13 +304,13 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
                 onKeyDown={handleKeyDown}
                 placeholder={`Pregúntale a ${agenteInfo.nombre}...`}
                 rows={1}
-                className="flex-1 bg-transparent text-white text-base placeholder:text-gray-500 focus:outline-none resize-none max-h-[200px] overflow-y-auto"
+                className="flex-1 bg-transparent text-[#333863] text-base placeholder:text-[#b0a898] focus:outline-none resize-none max-h-[200px] overflow-y-auto"
                 style={{ minHeight: '24px' }}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || enviando}
-                className="ml-4 w-9 h-9 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+                className="ml-4 w-9 h-9 bg-[#333863] hover:bg-[#4a5090] disabled:opacity-30 disabled:cursor-not-allowed rounded-xl flex items-center justify-center flex-shrink-0 transition-colors shadow-md"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -333,6 +318,9 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
               </button>
             </div>
           </form>
+          <p className="text-center text-[11px] text-[#b0a898] mt-2.5">
+            {agenteActivo === 'paco' ? 'Paco coordina automáticamente con el agente más adecuado' : `Chat directo con ${agenteInfo.nombre}`}
+          </p>
         </div>
       </div>
     </div>
@@ -344,46 +332,163 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
 // ─────────────────────────────────────────
 function ActividadPanel({ token }) {
   const [loading, setLoading] = useState(true)
-  const [interacciones, setInteracciones] = useState([])
+  const [items, setItems] = useState([])
 
   useEffect(() => {
     if (!token) return
-    fetch('/api/chat?limit=50', { headers: { Authorization: `Bearer ${token}` } })
+    fetch('/api/chat?limit=30', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => {
-        if (d.historial) {
-          const msgs = d.historial.filter(m => m.role === 'user')
-          setInteracciones(msgs.slice(-20).reverse())
-        }
+        if (d.historial) setItems(d.historial.filter(m => m.role === 'user').reverse())
       })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [token])
 
-  if (loading) return <div className="text-center py-20 text-gray-500">Cargando...</div>
+  if (loading) return <div className="text-center py-20 text-[#b0a898]">Cargando...</div>
 
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-bold text-white mb-6">📊 Actividad reciente</h2>
-      {interacciones.length === 0 ? (
-        <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl">
+      <h2 className="text-xl font-extrabold text-[#333863] mb-6">📊 Actividad reciente</h2>
+      {items.length === 0 ? (
+        <div className="text-center py-20 border-2 border-dashed border-[#e0d8cf] rounded-2xl">
           <div className="text-5xl mb-4">📊</div>
-          <div className="text-white font-semibold">Sin actividad todavía</div>
-          <div className="text-gray-500 text-sm mt-2">Tu actividad con Paco aparecerá aquí</div>
+          <div className="text-[#333863] font-bold text-lg">Sin actividad todavía</div>
+          <div className="text-[#b0a898] text-sm mt-2">Tu actividad con Paco aparecerá aquí</div>
         </div>
-      ) : (
-        interacciones.map(m => (
-          <div key={m.id} className="bg-[#2a2a2a] border border-[#333] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-indigo-500" />
-              <span className="text-xs text-gray-500">
-                {new Date(m.timestamp).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' })}
-              </span>
-            </div>
-            <div className="text-sm text-gray-200">{m.content}</div>
+      ) : items.map(m => (
+        <div key={m.id} className="bg-white border border-[#e8e0d5] rounded-xl p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#333863]" />
+            <span className="text-xs text-[#b0a898]">
+              {new Date(m.timestamp).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}
+            </span>
           </div>
-        ))
+          <div className="text-sm text-[#3d3d3d] leading-relaxed">{m.content}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// DECISIONES TAB
+// ─────────────────────────────────────────
+function DecisionesPanel({ token }) {
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState({ standups: [], decisiones: [], prioridades: [], toughLove: [] })
+  const [tab, setTab] = useState('standups')
+
+  useEffect(() => {
+    if (!token) return
+    fetch('/api/clientes/decisiones', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { if (d.ok) setData(d) })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [token])
+
+  if (loading) return <div className="text-center py-20 text-[#b0a898]">Cargando...</div>
+
+  const { standups = [], decisiones = [], prioridades = [], toughLove = [] } = data
+
+  return (
+    <div className="space-y-4">
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: 'Standups', count: standups.length, color: 'bg-[#F0EDFB] border-[#D1E0F7]', text: 'text-[#333863]' },
+          { label: 'Decisiones', count: decisiones.length, color: 'bg-[#FFF9E6] border-[#FFD54F]/40', text: 'text-[#333863]' },
+          { label: 'Prioridades', count: prioridades.length, color: 'bg-[#F0FDF4] border-[#86efac]/40', text: 'text-[#333863]' },
+          { label: 'Alertas', count: toughLove.length, color: 'bg-[#FEF2F2] border-[#fca5a5]/40', text: 'text-[#333863]' },
+        ].map((s, i) => (
+          <div key={i} className={`${s.color} border rounded-xl p-4 text-center`}>
+            <div className={`text-2xl font-extrabold ${s.text}`}>{s.count}</div>
+            <div className="text-[11px] text-[#b0a898] font-semibold mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Sub-tabs */}
+      <div className="flex gap-2 bg-white border border-[#e8e0d5] rounded-xl p-1 shadow-sm">
+        {[
+          { id: 'standups', label: '📋 Standups', count: standups.length },
+          { id: 'decisiones', label: '✅ Decisiones', count: decisiones.length },
+          { id: 'prioridades', label: '🎯 Prioridades', count: prioridades.length },
+          { id: 'tough', label: '💪 Alerts', count: toughLove.length },
+        ].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-bold transition-all ${
+              tab === t.id ? 'bg-[#333863] text-white shadow-sm' : 'text-[#6b6560] hover:bg-[#faf6f0]'
+            }`}>
+            {t.label}
+            {t.count > 0 && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${tab === t.id ? 'bg-white/20 text-white' : 'bg-[#f0e8df] text-[#6b6560]'}`}>{t.count}</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'standups' && standups.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed border-[#e0d8cf] rounded-2xl">
+          <div className="text-4xl mb-3">📋</div><div className="text-[#333863] font-bold">Sin standups todavía</div>
+          <div className="text-[#b0a898] text-sm mt-1">Tu Paco escribe su primer standup cada noche</div>
+        </div>
       )}
+      {tab === 'decisiones' && decisiones.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed border-[#e0d8cf] rounded-2xl">
+          <div className="text-4xl mb-3">✅</div><div className="text-[#333863] font-bold">Sin decisiones aún</div>
+        </div>
+      )}
+      {tab === 'prioridades' && prioridades.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed border-[#e0d8cf] rounded-2xl">
+          <div className="text-4xl mb-3">🎯</div><div className="text-[#333863] font-bold">Sin prioridades</div>
+        </div>
+      )}
+      {tab === 'tough' && toughLove.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed border-[#e0d8cf] rounded-2xl">
+          <div className="text-4xl mb-3">💪</div><div className="text-[#333863] font-bold">Todo bajo control</div>
+        </div>
+      )}
+
+      {tab === 'standups' && standups.map((s, i) => (
+        <div key={i} className="bg-white border border-[#e8e0d5] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 bg-[#F0EDFB] border-b border-[#e8e0d5] flex items-center justify-between">
+            <span className="text-sm font-bold text-[#333863]">📅 {s.fecha}</span>
+          </div>
+          <pre className="text-xs text-[#6b6560] whitespace-pre-wrap font-sans p-4 bg-white leading-relaxed">{s.contenido}</pre>
+        </div>
+      ))}
+
+      {tab === 'decisiones' && decisiones.map((d, i) => (
+        <div key={i} className="flex gap-3 p-4 bg-white border border-[#e8e0d5] rounded-xl shadow-sm">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#FFD54F] mt-1.5 flex-shrink-0" />
+          <div>
+            <div className="text-sm text-[#3d3d3d] font-medium">{d.texto}</div>
+            <div className="text-[10px] text-[#b0a898] mt-1">{d.fecha}</div>
+          </div>
+        </div>
+      ))}
+
+      {tab === 'prioridades' && prioridades.map((p, i) => (
+        <div key={i} className="flex gap-3 p-4 bg-white border border-[#e8e0d5] rounded-xl shadow-sm">
+          <div className="w-2.5 h-2.5 rounded-full bg-green-400 mt-1.5 flex-shrink-0" />
+          <div>
+            <div className="text-sm text-[#3d3d3d] font-medium">{p.texto}</div>
+            <div className="text-[10px] text-[#b0a898] mt-1">{p.fecha}</div>
+          </div>
+        </div>
+      ))}
+
+      {tab === 'tough' && toughLove.map((t, i) => (
+        <div key={i} className="flex gap-3 p-4 bg-[#FEF2F2] border border-[#fca5a5]/30 rounded-xl">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
+          <div>
+            <div className="text-sm text-[#3d3d3d] font-medium">{t.texto}</div>
+            <div className="text-[10px] text-[#b0a898] mt-1">{t.fecha}</div>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -393,34 +498,30 @@ function ActividadPanel({ token }) {
 // ─────────────────────────────────────────
 function CuentaPanel({ usuario, plan, onLogout }) {
   return (
-    <div className="space-y-6 max-w-lg">
-      <h2 className="text-lg font-bold text-white">⚙️ Mi cuenta</h2>
-      <div className="bg-[#2a2a2a] border border-[#333] rounded-2xl p-6 space-y-4">
-        <div className="flex justify-between items-center">
-          <span className="text-gray-400 text-sm">Nombre</span>
-          <span className="text-white font-semibold">{usuario?.nombre}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gray-400 text-sm">Email</span>
-          <span className="text-gray-300 text-sm">{usuario?.email}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gray-400 text-sm">Plan</span>
-          <span className="text-indigo-400 font-bold">{plan?.toUpperCase()}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gray-400 text-sm">Estado</span>
-          <span className="text-green-400 text-sm font-semibold">● Activo</span>
+    <div className="space-y-5 max-w-lg">
+      <h2 className="text-xl font-extrabold text-[#333863]">⚙️ Mi cuenta</h2>
+      <div className="bg-white border border-[#e8e0d5] rounded-2xl p-6 space-y-4 shadow-sm">
+        {[
+          { label: 'Nombre', value: usuario?.nombre },
+          { label: 'Email', value: usuario?.email },
+          { label: 'Plan', value: plan?.toUpperCase(), highlight: true },
+        ].map((row, i) => (
+          <div key={i} className="flex justify-between items-center py-2 border-b border-[#f0e8df] last:border-0">
+            <span className="text-[#b0a898] text-sm">{row.label}</span>
+            <span className={`text-sm font-semibold ${row.highlight ? 'text-[#333863]' : 'text-[#3d3d3d]'}`}>{row.value}</span>
+          </div>
+        ))}
+        <div className="flex justify-between items-center py-2">
+          <span className="text-[#b0a898] text-sm">Estado</span>
+          <span className="text-green-600 text-sm font-semibold">● Activo</span>
         </div>
       </div>
-
       <a href="https://billing.stripe.com/p/login/test" target="_blank" rel="noreferrer"
-        className="block w-full text-center bg-[#2a2a2a] border border-[#333] text-white font-semibold py-4 rounded-2xl hover:bg-[#333] transition-colors text-sm">
-        Gestionar suscripción en Stripe
+        className="block w-full text-center bg-[#333863] text-white font-bold py-4 rounded-2xl hover:bg-[#4a5090] transition-colors shadow-md text-sm">
+        Gestionar suscripción en Stripe →
       </a>
-
       <button onClick={onLogout}
-        className="w-full text-center text-red-400 hover:text-red-300 py-3 text-sm transition-colors">
+        className="w-full text-center text-red-400 hover:text-red-600 py-3 text-sm transition-colors">
         Cerrar sesión
       </button>
     </div>
@@ -457,42 +558,51 @@ export default function Dashboard() {
 
   const plan = subscription?.planId || 'basico'
   const agentes = (() => {
-    const AGENTES = {
-      BASICO: [{ id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-pink-400 to-rose-500' }],
+    const A = {
+      BASICO: [{ id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-[#f472b6] to-[#e11d48]' }],
       EQUIPO: [
-        { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-pink-400 to-rose-500' },
-        { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-blue-400 to-indigo-500' },
-        { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-green-400 to-emerald-500' },
+        { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-[#f472b6] to-[#e11d48]' },
+        { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-[#60a5fa] to-[#4f46e5]' },
+        { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-[#4ade80] to-[#059669]' },
       ],
       DIRECCION: [
-        { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-pink-400 to-rose-500' },
-        { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-blue-400 to-indigo-500' },
-        { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-green-400 to-emerald-500' },
-        { id: 'elena', nombre: 'Elena Ortega', rol: 'Operaciones', emoji: '⚙️', color: 'from-orange-400 to-amber-500' },
-        { id: 'diana', nombre: 'Diana Palau', rol: 'Data & Growth', emoji: '📈', color: 'from-purple-400 to-violet-500' },
-        { id: 'marcos', nombre: 'Marcos Fernández', rol: 'Desarrollo Web', emoji: '💻', color: 'from-cyan-400 to-teal-500' },
+        { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-[#f472b6] to-[#e11d48]' },
+        { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-[#60a5fa] to-[#4f46e5]' },
+        { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-[#4ade80] to-[#059669]' },
+        { id: 'elena', nombre: 'Elena Ortega', rol: 'Operaciones', emoji: '⚙️', color: 'from-[#fb923c] to-[#ea580c]' },
+        { id: 'diana', nombre: 'Diana Palau', rol: 'Data & Growth', emoji: '📈', color: 'from-[#a78bfa] to-[#7c3aed]' },
+        { id: 'marcos', nombre: 'Marcos Fernández', rol: 'Desarrollo Web', emoji: '💻', color: 'from-[#22d3ee] to-[#0891b2]' },
       ],
     }
-    return AGENTES[plan?.toUpperCase()] || AGENTES.BASICO
+    return A[plan?.toUpperCase()] || A.BASICO
   })()
 
   return (
-    <div className="min-h-screen bg-[#171717]">
+    <div className="min-h-screen bg-[#FDF8F3]">
       <Navbar />
       <div className="max-w-5xl mx-auto px-4 pt-6 pb-8" style={{ height: 'calc(100vh - 72px)' }}>
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-gray-500">Cargando...</div>
-          </div>
-        ) : tab === 'chat' ? (
-          <ChatPanel agentesActivos={agentes} token={token} onLogout={logout} />
-        ) : tab === 'actividad' ? (
-          <div className="bg-[#1e1e1e] rounded-2xl border border-gray-800 p-8 h-full overflow-y-auto">
-            <ActividadPanel token={token} />
+            <div className="text-[#b0a898]">Cargando...</div>
           </div>
         ) : (
-          <div className="bg-[#1e1e1e] rounded-2xl border border-gray-800 p-8">
-            <CuentaPanel usuario={usuario} plan={plan} onLogout={logout} />
+          <div className="h-full">
+            {tab === 'chat' && <ChatPanel agentesActivos={agentes} token={token} onLogout={logout} />}
+            {tab === 'actividad' && (
+              <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full overflow-y-auto shadow-sm">
+                <ActividadPanel token={token} />
+              </div>
+            )}
+            {tab === 'decisiones' && (
+              <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full overflow-y-auto shadow-sm">
+                <DecisionesPanel token={token} />
+              </div>
+            )}
+            {tab === 'cuenta' && (
+              <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full overflow-y-auto shadow-sm">
+                <CuentaPanel usuario={usuario} plan={plan} onLogout={logout} />
+              </div>
+            )}
           </div>
         )}
       </div>
