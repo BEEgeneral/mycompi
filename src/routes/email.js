@@ -1,43 +1,44 @@
 /**
  * email.js — Inbound + Outbound email para Paco
  *
+ * GET  /api/email/test     → test de conectividad
  * POST /api/email/inbound  → webhook de Resend (receives emails)
- * POST /api/email/enviar  → envía email como Paco
- * GET  /api/email/bandeja → bandeja de entrada del orquestador
+ * POST /api/email/enviar   → envía email como Paco
+ * GET  /api/email/bandeja  → bandeja de entrada del orquestador
+ * POST /api/email/:id/procesar → marcar email como procesado/fallido
  */
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('./auth');
 const prisma = require('../lib/db');
+const { Resend } = require('resend');
+const { v4: uuidv4 } = require('uuid');
 
 // ─────────────────────────────────────────
-// TEST — confirmar que el route existe
+// TEST
 // GET /api/email/test
 // ─────────────────────────────────────────
 router.get('/test', (req, res) => {
-  res.json({ ok: true, ts: new Date().toISOString() });
+  res.json({ ok: true, ts: new Date().toISOString(), path: __dirname });
 });
 
 // ─────────────────────────────────────────
-// WEBHOOK DE RESEND —Inbound email
+// WEBHOOK DE RESEND — Inbound email
 // POST /api/email/inbound
 // ─────────────────────────────────────────
 router.post('/inbound', async (req, res) => {
-  res.json({ ok: true, received: true });
-});
-  // Resend webhook verified via Resend signature — por ahora lo aceptamos directo
+  // Resend webhook verified via Resend signature
   // En producción añadir verificación HMAC de Resend
   try {
-    const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const payload = req.body;
 
     // Resend webhook puede venir como array de eventos
     const events = Array.isArray(payload) ? payload : [payload];
 
     for (const event of events) {
-      // Solo procesamos emails recibidos (no bounces, delivered, etc.)
       if (event.type !== 'email') continue;
 
-      const { email } = event.data;
+      const email = event.data;
       if (!email) continue;
 
       const de = email.from?.address || email.sender?.address || '';
@@ -47,127 +48,166 @@ router.post('/inbound', async (req, res) => {
       const html = email.html || '';
       const messageId = email.messageId || null;
 
-      // Ignorar emails sin remitente o vacíos
       if (!de || !texto.trim()) continue;
 
       // Buscar cliente por email del remitente
       let clienteId = null;
       try {
         const cliente = await prisma.cliente.findFirst({
-          where: { usuarios: { some: { email: de } }
+          where: { usuarios: { some: { email: de } } }
         });
         clienteId = cliente?.id || null;
-      } catch {}
+      } catch (e) {
+        console.error('[EMAIL] Error buscando cliente:', e.message);
+      }
 
       // Guardar email en BD
-      const emailRecord = await prisma.email.create({
-        data: {
-          messageId,
-          de,
-          para,
-          asunto,
-          texto,
-          html,
-          raw: JSON.stringify(email),
-          clienteId,
-          estadoEmail: 'RECIBIDO',
-        }
-      });
+      let emailRecord;
+      try {
+        emailRecord = await prisma.email.create({
+          data: {
+            messageId,
+            de,
+            para,
+            asunto,
+            texto,
+            html,
+            raw: JSON.stringify(email),
+            clienteId,
+            estadoEmail: 'RECIBIDO',
+          }
+        });
+      } catch (e) {
+        console.error('[EMAIL] Error creando email en BD:', e.message);
+        continue;
+      }
 
       // Procesar en background — OpenClaw analiza y responde
       procesarEmailAsync(emailRecord.id, { de, para, asunto, texto, clienteId, messageId });
     }
 
-    res.json({ ok: true, received: events.length });
+    res.json({ ok: true, processed: events.length });
   } catch (err) {
-    console.error('Error procesando inbound email:', err);
-    res.status(500).json({ error: 'Error procesando email' });
+    console.error('[EMAIL-INBOUND ERROR]:', err.message, err.stack?.slice(0, 200));
+    res.status(500).json({ error: 'Error interno', detail: err.message });
   }
 });
 
 // ─────────────────────────────────────────
-// PROCESAMIENTO ASYNC de email recibido
-// Llama a OpenClaw y envía respuesta
+// PROCESAMIENTO ASINCRONO DE EMAIL
 // ─────────────────────────────────────────
-async function procesarEmailAsync(emailId, { de, para, asunto, texto, clienteId }) {
+async function procesarEmailAsync(emailId, { de, para, asunto, texto, clienteId, messageId }) {
+  const OPENCLAW_URL = process.env.OPENCLAW_URL || 'http://localhost:18789';
+  const OPENCLAW_TOKEN = process.env.OPENCLAW_TOKEN || '';
+
   try {
     await prisma.email.update({
       where: { id: emailId },
       data: { estadoEmail: 'PROCESANDO' }
     });
 
-    // Obtener contexto del cliente si existe
-    let contextoCliente = '';
-    if (clienteId) {
-      try {
-        const cliente = await prisma.cliente.findUnique({
-          where: { id: clienteId },
-          select: { nombre: true, plan: true, email: true }
-        });
-        contextoCliente = `[Cliente: ${cliente?.nombre || de} | Plan: ${cliente?.plan || 'desconocido'}]\n`;
-      } catch {}
-    }
+    const cliente = clienteId
+      ? await prisma.cliente.findUnique({ where: { id: clienteId }, include: { usuarios: true } })
+      : null;
 
-    // Llamar a OpenClaw / Paco
-    let respuestaTexto = '';
+    const prompt = `Eres Paco, el asistente de IA de MyCompi (mycompi.com). Has recibido un email de un cliente.
+
+EMAIL RECIBIDO:
+- De: ${de}
+- Para: ${para}
+- Asunto: ${asunto}
+- Contenido: ${texto}
+
+${cliente ? `- Cliente: ${cliente.nombre} (${cliente.plan})` : '- Cliente: No registrado'}
+
+Genera una respuesta profesional y personalizada como Paco. La respuesta debe:
+1. Ser amable y profesional
+2. Responder al contenido del email
+3. Mencionar que es un asistente de IA de MyCompi si es la primera interacción
+4. Tener un tono cercano pero formal
+5. MAXIMO 300 palabras
+
+Si no puedes responder con certeza, sé honesto y ofrece ayuda adicional.
+
+Responde SOLO con el email de respuesta (no escribas nada más, solo el cuerpo del email).`;
+
+    let respuestaTexto = null;
+    let agenteId = 'paco';
+
     try {
-      const OPENCLAW_URL = process.env.OPENCLAW_URL || 'http://localhost:18789';
-      const OPENCLAW_TOKEN = process.env.OPENCLAW_TOKEN || '';
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25000);
 
-      const openclawRes = await fetch(`${OPENCLAW_URL}/api/chat`, {
+      const response = await fetch(`${OPENCLAW_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENCLAW_TOKEN}`,
+          'Authorization': `Bearer ${OPENCLAW_TOKEN}`
         },
         body: JSON.stringify({
-          sessionKey: `email-${de}`,
-          message: `${contextoCliente}[Email recibido]\nDe: ${de}\nAsunto: ${asunto}\n\n${texto}`,
+          message: prompt,
+          agenteId,
+          clienteId,
+          mode: 'email'
         }),
+        signal: controller.signal
       });
 
-      if (openclawRes.ok) {
-        const data = await openclawRes.json();
-        respuestaTexto = data.reply || data.response || JSON.stringify(data);
-      } else {
-        respuestaTexto = getEmailFallback(de, asunto, texto);
+      clearTimeout(timeout);
+
+      if (response.ok) {
+        const data = await response.json();
+        respuestaTexto = data.response || data.content || data.text || null;
       }
-    } catch (openclawErr) {
-      console.error('OpenClaw error en email:', openclawErr.message);
-      respuestaTexto = getEmailFallback(de, asunto, texto);
+    } catch (e) {
+      console.error('[EMAIL] OpenClaw no disponible:', e.message);
     }
 
-    // Enviar respuesta al cliente
-    await enviarEmail({
-      para: de,
-      asunto: `Re: ${asunto}`,
-      html: generarEmailHTML(respuestaTexto, de),
-      inReplyTo: messageId,
-    });
+    // Fallback inteligente si OpenClaw no responde
+    if (!respuestaTexto) {
+      respuestaTexto = getEmailFallback({ de, asunto, texto, clienteId });
+    }
 
-    // Actualizar estado en BD
-    await prisma.email.update({
-      where: { id: emailId },
-      data: { estadoEmail: 'RESPONDIDO' }
-    });
-
-    // También guardar como interaccionChat si hay cliente
-    if (clienteId) {
-      await prisma.interaccionChat.create({
+    // Guardar respuesta en BD
+    try {
+      await prisma.email.update({
+        where: { id: emailId },
         data: {
-          clienteId,
-          agenteId: 'paco',
-          tipoPeticion: 'CONSULTAR_INFO',
-          mensajeOriginal: texto.slice(0, 500),
-          respuestaAgente: respuestaTexto.slice(0, 500),
-          resultadoExitoso: true,
-          estadoChat: 'COMPLETED',
+          respuestaTexto,
+          estadoEmail: 'RESPONDIDO',
         }
       });
+    } catch (e) {
+      console.error('[EMAIL] Error guardando respuesta:', e.message);
     }
 
+    // Enviar respuesta al cliente via Resend
+    if (messageId) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: 'Paco — MyCompi <paco@mycompi.com>',
+          to: [de],
+          replyTo: 'paco@mycompi.com',
+          subject: `Re: ${asunto}`,
+          text: respuestaTexto,
+          html: generarEmailHTML(respuestaTexto, de),
+          headers: {
+            'In-Reply-To': messageId,
+            'References': messageId,
+          }
+        });
+        console.log(`[EMAIL] Respuesta enviada a ${de}`);
+      } catch (e) {
+        console.error('[EMAIL] Error enviando respuesta:', e.message);
+        await prisma.email.update({
+          where: { id: emailId },
+          data: { estadoEmail: 'FALLIDO' }
+        }).catch(() => {});
+      }
+    }
   } catch (err) {
-    console.error('Error en procesarEmailAsync:', err);
+    console.error('[EMAIL] Error procesando email:', err.message);
     await prisma.email.update({
       where: { id: emailId },
       data: { estadoEmail: 'FALLIDO' }
@@ -175,49 +215,80 @@ async function procesarEmailAsync(emailId, { de, para, asunto, texto, clienteId 
   }
 }
 
-function getEmailFallback(de, asunto, texto) {
-  const msg = texto.toLowerCase();
-  if (msg.includes('precio') || msg.includes('plan') || msg.includes('cuánto')) {
-    return `¡Hola!\n\nGracias por escribirme. Tienes el plan adecuado para lo que necesitas.\n\nNuestros precios:\n\n💼 Básico — 10€/mes\n📂 Equipo — 49€/mes\n🏢 Dirección — 147€/mes\n\n¿Quieres que profundicemos en alguno?`;
+function getEmailFallback({ de, asunto, texto, clienteId }) {
+  const nombre = de.split('@')[0];
+  const asuntoLower = asunto.toLowerCase();
+
+  if (asuntoLower.includes('demo') || asuntoLower.includes('prueba') || asuntoLower.includes('test')) {
+    return `Hola,
+
+Gracias por escribirnos. Soy Paco, el asistente virtual de MyCompi.
+
+He recibido tu mensaje de prueba correctamente. Estamos encantados de que quieras conocer cómo nuestros agentes de IA pueden ayudar a tu empresa.
+
+¿Podrías contarnos más sobre qué tipo de problema o proceso te gustaría automatizar? Con esa información podré orientarte mejor sobre qué agentes serían más útiles para tu caso.
+
+Un saludo,
+Paco — MyCompi`;
   }
-  if (msg.includes('hola') || msg.includes('gracias')) {
-    return `¡Hola!\n\nGracias por contactarla. Soy Paco, el orquestador de MyCompi.\n\n¿En qué puedo ayudarte? Puedo coordinarte con Laura (atención al cliente), Enzo (marketing), Carlos (ventas), Elena (operaciones) o Diana (data).\n\n¡Cuéntame!`;
+
+  if (asuntoLower.includes('precio') || asuntoLower.includes('coste') || asuntoLower.includes('cotizac')) {
+    return `Hola ${nombre},
+
+Gracias por tu interés en MyCompi. Somos una plataforma SaaS que pone a tu disposición equipos de agentes de IA especializados para PYMES españolas.
+
+Nuestros planes:
+
+• Profesional Agéntico — 10€/mes (1 agente especializado)
+• Equipo Agéntico — 49€/mes (1 manager + 5 agentes especializados)
+• Equipos con Dirección — 147€/mes (1 director + 5 managers + 25 agentes)
+
+Todos los planes incluyen setup gratuito y soporte inicial. ¿Te gustaría que te prepare una demo personalizada?
+
+Un saludo,
+Paco — MyCompi`;
   }
-  return `¡Hola!\n\nGracias por tu mensaje. Lo he recibido y estoy procesándolo.\n\nTe respondo con lo que necesitas. ¿Hay algo específico sobre lo que quieras que profundice?\n\nUn saludo,\nPaco\nMyCompi — Tu equipo de agentes IA`;
+
+  return `Hola ${nombre},
+
+Gracias por contactar con MyCompi. Soy Paco, tu asistente virtual.
+
+He recibido tu mensaje y lo he transmitido a nuestro equipo. Te responderemos en la mayor brevedad posible con más detalles.
+
+Mientras tanto, si tienes alguna urgencia, puedes escribirnos directamente a soporte@mycompi.com.
+
+Un saludo,
+Paco — MyCompi
+
+---
+MyCompi — Equipos de Agentes de IA para PYMES
+https://mycompi.onrender.com`;
 }
 
-function generarEmailHTML(texto, nombre) {
+function generarEmailHTML(texto, destinatario) {
   return `<!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f9fafb; margin: 0; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .header { background: linear-gradient(135deg, #4F46E5, #7C3AED); padding: 24px 28px; display: flex; align-items: center; gap: 12px; }
-    .header-emoji { font-size: 28px; }
-    .header-title { color: white; font-size: 18px; font-weight: 700; }
-    .header-sub { color: rgba(255,255,255,0.75); font-size: 13px; }
-    .body { padding: 28px; }
-    .body p { color: #374151; font-size: 15px; line-height: 1.7; margin: 0 0 16px; white-space: pre-wrap; }
-    .footer { padding: 20px 28px; border-top: 1px solid #e5e7eb; }
-    .footer p { font-size: 12px; color: #9ca3af; margin: 0; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Respuesta de Paco — MyCompi</title>
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      <span class="header-emoji">🎯</span>
-      <div>
-        <div class="header-title">Paco — MyCompi</div>
-        <div class="header-sub">Tu orquestador de agentes IA</div>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+    <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:32px 40px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;">🤖</div>
+        <div>
+          <div style="color:rgba(255,255,255,0.6);font-size:12px;text-transform:uppercase;letter-spacing:1px;">Asistente MyCompi</div>
+          <div style="color:#ffffff;font-size:20px;font-weight:700;">Paco</div>
+        </div>
       </div>
     </div>
-    <div class="body">
-      ${texto.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}
-    </div>
-    <div class="footer">
-      <p>Enviado desde MyCompi · ¿Necesitas algo más? Responde a este email y Paco te responde al momento.</p>
+    <div style="padding:36px 40px;">
+      <div style="white-space:pre-wrap;line-height:1.7;color:#333;font-size:15px;margin-bottom:24px;">${texto.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+      <div style="border-top:1px solid #eee;padding-top:20px;margin-top:8px;">
+        <div style="color:#888;font-size:12px;">Este email fue generado por <strong style="color:#667eea;">Paco</strong>, asistente de IA de <a href="https://mycompi.onrender.com" style="color:#667eea;text-decoration:none;">MyCompi</a></div>
+      </div>
     </div>
   </div>
 </body>
@@ -225,82 +296,86 @@ function generarEmailHTML(texto, nombre) {
 }
 
 // ─────────────────────────────────────────
-// ENVIAR EMAIL (como Paco)
+// ENVIAR EMAIL (como Paco, con auth)
 // POST /api/email/enviar
 // ─────────────────────────────────────────
 router.post('/enviar', authMiddleware, async (req, res) => {
-  const { para, asunto, html, inReplyTo } = req.body;
-
-  if (!para || !asunto || !html) {
-    return res.status(400).json({ error: 'para, asunto y html son requeridos' });
-  }
-
   try {
-    const result = await enviarEmail({ para, asunto, html, inReplyTo });
-    res.json({ ok: true, messageId: result?.id });
+    const { to, subject, text, html, replyTo } = req.body;
+    const fromName = req.body.fromName || 'Paco — MyCompi';
+
+    if (!to || !subject || !text) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios: to, subject, text' });
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const result = await resend.emails.send({
+      from: `${fromName} <paco@mycompi.com>`,
+      to: Array.isArray(to) ? to : [to],
+      replyTo: replyTo || 'paco@mycompi.com',
+      subject,
+      text,
+      html: html || generarEmailHTML(text, to),
+    });
+
+    res.json({ ok: true, emailId: result.data?.id });
   } catch (err) {
-    console.error('Error enviando email:', err);
-    res.status(500).json({ error: 'Error enviando email' });
+    console.error('[EMAIL-ENVIAR ERROR]:', err.message);
+    res.status(500).json({ error: 'Error enviando email', detail: err.message });
   }
 });
 
-async function enviarEmail({ para, asunto, html, inReplyTo }) {
-  const { Resend } = require('resend');
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
-  const payload = {
-    from: 'Paco — MyCompi <paco@mycompi.com>',
-    to: para,
-    subject: asunto,
-    html,
-    ...(inReplyTo ? { headers: { 'In-Reply-To': inReplyTo } } : {}),
-  };
-
-  return await resend.emails.send(payload);
-}
-
 // ─────────────────────────────────────────
-// BANDEJA DE ENTRADA (para el admin)
+// BANDEJA DE ENTRADA (admin, con auth)
 // GET /api/email/bandeja
 // ─────────────────────────────────────────
 router.get('/bandeja', authMiddleware, async (req, res) => {
   try {
+    const limit = parseInt(req.query.limit) || 50;
+    const estado = req.query.estado;
+
+    const where = {};
+    if (estado) where.estadoEmail = estado;
+
     const emails = await prisma.email.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
-      take: 50,
-      select: {
-        id: true,
-        de: true,
-        para: true,
-        asunto: true,
-        texto: true,
-        estadoEmail: true,
-        createdAt: true,
-        clienteId: true,
+      take: limit,
+      include: {
+        cliente: { select: { id: true, nombre: true, plan: true } }
       }
     });
+
     res.json({ emails });
   } catch (err) {
-    res.status(500).json({ error: 'Error obteniendo bandeja' });
+    console.error('[EMAIL-BANDEJA ERROR]:', err.message);
+    res.status(500).json({ error: 'Error consultando bandeja' });
   }
 });
 
 // ─────────────────────────────────────────
-// MARCAR COMO PROCESADO / FALLIDO
+// PROCESAR EMAIL MANUALMENTE
 // POST /api/email/:id/procesar
 // ─────────────────────────────────────────
 router.post('/:id/procesar', authMiddleware, async (req, res) => {
   try {
-    const updated = await prisma.email.update({
-      where: { id: req.params.id },
-      data: { estadoEmail: req.body.estado || 'PROCESANDO' }
+    const { id } = req.params;
+    const { estado, respuestaTexto } = req.body;
+
+    const update = {};
+    if (estado) update.estadoEmail = estado;
+    if (respuestaTexto) update.respuestaTexto = respuestaTexto;
+
+    const email = await prisma.email.update({
+      where: { id },
+      data: update
     });
-    res.json({ ok: true, updated });
+
+    res.json({ ok: true, email });
   } catch (err) {
+    console.error('[EMAIL-PROCESAR ERROR]:', err.message);
     res.status(500).json({ error: 'Error actualizando' });
   }
 });
 
 module.exports = router;
-Thu Mar 26 15:14:01 +08 2026
-# force timestamp
