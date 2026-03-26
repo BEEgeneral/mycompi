@@ -2,6 +2,49 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // ─────────────────────────────────────────
+// FETCH CON AUTO-REFRESH DE TOKEN
+// ─────────────────────────────────────────
+async function fetchConAuth(url, options = {}) {
+  let token = localStorage.getItem('mycompi_token')
+  if (!token) throw new Error('No hay token')
+
+  let res = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  // Si 401, intentar refresh
+  if (res.status === 401) {
+    const refreshToken = localStorage.getItem('mycompi_refresh_token')
+    if (refreshToken) {
+      const refreshRes = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      })
+      if (refreshRes.ok) {
+        const tokens = await refreshRes.json()
+        localStorage.setItem('mycompi_token', tokens.accessToken)
+        localStorage.setItem('mycompi_refresh_token', tokens.refreshToken)
+        // Reintentar con nuevo token
+        res = await fetch(url, {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            Authorization: `Bearer ${tokens.accessToken}`,
+          },
+        })
+      }
+    }
+  }
+
+  return res
+}
+
+// ─────────────────────────────────────────
 // AGENTES DATA
 // ─────────────────────────────────────────
 const AGENTES_POR_PLAN = {
@@ -103,7 +146,7 @@ function ChatPanel({ token }) {
   // Cargar historial al montar
   useEffect(() => {
     if (!token) return
-    fetch('/api/chat?limit=50', { headers: { Authorization: `Bearer ${token}` } })
+    fetchConAuth('/api/chat?limit=50')
       .then(r => r.json())
       .then(d => {
         if (d.historial) setMensajes(d.historial)
@@ -147,9 +190,9 @@ function ChatPanel({ token }) {
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), 15000)
 
-      const res = await fetch('/api/chat', {
+      const res = await fetchConAuth('/api/chat', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mensaje: texto }),
         signal: controller.signal,
       })

@@ -23,7 +23,8 @@ export default function Login() {
         setError(data.error || 'Error al iniciar sesión')
         return
       }
-      localStorage.setItem('mycompi_token', data.token)
+      localStorage.setItem('mycompi_token', data.tokens.accessToken)
+      localStorage.setItem('mycompi_refresh_token', data.tokens.refreshToken)
       localStorage.setItem('mycompi_usuario', JSON.stringify(data.usuario))
       window.dispatchEvent(new Event('mycompi_auth_change'))
       // Redirect based on role — admin va a URL absoluta (no HashRouter)
