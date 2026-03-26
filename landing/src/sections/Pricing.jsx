@@ -1,5 +1,6 @@
 const planes = [
   {
+    id: 'BASICO',
     name: 'Profesional Agéntico',
     desc: 'Para empezar a automatizar con un agente especializado',
     price: '10',
@@ -13,6 +14,7 @@ const planes = [
     ],
   },
   {
+    id: 'EQUIPO',
     name: 'Equipo Agéntico',
     desc: 'Un equipo completo con manager y 5 subagentes',
     price: '49',
@@ -27,6 +29,7 @@ const planes = [
     ],
   },
   {
+    id: 'DIRECCION',
     name: 'Equipos con Dirección',
     desc: 'Varios equipos agénticos con equipo de dirección',
     price: '147',
@@ -54,11 +57,11 @@ export default function Pricing() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
           {planes.map(p => (
             <div
-              key={p.name}
+              key={p.id}
               className={`rounded-xl p-6 md:p-9 transition-all duration-300 ${
                 p.popular
-                  ? 'bg-brand-bg border-2 border-brand-yellow shadow-lg'
-                  : 'bg-brand-bg border border-brand-border'
+                  ? 'bg-white border-2 border-brand-yellow shadow-lg'
+                  : 'bg-white border border-brand-border'
               }`}
             >
               {p.popular && (
@@ -72,24 +75,25 @@ export default function Pricing() {
               <div className="text-[12px] md:text-sm text-brand-muted mt-1 mb-5 md:mb-6">por mes</div>
               <ul className="space-y-2 md:space-y-3 mb-5 md:mb-6">
                 {p.features.map(f => (
-                  <li key={f} className="text-[12px] md:text-sm text-brand-secondary pl-6 relative before:content-['✓'] before:absolute before:left-0 before:text-brand-text before:font-bold before:text-[13px]">
-                    {f}
+                  <li key={f} className="text-[12px] md:text-sm text-brand-secondary pl-6 relative before:absolute before:left-0 before:text-brand-yellow before:font-bold">
+                    ✓ {f}
                   </li>
                 ))}
               </ul>
               <a
-                href="#contacto"
+                href={`/#/checkout?plan=${p.id}`}
                 className={`block text-center font-bold text-[13px] md:text-sm px-4 py-3 rounded-xl transition-all ${
                   p.popular
-                    ? 'bg-brand-yellow text-brand-text hover:bg-brand-yellow-dark'
-                    : 'bg-brand-bg-section border border-brand-border text-brand-text hover:border-brand-text'
+                    ? 'bg-brand-yellow text-brand-text hover:bg-brand-yellow-dark shadow-md'
+                    : 'bg-brand-bg-section border-2 border-brand-border text-brand-text hover:border-brand-yellow hover:text-brand-text'
                 }`}
               >
-                Empezar ahora
+                Contratar ahora →
               </a>
             </div>
           ))}
         </div>
+        <p className="text-center text-xs text-brand-secondary mt-8">Pago seguro con Stripe · Cancela cuando quieras · Sin sorpresas</p>
       </div>
     </section>
   )

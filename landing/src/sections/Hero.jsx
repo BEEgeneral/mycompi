@@ -25,13 +25,13 @@ export default function Hero() {
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
             <a
-              href="#precios"
+              href="/#/checkout"
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm md:text-[15px] px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5 w-full sm:w-auto"
             >
-              Ver precios y contratar →
+              Contratar mi equipo →
             </a>
             <a
-              href="#equipo"
+              href="/#/equipo"
               className="text-gray-500 hover:text-gray-800 font-semibold text-sm md:text-[15px] px-6 py-3.5 rounded-xl hover:bg-gray-50 transition-all w-full sm:w-auto"
             >
               Conoce a tu equipo →
