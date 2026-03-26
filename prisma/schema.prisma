@@ -183,7 +183,7 @@ model InteraccionChat {
 // ============================================
 model Email {
   id             String      @id @default(cuid())
-  messageId      String?     @unique  // ID de Resend para tracking
+  messageId      String?     // ID de Resend para tracking
   de             String      // email del remitente
   para           String      // paco@mycompi.com
   asunto         String      @db.VarChar(500)
