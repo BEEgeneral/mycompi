@@ -11,10 +11,20 @@ const { authMiddleware } = require('./auth');
 const prisma = require('../lib/db');
 
 // ─────────────────────────────────────────
+// TEST — confirmar que el route existe
+// GET /api/email/test
+// ─────────────────────────────────────────
+router.get('/test', (req, res) => {
+  res.json({ ok: true, ts: new Date().toISOString() });
+});
+
+// ─────────────────────────────────────────
 // WEBHOOK DE RESEND —Inbound email
 // POST /api/email/inbound
 // ─────────────────────────────────────────
 router.post('/inbound', async (req, res) => {
+  res.json({ ok: true, received: true });
+});
   // Resend webhook verified via Resend signature — por ahora lo aceptamos directo
   // En producción añadir verificación HMAC de Resend
   try {
