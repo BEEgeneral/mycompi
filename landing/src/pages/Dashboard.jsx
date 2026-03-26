@@ -129,17 +129,25 @@ function Sidebar({ tab, onTabChange, agentes, onLogout }) {
 }
 
 // ─────────────────────────────────────────
-// CHAT PANEL - solo Paco (rediseñado流畅)
+// CHAT PANEL — solo Paco (rediseñado)
 // ─────────────────────────────────────────
-function ChatPanel({ token }) {
+function ChatPanel() {
   const [mensajes, setMensajes] = useState([])
   const [input, setInput] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [statusOnline, setStatusOnline] = useState(false)
   const [errorMsg, setErrorMsg] = useState(null)
+  const [token, setToken] = useState(() => localStorage.getItem('mycompi_token'))
   const bottomRef = useRef(null)
   const textareaRef = useRef(null)
+
+  // Sincronizar token desde localStorage
+  useEffect(() => {
+    const sync = () => setToken(localStorage.getItem('mycompi_token'))
+    window.addEventListener('mycompi_auth_change', sync)
+    return () => window.removeEventListener('mycompi_auth_change', sync)
+  }, [])
 
   const agenteInfo = { id: 'paco', nombre: 'Paco', emoji: '🎯', color: 'from-[#2D3261] to-[#4a5090]', rol: 'Orquestador' }
 
@@ -462,7 +470,7 @@ function EquipoPanel({ agentes, usuario }) {
         <p className="text-sm text-brand-secondary">Personas y profesionales que trabajan para tu negocio</p>
       </div>
 
-      {/* CEO / Titular — siempre primero */}
+      {/* CEO / Titular - siempre primero */}
       {jerarquia.CEO.agents.length > 0 && jerarquia.CEO.agents[0].nombre !== 'Tú' && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
@@ -485,7 +493,7 @@ function EquipoPanel({ agentes, usuario }) {
         </div>
       )}
 
-      {/* Director / Orquestador — Paco */}
+      {/* Director / Orquestador - Paco */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
           <span>🎯</span> {jerarquia.DIRECTOR.label}
@@ -558,13 +566,20 @@ function EquipoPanel({ agentes, usuario }) {
 // ─────────────────────────────────────────
 // ACTIVIDAD TAB
 // ─────────────────────────────────────────
-function ActividadPanel({ token }) {
+function ActividadPanel() {
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState([])
+  const [token, setToken] = useState(() => localStorage.getItem('mycompi_token'))
+
+  useEffect(() => {
+    const sync = () => setToken(localStorage.getItem('mycompi_token'))
+    window.addEventListener('mycompi_auth_change', sync)
+    return () => window.removeEventListener('mycompi_auth_change', sync)
+  }, [])
 
   useEffect(() => {
     if (!token) return
-    fetch('/api/chat?limit=30', { headers: { Authorization: `Bearer ${token}` } })
+    fetchConAuth('/api/chat?limit=30')
       .then(r => r.json())
       .then(d => { if (d.historial) setItems(d.historial.filter(m => m.role === 'user').reverse()) })
       .catch(() => {})
@@ -600,14 +615,21 @@ function ActividadPanel({ token }) {
 // ─────────────────────────────────────────
 // DECISIONES TAB
 // ─────────────────────────────────────────
-function DecisionesPanel({ token }) {
+function DecisionesPanel() {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState({ decisiones: [], prioridades: [], toughLove: [] })
   const [tab, setTab] = useState('decisiones')
+  const [token, setToken] = useState(() => localStorage.getItem('mycompi_token'))
+
+  useEffect(() => {
+    const sync = () => setToken(localStorage.getItem('mycompi_token'))
+    window.addEventListener('mycompi_auth_change', sync)
+    return () => window.removeEventListener('mycompi_auth_change', sync)
+  }, [])
 
   useEffect(() => {
     if (!token) return
-    fetch('/api/clientes/decisiones', { headers: { Authorization: `Bearer ${token}` } })
+    fetchConAuth('/api/clientes/decisiones')
       .then(r => r.json())
       .then(d => { if (d.ok) setData(d) })
       .catch(() => {})
@@ -745,25 +767,41 @@ function CuentaPanel({ usuario, plan, onLogout }) {
 export default function Dashboard() {
   const navigate = useNavigate()
   const [usuario, setUsuario] = useState(null)
-  const [token, setToken] = useState(localStorage.getItem('mycompi_token'))
+  const [token, setToken] = useState(() => localStorage.getItem('mycompi_token'))
   const [subscription, setSubscription] = useState(null)
   const [tab, setTab] = useState('chat')
   const [loading, setLoading] = useState(true)
 
+  // Cargar datos iniciales con refresh automático
   useEffect(() => {
-    if (!token) { navigate('/#/login'); return }
+    const tokenGuardado = localStorage.getItem('mycompi_token')
+    if (!tokenGuardado || tokenGuardado === 'undefined') {
+      navigate('/#/login')
+      return
+    }
+
     const stored = localStorage.getItem('mycompi_usuario')
     if (stored) setUsuario(JSON.parse(stored))
-    fetch('/api/stripe/subscription', { headers: { Authorization: `Bearer ${token}` } })
+
+    fetchConAuth('/api/stripe/subscription')
       .then(r => r.json())
       .then(d => { if (d.subscription) setSubscription(d.subscription) })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [token, navigate])
+  }, [navigate])
+
+  // Sincronizar estado de token
+  useEffect(() => {
+    const syncToken = () => setToken(localStorage.getItem('mycompi_token'))
+    window.addEventListener('mycompi_auth_change', syncToken)
+    return () => window.removeEventListener('mycompi_auth_change', syncToken)
+  }, [])
 
   const logout = () => {
     localStorage.removeItem('mycompi_token')
+    localStorage.removeItem('mycompi_refresh_token')
     localStorage.removeItem('mycompi_usuario')
+    window.dispatchEvent(new Event('mycompi_auth_change'))
     navigate('/#/login')
   }
 
@@ -791,7 +829,7 @@ export default function Dashboard() {
             {/* Content area */}
             <div className="flex-1 min-w-0 overflow-y-auto">
               {tab === 'chat' && (
-                <ChatPanel token={token} />
+                <ChatPanel />
               )}
               {tab === 'equipo' && (
                 <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm">
@@ -800,12 +838,12 @@ export default function Dashboard() {
               )}
               {tab === 'actividad' && (
                 <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm">
-                  <ActividadPanel token={token} />
+                  <ActividadPanel />
                 </div>
               )}
               {tab === 'decisiones' && (
                 <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm">
-                  <DecisionesPanel token={token} />
+                  <DecisionesPanel />
                 </div>
               )}
               {tab === 'cuenta' && (
