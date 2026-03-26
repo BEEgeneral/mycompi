@@ -24,7 +24,7 @@ const AGENTES_POR_PLAN = {
 }
 
 // ─────────────────────────────────────────
-// SIDEBAR — está en Dashboard, no dentro de ChatPanel
+// SIDEBAR - está en Dashboard, no dentro de ChatPanel
 // ─────────────────────────────────────────
 function Sidebar({ tab, onTabChange, agentes, onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -50,12 +50,7 @@ function Sidebar({ tab, onTabChange, agentes, onLogout }) {
           </div>
           <button onClick={() => setSidebarOpen(false)} className="text-[#b0a898] hover:text-[#333863] text-sm">✕</button>
         </div>
-        {sidebarOpen && (
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#333863] hover:bg-[#3d4080] text-white rounded-xl text-sm font-semibold transition-colors shadow-sm">
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-            Nuevo chat
-          </button>
-        )}
+
       </div>
 
       {/* Nav items */}
@@ -91,7 +86,7 @@ function Sidebar({ tab, onTabChange, agentes, onLogout }) {
 }
 
 // ─────────────────────────────────────────
-// CHAT PANEL — solo Paco (rediseñado流畅)
+// CHAT PANEL - solo Paco (rediseñado流畅)
 // ─────────────────────────────────────────
 function ChatPanel({ token }) {
   const [mensajes, setMensajes] = useState([])
@@ -225,7 +220,7 @@ function ChatPanel({ token }) {
             <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${agenteInfo.color} flex items-center justify-center text-lg shadow-md`}>
               {agenteInfo.emoji}
             </div>
-            {/* Puntito verde — online */}
+            {/* Puntito verde - online */}
             <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white transition-colors ${statusOnline ? 'bg-green-400' : 'bg-red-400'}`} />
           </div>
 
@@ -370,7 +365,7 @@ function ChatPanel({ token }) {
   )
 }
 // ─────────────────────────────────────────
-// MI EQUIPO TAB — jerarquía visual
+// MI EQUIPO TAB - jerarquía visual
 // ─────────────────────────────────────────
 function EquipoPanel({ agentes }) {
   const jerarquia = {
@@ -678,7 +673,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#FDF8F3]">
-      {/* No renderizamos el Navbar de la landing — el Dashboard tiene su propio Sidebar */}
+      {/* No renderizamos el Navbar de la landing - el Dashboard tiene su propio Sidebar */}
       <div className="max-w-5xl mx-auto px-4 pt-6 pb-8" style={{ height: 'calc(100vh - 72px)' }}>
         {loading ? (
           <div className="flex items-center justify-center h-full">
@@ -686,7 +681,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="flex gap-4 h-full overflow-hidden">
-            {/* Sidebar — ahora en Dashboard, fuera de ChatPanel */}
+            {/* Sidebar - ahora en Dashboard, fuera de ChatPanel */}
             <Sidebar
               tab={tab}
               onTabChange={setTab}
