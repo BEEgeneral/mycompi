@@ -42,7 +42,8 @@ export default function Register() {
         setError(data.error || 'Error al registrarse')
         return
       }
-      localStorage.setItem('mycompi_token', data.token)
+      localStorage.setItem('mycompi_token', data.tokens.accessToken)
+      localStorage.setItem('mycompi_refresh_token', data.tokens.refreshToken)
       localStorage.setItem('mycompi_usuario', JSON.stringify(data.usuario))
       navigate('/dashboard')
     } catch (err) {
