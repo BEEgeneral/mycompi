@@ -5,23 +5,17 @@ import Navbar from '../components/Navbar'
 // ─────────────────────────────────────────
 // CHAT PANEL — Colors: blanco cálido, azul marino
 // ─────────────────────────────────────────
-function ChatPanel({ agentesActivos, token, onLogout }) {
+function ChatPanel({ token, onLogout }) {
   const [mensajes, setMensajes] = useState([])
   const [input, setInput] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [agenteActivo, setAgenteActivo] = useState('paco')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [tab, setTab] = useState('chat')
-  const [plan, setPlan] = useState('BASICO')
   const bottomRef = useRef(null)
   const textareaRef = useRef(null)
 
-  const agentes = [
-    { id: 'paco', nombre: 'Paco', emoji: '🎯', color: 'from-[#333863] to-[#4a5090]', rol: 'Orquestador' },
-    ...agentesActivos,
-  ]
-
-  const agenteInfo = agentes.find(a => a.id === agenteActivo) || agentes[0]
+  const agenteInfo = { id: 'paco', nombre: 'Paco', emoji: '🎯', color: 'from-[#333863] to-[#4a5090]', rol: 'Orquestador' }
 
   // Cargar historial
   useEffect(() => {
@@ -61,44 +55,32 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mensaje: texto, agenteId: agenteActivo }),
+        body: JSON.stringify({ mensaje: texto }),
       })
       const d = await res.json()
       if (d.ok) {
-        // Reemplazar optimistic con ID real
+        // Reemplazar optimistic con respuesta real
         setMensajes(prev => prev.map(m =>
-          m.id === tempId ? { ...m, id: `user-${d.interaccionId}` } : m
+          m.id === tempId
+            ? { ...m, id: `user-${d.interaccionId}`, content: texto }
+            : m
         ))
-        // Esperar respuesta con polling
-        await esperarRespuesta(d.interaccionId)
+        // Añadir respuesta de Paco
+        if (d.respuesta) {
+          setMensajes(prev => [...prev, {
+            id: `agent-${d.interaccionId}`,
+            role: 'assistant',
+            content: d.respuesta,
+            timestamp: d.timestamp || new Date().toISOString(),
+            agenteId: 'paco',
+          }])
+        }
       }
     } catch (err) {
       console.error(err)
     }
 
     setEnviando(false)
-  }
-
-  const esperarRespuesta = async (interaccionId) => {
-    for (let i = 0; i < 60; i++) {
-      await new Promise(r => setTimeout(r, 1000))
-      try {
-        const res = await fetch(`/api/chat/${interaccionId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        const d = await res.json()
-        if (d.respuestaAgente) {
-          setMensajes(prev => [...prev, {
-            id: `resp-${interaccionId}`,
-            role: 'assistant',
-            content: d.respuestaAgente,
-            timestamp: d.createdAt || new Date().toISOString(),
-            agenteId: d.agenteId || 'paco',
-          }])
-          return
-        }
-      } catch {}
-    }
   }
 
   const handleInputChange = (e) => {
@@ -145,29 +127,19 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
         </div>
 
         <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
-          <p className="text-[10px] font-bold text-[#b0a898] uppercase tracking-widest px-2 mb-3">Tu equipo</p>
-          {agentes.map(a => (
-            <button
-              key={a.id}
-              onClick={() => { setAgenteActivo(a.id); setTab('chat') }}
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl mb-0.5 text-left transition-all ${
-                agenteActivo === a.id && tab === 'chat'
-                  ? 'bg-[#F0EDFB] border border-[#D1E0F7] text-[#333863]'
-                  : 'text-[#6b6560] hover:bg-[#faf6f0] hover:text-[#333863]'
-              }`}
-            >
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-base flex-shrink-0 shadow-sm`}>
-                {a.emoji}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold truncate">{a.nombre}</div>
-                <div className="text-[11px] text-[#b0a898] truncate">{a.rol}</div>
-              </div>
-              {a.id === 'paco' && (
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400 flex-shrink-0" />
-              )}
-            </button>
-          ))}
+          <p className="text-[10px] font-bold text-[#b0a898] uppercase tracking-widest px-2 mb-3">Chat</p>
+          <button
+            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all bg-[#F0EDFB] border border-[#D1E0F7]`}
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#333863] to-[#4a5090] flex items-center justify-center text-base flex-shrink-0 shadow-sm">
+              🎯
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-[#333863]">Paco</div>
+              <div className="text-[11px] text-[#b0a898]">Orquestador</div>
+            </div>
+            <div className="w-2.5 h-2.5 rounded-full bg-green-400 flex-shrink-0" />
+          </button>
         </div>
 
         <div className="border-t border-[#f0e8df] py-2 px-3 space-y-1">
@@ -220,24 +192,17 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
               </div>
               <h2 className="text-2xl font-extrabold text-[#333863] mb-3">¿En qué te ayudo hoy?</h2>
               <p className="text-[#8b8075] max-w-lg text-base leading-relaxed mb-10">
-                {agenteActivo === 'paco'
-                  ? 'Soy Paco, tu orquestador. Coordino automáticamente con Laura, Enzo, Carlos, Elena, Diana o Marcos. Pregúntame lo que necesites.'
-                  : `Soy ${agenteInfo.nombre}, ${agenteInfo.rol.toLowerCase()}. ¿Qué necesitas?`}
+                Soy Paco, tu orquestador. Coordino automáticamente con Laura, Enzo, Carlos, Elena, Diana o Marcos. Pregúntame lo que necesites.
               </p>
               <div className="grid grid-cols-2 gap-3 w-full max-w-xl">
-                {(agenteActivo === 'paco' ? [
+                {[
                   '¿Qué han hecho mis agentes hoy?',
                   'Crear una campaña de marketing',
                   'Resumen de mis leads activos',
                   'Automatizar un proceso',
                   'Revisar mi analítica',
                   'Ayuda con un cliente',
-                ] : [
-                  '¿Qué puedes hacer por mí?',
-                  'Ver estado de mis tareas',
-                  'Generar un informe',
-                  'Consultar métricas',
-                ]).map((s, i) => (
+                ].map((s, i) => (
                   <button key={i} onClick={() => enviarSuggestion(s)}
                     className="text-left text-sm text-[#6b6560] bg-white hover:bg-[#F0EDFB] border border-[#e8e0d5] hover:border-[#D1E0F7] rounded-xl px-4 py-3.5 transition-all shadow-sm">
                     {s}
@@ -249,12 +214,11 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
 
           {mensajes.map((m, i) => {
             const isUser = m.role === 'user'
-            const agenteMsg = !isUser ? (m.agenteId ? agentes.find(a => a.id === m.agenteId) : agenteInfo) : null
             return (
               <div key={m.id || i} className={`flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}>
                 {!isUser && (
-                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${agenteMsg?.color || 'from-[#333863] to-[#5a62a8]'} flex items-center justify-center text-sm flex-shrink-0 mt-0.5 shadow-sm`}>
-                    {agenteMsg?.emoji || '🤖'}
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#333863] to-[#5a62a8] flex items-center justify-center text-sm flex-shrink-0 mt-0.5 shadow-sm">
+                    🎯
                   </div>
                 )}
                 {isUser && (
@@ -319,7 +283,7 @@ function ChatPanel({ agentesActivos, token, onLogout }) {
             </div>
           </form>
           <p className="text-center text-[11px] text-[#b0a898] mt-2.5">
-            {agenteActivo === 'paco' ? 'Paco coordina automáticamente con el agente más adecuado' : `Chat directo con ${agenteInfo.nombre}`}
+            Paco coordina automáticamente con el agente más adecuado
           </p>
         </div>
       </div>
@@ -587,7 +551,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="h-full">
-            {tab === 'chat' && <ChatPanel agentesActivos={agentes} token={token} onLogout={logout} />}
+            {tab === 'chat' && <ChatPanel token={token} onLogout={logout} />}
             {tab === 'actividad' && (
               <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full overflow-y-auto shadow-sm">
                 <ActividadPanel token={token} />
