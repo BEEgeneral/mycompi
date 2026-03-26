@@ -5,29 +5,27 @@ export default {
     extend: {
       colors: {
         brand: {
-          bg: '#FAFAFA',
-          'bg-section': '#F7F8F9',
-          border: '#E5E7EB',
-          yellow: '#FFD200',
-          'yellow-dark': '#F5B800',
-          text: '#111111',
-          secondary: '#4B5563',
-          muted: '#9CA3AF',
+          // Nueva paleta MyCompi para PYMES
+          dark: '#2D3261',      // Azul principal — logo, títulos, CTAs
+          pastel: '#D1E0F3',    // Azul pastel — fondos de sección hero y cards
+          yellow: '#FFD154',   // Amarillo vibrante — acentos, highlights, iconos
+          cream: '#FCF9F1',    // Crema — fondo general de la página
+          'dark-yellow': '#E5B900', // Amarillo oscuro para hover
+          text: '#2D3261',      // Texto principal
+          secondary: '#4B5563', // Texto secundario
+          muted: '#9CA3AF',     // Texto terciario / placeholder
         },
-        primary: {
-          DEFAULT: '#1D4ED8',
-          hover: '#1E40AF',
-          light: '#DBEAFE',
-        }
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Unbounded', 'system-ui', 'sans-serif'],
+        sans: ['Poppins', 'Montserrat', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Poppins', 'system-ui', 'sans-serif'],
       },
-      fontSize: {
-        'display-xl': ['clamp(2.5rem,6vw,5rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-        'display-lg': ['clamp(2rem,4vw,3.5rem)', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
-        'display-md': ['clamp(1.5rem,3vw,2.25rem)', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+        '6xl': '3rem',
+        '7xl': '3.5rem',
+        'pill': '9999px',
       },
       boxShadow: {
         sm: '0 4px 6px -1px rgba(0,0,0,0.05)',

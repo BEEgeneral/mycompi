@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,35 +7,38 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-  background: #FFFFFF;
-  color: #4B5563;
+  font-family: 'Poppins', 'Montserrat', 'Inter', system-ui, sans-serif;
+  background: #FCF9F1; /* Crema — fondo general */
+  color: #2D3261;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-/* ─── Focus states (accesibilidad) ─── */
+/* ─── Highlight amarillo para texto ─── */
+.highlight-yellow {
+  background-color: #FFD154;
+  padding: 0 4px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* ─── Focus states ─── */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #4F46E5;
+  outline: 2px solid #FFD154;
   outline-offset: 2px;
-}
-
-/* ─── Font display ─── */
-@font-face {
-  font-display: swap;
 }
 
 /* ─── Scrollbar custom ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+::-webkit-scrollbar-thumb { background: #D1E0F3; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2D3261; }
 
-/*** Scroll animations ─── */
+/* ─── Animaciones de scroll ─── */
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(24px);
@@ -44,7 +49,6 @@ textarea:focus-visible {
   transform: translateY(0);
 }
 
-/* Fade in from left */
 .animate-on-scroll.from-left {
   opacity: 0;
   transform: translateX(-24px);
@@ -54,7 +58,6 @@ textarea:focus-visible {
   transform: translateX(0);
 }
 
-/* Fade in from right */
 .animate-on-scroll.from-right {
   opacity: 0;
   transform: translateX(24px);
@@ -64,7 +67,6 @@ textarea:focus-visible {
   transform: translateX(0);
 }
 
-/* Scale up */
 .animate-on-scroll.scale {
   opacity: 0;
   transform: scale(0.92);
@@ -74,7 +76,7 @@ textarea:focus-visible {
   transform: scale(1);
 }
 
-/* Stagger children */
+/* ─── Stagger children ─── */
 .stagger-children > * {
   opacity: 0;
   transform: translateY(16px);
@@ -86,3 +88,16 @@ textarea:focus-visible {
 .stagger-children.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 240ms; }
 .stagger-children.visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 320ms; }
 .stagger-children.visible > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 400ms; }
+
+/* ─── Cards: bordes muy redondeados (40-60px) ─── */
+.card-rounded {
+  border-radius: 2.5rem;
+}
+
+/* ─── CTAs pill-shaped ─── */
+.btn-pill {
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

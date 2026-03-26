@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../components/Navbar'
 
 // ─────────────────────────────────────────
 // AGENTES DATA
@@ -614,7 +613,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#FDF8F3]">
-      <Navbar />
+      {/* No renderizamos el Navbar de la landing — el Dashboard tiene su propio Sidebar */}
       <div className="max-w-5xl mx-auto px-4 pt-6 pb-8" style={{ height: 'calc(100vh - 72px)' }}>
         {loading ? (
           <div className="flex items-center justify-center h-full">

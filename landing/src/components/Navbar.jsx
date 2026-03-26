@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-// ——— Scroll in-page a un anchor (funciona con HashRouter) ———
+// ——— Scroll in-page a un anchor ———
 function scrollToAnchor(id) {
   const el = document.getElementById(id)
   if (el) {
@@ -61,79 +61,72 @@ function Logo() {
 function DesktopNav({ user, onLogout }) {
   const isAdmin = user?.rol_platform === 'ADMIN'
 
+  if (user) {
+    return (
+      <div className="hidden md:flex items-center gap-6">
+        {LOGGED_IN_LINKS.map(l => (
+          <a
+            key={l.href}
+            href={l.href}
+            className="text-sm font-semibold text-brand-dark hover:text-brand-yellow transition-colors"
+          >
+            {l.label}
+          </a>
+        ))}
+        {isAdmin && ADMIN_LINKS.map(l => (
+          <a
+            key={l.href}
+            href={l.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-bold text-brand-yellow hover:text-brand-dark-yellow transition-colors"
+          >
+            {l.label}
+          </a>
+        ))}
+        <div className="flex items-center gap-3 pl-2">
+          <span className="text-sm text-brand-secondary">{user.nombre}</span>
+          <button
+            onClick={onLogout}
+            className="text-sm text-brand-muted hover:text-red-500 transition-colors"
+          >
+            Salir
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="hidden md:flex items-center gap-6">
-      {/* Links comunes — scroll in-page (no href para evitar blanco con HashRouter) */}
       {LANDING_LINKS.map(l => (
         <button
           key={l.href}
           onClick={() => scrollToAnchor(l.href)}
-          className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+          className="text-sm font-semibold text-brand-dark hover:text-brand-yellow transition-colors cursor-pointer"
         >
           {l.label}
         </button>
       ))}
-
-      {/* Divider */}
-      <div className="w-px h-5 bg-gray-200" />
-
-      {/* Si logueado */}
-      {user ? (
-        <>
-          {LOGGED_IN_LINKS.map(l => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              {l.label}
-            </a>
-          ))}
-
-          {isAdmin && ADMIN_LINKS.map(l => (
-            <a
-              key={l.href}
-              href={l.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
-            >
-              {l.label}
-            </a>
-          ))}
-
-          {/* Usuario + logout */}
-          <div className="flex items-center gap-3 pl-2">
-            <span className="text-sm text-gray-500">
-              {user.nombre}
-            </span>
-            <button
-              onClick={onLogout}
-              className="text-sm text-gray-400 hover:text-red-600 transition-colors"
-            >
-              Salir
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          {LOGGED_OUT_LINKS.map(l => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              {l.label}
-            </a>
-          ))}
-          <a
-            href="/#/checkout"
-            className="bg-brand-yellow text-gray-900 text-sm font-bold px-5 py-2 rounded-xl hover:bg-yellow-400 transition-all"
-          >
-            Contratar →
-          </a>
-        </>
-      )}
+      <div className="w-px h-5 bg-brand-pastel" />
+      {LOGGED_OUT_LINKS.map(l => (
+        <a
+          key={l.href}
+          href={l.href}
+          className="text-sm font-semibold text-brand-dark hover:text-brand-yellow transition-colors"
+        >
+          {l.label}
+        </a>
+      ))}
+      <a
+        href="/#/checkout"
+        className="bg-brand-dark text-white text-sm font-semibold px-6 py-2.5 rounded-pill hover:bg-brand-dark/90 transition-colors flex items-center gap-2"
+      >
+        Contratar
+        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </a>
     </div>
   )
 }
@@ -146,9 +139,9 @@ function Hamburger({ open, onClick }) {
       className="md:hidden flex flex-col gap-1.5 p-2"
       aria-label="Menú"
     >
-      <span className={`block w-6 h-0.5 bg-gray-800 transition-all ${open ? 'rotate-45 translate-y-2' : ''}`} />
-      <span className={`block w-6 h-0.5 bg-gray-800 transition-all ${open ? 'opacity-0' : ''}`} />
-      <span className={`block w-6 h-0.5 bg-gray-800 transition-all ${open ? '-rotate-45 -translate-y-2' : ''}`} />
+      <span className={`block w-6 h-0.5 bg-brand-dark transition-all ${open ? 'rotate-45 translate-y-2' : ''}`} />
+      <span className={`block w-6 h-0.5 bg-brand-dark transition-all ${open ? 'opacity-0' : ''}`} />
+      <span className={`block w-6 h-0.5 bg-brand-dark transition-all ${open ? '-rotate-45 -translate-y-2' : ''}`} />
     </button>
   )
 }
@@ -157,41 +150,42 @@ function Hamburger({ open, onClick }) {
 function MobileMenu({ user, onLogout, onClose }) {
   const isAdmin = user?.rol_platform === 'ADMIN'
 
-  const linkGroups = [
-    { label: 'Web', links: LANDING_LINKS },
-    ...(user ? [{ label: 'Tu cuenta', links: LOGGED_IN_LINKS }] : []),
-    ...(user && isAdmin ? [{ label: 'Administración', links: ADMIN_LINKS }] : []),
-    ...(user ? [] : [{ label: 'Acceder', links: LOGGED_OUT_LINKS }]),
-  ]
+  const linkGroups = user
+    ? [
+        ...(isAdmin ? [{ label: 'Administración', links: ADMIN_LINKS }] : []),
+        { label: 'Tu cuenta', links: LOGGED_IN_LINKS },
+      ]
+    : [
+        { label: 'Web', links: LANDING_LINKS },
+        { label: 'Acceder', links: LOGGED_OUT_LINKS },
+      ]
 
   return (
-    <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-5">
+    <div className="md:hidden bg-brand-cream border-t border-brand-pastel px-6 py-4 flex flex-col gap-5">
       {linkGroups.map(group => (
         <div key={group.label}>
-          <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-brand-muted mb-2">
             {group.label}
           </div>
           <div className="flex flex-col gap-1">
             {group.links.map(l => {
-              // Landing links → scroll in-page
               if (['servicios', 'equipo', 'precios', 'faq'].includes(l.href)) {
                 return (
                   <button
                     key={l.href}
                     onClick={() => { scrollToAnchor(l.href); onClose() }}
-                    className="text-sm font-semibold text-gray-700 hover:text-gray-900 py-1.5 text-left"
+                    className="text-sm font-semibold text-brand-dark hover:text-brand-yellow py-1.5 text-left"
                   >
                     {l.label}
                   </button>
                 )
               }
-              // Todos los demás → link normal
               return (
                 <a
                   key={l.href}
                   href={l.href}
                   onClick={onClose}
-                  className="text-sm font-semibold text-gray-700 hover:text-gray-900 py-1.5"
+                  className="text-sm font-semibold text-brand-dark hover:text-brand-yellow py-1.5"
                   {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 >
                   {l.label}
@@ -206,7 +200,7 @@ function MobileMenu({ user, onLogout, onClose }) {
         <a
           href="/#/checkout"
           onClick={onClose}
-          className="bg-brand-yellow text-gray-900 text-sm font-bold px-5 py-3 rounded-xl text-center mt-2"
+          className="bg-brand-dark text-white text-sm font-semibold px-6 py-3 rounded-pill text-center mt-2"
         >
           Contratar →
         </a>
@@ -215,7 +209,7 @@ function MobileMenu({ user, onLogout, onClose }) {
       {user && (
         <button
           onClick={() => { onLogout(); onClose() }}
-          className="text-sm text-red-500 hover:text-red-700 py-1.5 text-left mt-2 border-t border-gray-100 pt-4"
+          className="text-sm text-red-400 hover:text-red-600 py-1.5 text-left mt-2 border-t border-brand-pastel pt-4"
         >
           Cerrar sesión
         </button>
@@ -229,16 +223,13 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState(null)
 
-  // Leer usuario inicial
   useEffect(() => {
     setUser(getUser())
   }, [])
 
-  // Sincronizar con cambios de localStorage (otros tabs, login success)
   useEffect(() => {
     const sync = () => setUser(getUser())
     window.addEventListener('mycompi_auth_change', sync)
-    // Polling para covering all cases (storage event only fires in other tabs)
     const interval = setInterval(sync, 1000)
     return () => {
       window.removeEventListener('mycompi_auth_change', sync)
@@ -249,13 +240,12 @@ export default function Navbar() {
   const logout = () => {
     localStorage.removeItem('mycompi_token')
     localStorage.removeItem('mycompi_usuario')
-    // Notificar a otros components
     window.dispatchEvent(new Event('mycompi_auth_change'))
     window.location.href = '/'
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-cream/95 backdrop-blur-md border-b border-brand-pastel">
       <div className="max-w-[1200px] mx-auto px-6 md:px-10">
         <div className="h-[68px] flex items-center justify-between">
           <Logo />
@@ -264,7 +254,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile dropdown */}
       {open && (
         <MobileMenu user={user} onLogout={logout} onClose={() => setOpen(false)} />
       )}
