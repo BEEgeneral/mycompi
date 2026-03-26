@@ -144,11 +144,17 @@ function ChatPanel({ token }) {
     }])
 
     try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 15000)
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ mensaje: texto }),
+        signal: controller.signal,
       })
+
+      clearTimeout(timeout)
 
       if (!res.ok) throw new Error('HTTP ' + res.status)
 
@@ -174,13 +180,27 @@ function ChatPanel({ token }) {
       }
     } catch (err) {
       console.error('Error chat:', err)
-      // Reemplazar el mensaje temporal por uno de error
+      // Mensaje específico según el error
+      let msgError = 'No he podido procesar tu mensaje. ¿Puedes intentarlo de nuevo?'
+      let bannerError = 'Error de conexión.'
+
+      if (err.message?.includes('HTTP 401')) {
+        msgError = 'Tu sesión ha expirado. Recarga la página para continuar.'
+        bannerError = 'Sesión expirada. Recarga la página.'
+      } else if (err.message?.includes('HTTP 4')) {
+        msgError = 'Error del servidor. Inténtalo de nuevo en un momento.'
+        bannerError = 'Error del servidor.'
+      } else if (err.name === 'AbortError') {
+        msgError = 'La petición ha tardado demasiado. Inténtalo de nuevo.'
+        bannerError = 'Tiempo de espera agotado.'
+      }
+
       setMensajes(prev => prev.map(m =>
         m.id === tempId
-          ? { ...m, id: `error-${tempId}`, content: 'No he podido procesar tu mensaje. ¿Puedes intentarlo de nuevo?' }
+          ? { ...m, id: `error-${tempId}`, content: msgError }
           : m
       ))
-      setErrorMsg('Error de conexión. Revisa tu red.')
+      setErrorMsg(bannerError)
       setTimeout(() => setErrorMsg(null), 5000)
     }
 
