@@ -50,6 +50,7 @@ const adminRoutes = require('./routes/admin');
 const digestRoutes = require('./routes/digest');
 const stripeRoutes = require('./routes/stripe');
 const toolsRoutes = require('./routes/tools');
+const { router: notificacionesRoutes } = require('./routes/notificaciones');
 
 const { AGENTS } = require('./services/agentLoader');
 
@@ -61,6 +62,7 @@ app.use('/api/auth', authRoutes.router);
 app.use('/api/chat', chatRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/stripe', stripeRoutes);
+app.use('/api/notificaciones', notificacionesRoutes);
 
 // Exponer AGENTS para las rutas
 app.use((req, res, next) => {

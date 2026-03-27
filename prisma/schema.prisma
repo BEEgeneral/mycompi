@@ -30,6 +30,7 @@ model Cliente {
   documentos  Documento[]
   interacciones InteraccionChat[]
   emails        Email[]
+  notificaciones Notificacion[]
 }
 
 // ============================================
@@ -158,24 +159,35 @@ model Mensaje {
 
 
 // ============================================
-// INTERACCIONES DE CHAT (aprendizaje)
+// NOTIFICACIONES PROACTIVAS — agentes avisan al cliente
 // ============================================
-model InteraccionChat {
-  id               String   @id @default(cuid())
-  clienteId        String
-  agenteId         String
-  tipoPeticion     TipoPeticion
-  mensajeOriginal  String   @db.Text
-  resumen         String?  @db.VarChar(250)
-  respuestaAgente  String? @db.Text
-  estadoChat       EstadoChat @default(PENDING)
-  streamId         String?
-  clienteAcepta   Boolean?
-  resultadoExitoso Boolean?
-  createdAt       DateTime @default(now())
+model Notificacion {
+  id          String   @id @default(cuid())
+  clienteId   String
+  agenteId    String
+  tipo        TipoNotificacion @default(INFO)
+  titulo      String
+  contenido   String   @db.Text
+  leida       Boolean  @default(false)
+  createdAt   DateTime @default(now())
 
-  cliente         Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  agente          Agente  @relation(fields: [agenteId], references: [id], onDelete: Cascade)
+  cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+}
+
+enum TipoNotificacion {
+  INFO
+  ALERTA
+  ACCION_REQUERIDA
+  COMPLETADO
+}
+
+enum TipoPeticion {
+  CREAR_CONTENIDO
+  CONSULTAR_INFO
+  MODIFICAR_SOLICITUD
+  QUEJA
+  ALERTA
+  OTRO
 }
 
 // ============================================
@@ -208,14 +220,27 @@ enum EstadoEmail {
   FALLIDO
 }
 
-enum TipoPeticion {
-  CREAR_CONTENIDO
-  CONSULTAR_INFO
-  MODIFICAR_SOLICITUD
-  QUEJA
-  ALERTA
-  OTRO
+// ============================================
+// INTERACCIONES DE CHAT (aprendizaje)
+// ============================================
+model InteraccionChat {
+  id               String   @id @default(cuid())
+  clienteId        String
+  agenteId         String
+  tipoPeticion     TipoPeticion
+  mensajeOriginal  String   @db.Text
+  resumen         String?  @db.VarChar(250)
+  respuestaAgente  String? @db.Text
+  estadoChat       EstadoChat @default(PENDING)
+  streamId         String?
+  clienteAcepta   Boolean?
+  resultadoExitoso Boolean?
+  createdAt       DateTime @default(now())
+
+  cliente         Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  agente          Agente  @relation(fields: [agenteId], references: [id], onDelete: Cascade)
 }
+
 // ============================================
 // ENUMS
 // ============================================
