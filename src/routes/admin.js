@@ -602,4 +602,95 @@ router.post('/notificaciones/marcar-todas-leidas', ownerOnly, async (req, res) =
   }
 });
 
+// ─────────────────────────────────────────
+// COLA — todas las tareas de todos los clientes (admin)
+// GET /api/admin/cola?estado=TODO&limit=50&offset=0
+// ─────────────────────────────────────────
+router.get('/cola', ownerOnly, async (req, res) => {
+  const { estado, agenteId, limit = 50, offset = 0 } = req.query;
+
+  const where = {};
+  if (estado) where.estado = estado;
+  if (agenteId) where.agenteId = agenteId;
+
+  try {
+    const [tareas, total] = await Promise.all([
+      prisma.trabajo.findMany({
+        where,
+        orderBy: [
+          { prioridad: 'desc' },
+          { createdAt: 'desc' }
+        ],
+        take: Math.min(parseInt(limit), 100),
+        skip: parseInt(offset),
+        include: {
+          cliente: { select: { id: true, nombre: true } },
+        }
+      }),
+      prisma.trabajo.count({ where })
+    ]);
+    res.json({ tareas, total });
+  } catch (err) {
+    console.error('Error admin cola:', err.message);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// GET /api/admin/cola/resumen
+router.get('/cola/resumen', ownerOnly, async (req, res) => {
+  try {
+    const [total, pending, inProgress, completed, failed] = await Promise.all([
+      prisma.trabajo.count(),
+      prisma.trabajo.count({ where: { estado: 'TODO' } }),
+      prisma.trabajo.count({ where: { estado: 'IN_PROGRESS' } }),
+      prisma.trabajo.count({ where: { estado: 'COMPLETED' } }),
+      prisma.trabajo.count({ where: { estado: 'FAILED' } }),
+    ]);
+    res.json({ total, pending, inProgress, completed, failed });
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// PATCH /api/admin/cola/:id (cambiar estado)
+// POST /api/admin/cola/:id/complete
+// POST /api/admin/cola/:id/fail
+router.patch('/cola/:id', ownerOnly, async (req, res) => {
+  const { estado, prioridad } = req.body;
+  const data = {};
+  if (estado) data.estado = estado;
+  if (prioridad) data.prioridad = prioridad;
+  try {
+    const updated = await prisma.trabajo.update({ where: { id: req.params.id }, data });
+    res.json({ ok: true, tarea: updated });
+  } catch (err) {
+    res.status(500).json({ error: 'Error actualizando' });
+  }
+});
+
+router.post('/cola/:id/complete', ownerOnly, async (req, res) => {
+  try {
+    const updated = await prisma.trabajo.update({
+      where: { id: req.params.id },
+      data: { estado: 'COMPLETED', completedAt: new Date() }
+    });
+    res.json({ ok: true, tarea: updated });
+  } catch (err) {
+    res.status(500).json({ error: 'Error completando' });
+  }
+});
+
+router.post('/cola/:id/fail', ownerOnly, async (req, res) => {
+  const { errorMsg } = req.body;
+  try {
+    const updated = await prisma.trabajo.update({
+      where: { id: req.params.id },
+      data: { estado: 'FAILED', errorMsg: errorMsg || 'Error' }
+    });
+    res.json({ ok: true, tarea: updated });
+  } catch (err) {
+    res.status(500).json({ error: 'Error' });
+  }
+});
+
 module.exports = router;

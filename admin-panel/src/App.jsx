@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import HierarchyView from './components/HierarchyView'
 import DecisionesTab from './components/tabs/DecisionesTab'
 import ActividadTab from './components/tabs/ActividadTab'
+import ColaTab from './components/tabs/ColaTab'
 
 const API = ''
 
@@ -485,6 +486,7 @@ export default function App() {
         {[
           { id: 'dashboard', label: 'Dashboard' },
           { id: 'jerarquia', label: 'Jerarquía' },
+          { id: 'cola', label: '📋 Cola' },
           { id: 'actividad', label: 'Actividad' },
           { id: 'decisiones', label: 'Decisiones' },
           { id: 'plataforma', label: 'Mi cuenta' },
@@ -544,6 +546,12 @@ export default function App() {
         {vista === 'actividad' && (
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <ActividadTab apiCall={apiCall} />
+          </div>
+        )}
+
+        {vista === 'cola' && (
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <ColaTab apiCall={apiCall} />
           </div>
         )}
 
