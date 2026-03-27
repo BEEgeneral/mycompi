@@ -15,6 +15,127 @@ const AGENTES = [
 ]
 
 const API_URL = import.meta.env.VITE_API_URL || ''
+const TOKEN_REFRESH_THRESHOLD_MS = 5 * 60 * 1000 // 5 min antes del expiry
+
+// ─────────────────────────────────────────
+// Token manager (módulo singleton)
+// ─────────────────────────────────────────
+let tokenState = {
+  accessToken: localStorage.getItem('mycompi_token'),
+  refreshToken: localStorage.getItem('mycompi_refresh'),
+  refreshTimer: null,
+  listeners: new Set(),
+}
+
+// Escuchar cambios de token desde fuera (ej: login multiple tabs)
+window.addEventListener('storage', (e) => {
+  if (e.key === 'mycompi_token' || e.key === 'mycompi_refresh') {
+    tokenState.accessToken = localStorage.getItem('mycompi_token')
+    tokenState.refreshToken = localStorage.getItem('mycompi_refresh')
+    tokenState.listeners.forEach(fn => fn(tokenState.accessToken))
+  }
+})
+
+function getAccessToken() {
+  return tokenState.accessToken || localStorage.getItem('mycompi_token')
+}
+
+function setTokens(accessToken, refreshToken) {
+  localStorage.setItem('mycompi_token', accessToken)
+  localStorage.setItem('mycompi_refresh', refreshToken)
+  tokenState.accessToken = accessToken
+  tokenState.refreshToken = refreshToken
+  tokenState.listeners.forEach(fn => fn(accessToken))
+}
+
+function clearTokens() {
+  localStorage.removeItem('mycompi_token')
+  localStorage.removeItem('mycompi_refresh')
+  localStorage.removeItem('mycompi_usuario')
+  localStorage.removeItem('mycompi_cliente')
+  tokenState.accessToken = null
+  tokenState.refreshToken = null
+  if (tokenState.refreshTimer) {
+    clearTimeout(tokenState.refreshTimer)
+    tokenState.refreshTimer = null
+  }
+}
+
+// ─────────────────────────────────────────
+// Fetch con token refresh automático
+// ─────────────────────────────────────────
+async function fetchWithAuth(url, options = {}) {
+  const accessToken = getAccessToken()
+
+  if (!accessToken) {
+    throw new Error('NO_TOKEN')
+  }
+
+  const headers = {
+    ...(options.headers || {}),
+    'Authorization': `Bearer ${accessToken}`,
+  }
+
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json'
+  }
+
+  let res = await fetch(url, { ...options, headers })
+
+  // Si es 401, intentar refresh
+  if (res.status === 401) {
+    const refreshed = await refreshAccessToken()
+    if (refreshed) {
+      // Reintentar request con nuevo token
+      const newToken = getAccessToken()
+      headers['Authorization'] = `Bearer ${newToken}`
+      res = await fetch(url, { ...options, headers })
+    } else {
+      // Refresh falló → logout
+      clearTokens()
+      throw new Error('SESSION_EXPIRED')
+    }
+  }
+
+  return res
+}
+
+// ─────────────────────────────────────────
+// Refresh del access token
+// ─────────────────────────────────────────
+async function refreshAccessToken() {
+  const refreshToken = localStorage.getItem('mycompi_refresh')
+  if (!refreshToken) return false
+
+  try {
+    const res = await fetch(`${API_URL}/api/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    })
+
+    if (!res.ok) {
+      return false
+    }
+
+    const data = await res.json()
+    setTokens(data.accessToken, data.refreshToken)
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Programar refresh antes de que expire
+function scheduleTokenRefresh(expiresInMs) {
+  if (tokenState.refreshTimer) {
+    clearTimeout(tokenState.refreshTimer)
+  }
+  const delay = Math.max(expiresInMs - TOKEN_REFRESH_THRESHOLD_MS, 60000)
+  tokenState.refreshTimer = setTimeout(async () => {
+    await refreshAccessToken()
+  }, delay)
+}
 
 // ─────────────────────────────────────────
 // Login
@@ -40,10 +161,9 @@ function Login({ onLogin }) {
         setError(data.error || 'Error al iniciar sesión')
         return
       }
-      localStorage.setItem('mycompi_token', data.tokens.accessToken)
-      localStorage.setItem('mycompi_refresh', data.tokens.refreshToken)
-      localStorage.setItem('mycompi_usuario', JSON.stringify(data.usuario))
-      localStorage.setItem('mycompi_cliente', JSON.stringify(data.cliente))
+      setTokens(data.tokens.accessToken, data.tokens.refreshToken)
+      // Programar refresh (15 min expiry → refresh a los 10 min)
+      scheduleTokenRefresh(15 * 60 * 1000)
       onLogin(data.usuario, data.cliente)
     } catch {
       setError('No se pudo conectar con el servidor')
@@ -122,7 +242,7 @@ function TypingIndicator() {
 }
 
 // ─────────────────────────────────────────
-// Chat principal (sin SSE — respuesta directa)
+// Chat principal
 // ─────────────────────────────────────────
 export default function App() {
   const [usuario, setUsuario] = useState(null)
@@ -132,44 +252,58 @@ export default function App() {
   const [historial, setHistorial] = useState([])
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
-  const [token, setToken] = useState(localStorage.getItem('mycompi_token'))
   const [status, setStatus] = useState('online')
+  const [tokenVal, setTokenVal] = useState(getAccessToken())
   const bottomRef = useRef(null)
 
   // ─────────────────────────────────────────
-  // Auth
+  // Suscribirse a cambios de token
   // ─────────────────────────────────────────
   useEffect(() => {
-    if (!token) return
+    const handler = (newToken) => setTokenVal(newToken)
+    tokenState.listeners.add(handler)
+    return () => tokenState.listeners.delete(handler)
+  }, [])
+
+  // ─────────────────────────────────────────
+  // Auth inicial
+  // ─────────────────────────────────────────
+  useEffect(() => {
+    const storedToken = getAccessToken()
+    if (!storedToken) return
+
     const u = localStorage.getItem('mycompi_usuario')
     const c = localStorage.getItem('mycompi_cliente')
     if (u) setUsuario(JSON.parse(u))
     if (c) setCliente(JSON.parse(c))
-  }, [token])
+
+    // Programar refresh si hay token
+    scheduleTokenRefresh(15 * 60 * 1000)
+  }, [tokenVal])
 
   // ─────────────────────────────────────────
-  // Cargar historial al iniciar
+  // Cargar historial
   // ─────────────────────────────────────────
   useEffect(() => {
-    if (!token) return
+    if (!getAccessToken()) return
     cargarHistorial()
-  }, [token])
+  }, [tokenVal])
 
-  // Auto-scroll al último mensaje
+  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [historial])
 
   const cargarHistorial = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/chat?limit=50`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      })
+      const res = await fetchWithAuth(`${API_URL}/api/chat?limit=50`)
       if (res.ok) {
         const data = await res.json()
         if (data.historial?.length > 0) {
           setHistorial(data.historial)
         }
+      } else if (res.status === 401) {
+        handleLogout()
       }
     } catch (err) {
       console.error('Error cargando historial:', err)
@@ -179,22 +313,20 @@ export default function App() {
   const handleLogin = (usr, cli) => {
     setUsuario(usr)
     setCliente(cli)
-    setToken(localStorage.getItem('mycompi_token'))
+    setTokenVal(getAccessToken())
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('mycompi_token')
-    localStorage.removeItem('mycompi_refresh')
-    localStorage.removeItem('mycompi_usuario')
-    localStorage.removeItem('mycompi_cliente')
-    setToken(null)
+    clearTokens()
+    setTokenVal(null)
     setUsuario(null)
     setCliente(null)
     setHistorial([])
+    setStatus('offline')
   }
 
   // ─────────────────────────────────────────
-  // Enviar mensaje (respuesta directa)
+  // Enviar mensaje
   // ─────────────────────────────────────────
   const enviar = async (e) => {
     e?.preventDefault()
@@ -205,7 +337,6 @@ export default function App() {
     setError('')
     setCargando(true)
 
-    // Añadir mensaje del usuario
     setHistorial(prev => [
       ...prev,
       {
@@ -217,12 +348,9 @@ export default function App() {
     ])
 
     try {
-      const res = await fetch(`${API_URL}/api/chat`, {
+      const res = await fetchWithAuth(`${API_URL}/api/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mensaje: texto }),
       })
 
@@ -234,11 +362,12 @@ export default function App() {
         } else {
           setError(data.error || 'Error al procesar mensaje')
         }
+        // Quitar el mensaje de usuario si falló
+        setHistorial(prev => prev.slice(0, -1))
         setCargando(false)
         return
       }
 
-      // Añadir respuesta de Paco
       if (data.respuesta) {
         setHistorial(prev => [
           ...prev,
@@ -252,7 +381,12 @@ export default function App() {
         ])
       }
     } catch (err) {
-      setError('No se pudo conectar con el servidor')
+      if (err.message === 'SESSION_EXPIRED') {
+        setError('Sesión expirada. Recarga la página para volver a entrar.')
+      } else {
+        setError('No se pudo conectar con el servidor')
+      }
+      setHistorial(prev => prev.slice(0, -1))
     } finally {
       setCargando(false)
     }
@@ -268,7 +402,7 @@ export default function App() {
   // ─────────────────────────────────────────
   // NO AUTH
   // ─────────────────────────────────────────
-  if (!token) {
+  if (!getAccessToken()) {
     return <Login onLogin={handleLogin} />
   }
 
@@ -295,10 +429,8 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Status */}
-          <div className={`w-2 h-2 rounded-full ${status === 'online' ? 'bg-green-500' : 'bg-red-500'}`}
+          <div className={`w-2 h-2 rounded-full ${status}`}
                title={status === 'online' ? 'Conectado' : 'Sin conexión'} />
-
           <button onClick={handleLogout} className="text-xs text-gray-500 hover:text-gray-300 transition-colors" title="Cerrar sesión">
             🚪
           </button>
@@ -320,7 +452,6 @@ export default function App() {
       {/* Chat */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
 
-        {/* Mensaje inicial */}
         {historial.length === 0 && (
           <div className="flex gap-3">
             <AgenteAvatar agente={AGENTES[0]} />
@@ -338,15 +469,14 @@ export default function App() {
           </div>
         )}
 
-        {/* Historial */}
         {historial.map((msg, i) => {
           const agenteMsg = msg.agenteId ? AGENTES.find(a => a.id === msg.agenteId) : AGENTES[0]
+          const isLastUser = i === historial.length - 1 && cargando
 
-          if (cargando && i === historial.length - 1 && msg.role === 'user') {
+          if (isLastUser) {
             return (
               <div key={msg.id || i}>
                 <div className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  {msg.role === 'assistant' && <AgenteAvatar agente={agenteMsg} />}
                   <div className={`max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-indigo-600 text-white rounded-tr-sm'
