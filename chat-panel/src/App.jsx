@@ -9,12 +9,12 @@ const AGENTES = [
   { id: 'enzo',    nombre: 'Enzo Herrera',    emoji: '📊', rol: 'Marketing',        color: 'from-blue-500 to-indigo-600',   desc: 'Campañas, contenido, SEO' },
   { id: 'carlos',  nombre: 'Carlos Mendoza',  emoji: '💼', rol: 'Ventas',           color: 'from-green-500 to-emerald-600', desc: 'Leads, cierre, seguimiento' },
   { id: 'elena',   nombre: 'Elena Ortega',    emoji: '⚙️', rol: 'Operaciones',      color: 'from-orange-500 to-amber-600',  desc: 'Automatizaciones y procesos' },
-  { id: 'diana',   nombre: 'Diana Palau',     emoji: '📈', rol: 'Data',             color: 'from-purple-500 to-violet-600', desc: 'Métricas y análisis' },
+  { id: 'diana',   nombre: 'Diana Palau',      emoji: '📈', rol: 'Data',             color: 'from-purple-500 to-violet-600', desc: 'Métricas y análisis' },
   { id: 'marcos',  nombre: 'Marcos Fernández', emoji: '💻', rol: 'Desarrollo',       color: 'from-cyan-500 to-teal-600',    desc: 'Web y e-commerce' },
   { id: 'pelayo',  nombre: 'Pelayo',          emoji: '🤖', rol: 'Asistente',        color: 'from-gray-500 to-slate-600',   desc: 'Tu asistente personal' },
 ]
 
-const API_URL = ''
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 // ─────────────────────────────────────────
 // Login
@@ -90,9 +90,6 @@ function Login({ onLogin }) {
             {loading ? 'Conectando...' : 'Entrar'}
           </button>
         </form>
-        <p className="text-center text-xs text-gray-500 mt-6">
-          ¿No tienes cuenta? <a href="#/registro" className="text-indigo-400 hover:underline">Regístrate</a>
-        </p>
       </div>
     </div>
   )
@@ -124,21 +121,8 @@ function TypingIndicator() {
   )
 }
 
-function QueuedMessage({ agente }) {
-  return (
-    <div className="flex gap-3">
-      <AgenteAvatar agente={agente} />
-      <div className="bg-[#1e1e2e] border border-[#2a2a3a] rounded-2xl rounded-tl-sm px-4 py-3 max-w-md">
-        <p className="text-sm text-gray-400 italic">
-          ⏳ Recibido, procesando respuesta...
-        </p>
-      </div>
-    </div>
-  )
-}
-
 // ─────────────────────────────────────────
-// Chat principal
+// Chat principal (sin SSE — respuesta directa)
 // ─────────────────────────────────────────
 export default function App() {
   const [usuario, setUsuario] = useState(null)
@@ -149,10 +133,8 @@ export default function App() {
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
   const [token, setToken] = useState(localStorage.getItem('mycompi_token'))
-  const [sseConnected, setSseConnected] = useState(false)
-  const [pendingIds, setPendingIds] = useState(new Set())
+  const [status, setStatus] = useState('online')
   const bottomRef = useRef(null)
-  const eventSourceRef = useRef(null)
 
   // ─────────────────────────────────────────
   // Auth
@@ -166,103 +148,14 @@ export default function App() {
   }, [token])
 
   // ─────────────────────────────────────────
-  // SSE connection
-  // ─────────────────────────────────────────
-  useEffect(() => {
-    if (!token) return
-
-    const es = new EventSource(`${API_URL}/api/chat/stream`, {
-      withCredentials: true,
-    })
-
-    eventSourceRef.current = es
-
-    es.addEventListener('connected', () => {
-      setSseConnected(true)
-    })
-
-    // Nuevo mensaje en cola
-    es.addEventListener('queued', (e) => {
-      const data = JSON.parse(e.data)
-      // El mensaje de "procesando" ya se añadió al historial tras el send
-    })
-
-    // Processing
-    es.addEventListener('processing', (e) => {
-      const data = JSON.parse(e.data)
-      // Update pending message in historial
-      setHistorial(prev => prev.map(m =>
-        m.tempId === data.interaccionId
-          ? { ...m, estado: 'processing' }
-          : m
-      ))
-    })
-
-    // Respuesta definitiva
-    es.addEventListener('respuesta', (e) => {
-      const data = JSON.parse(e.data)
-      // Reemplazar el mensaje pendiente con la respuesta real
-      setHistorial(prev => {
-        const idx = prev.findLastIndex(m => m.tempId === data.interaccionId)
-        if (idx === -1) {
-          // Fallback: añadir al final
-          return [...prev, {
-            id: `agent-${data.interaccionId}`,
-            role: 'assistant',
-            content: data.respuesta,
-            timestamp: new Date(),
-            agenteId: data.agenteId,
-            estado: 'completed',
-          }]
-        }
-        const updated = [...prev]
-        updated[idx] = {
-          id: `agent-${data.interaccionId}`,
-          role: 'assistant',
-          content: data.respuesta,
-          timestamp: new Date(),
-          agenteId: data.agenteId,
-          estado: 'completed',
-        }
-        return updated
-      })
-      setPendingIds(prev => {
-        const next = new Set(prev)
-        next.delete(data.interaccionId)
-        return next
-      })
-      setCargando(false)
-    })
-
-    // Heartbeat
-    es.addEventListener('heartbeat', () => {})
-
-    es.onerror = () => {
-      setSseConnected(false)
-      es.close()
-      // Reconnect after 5s
-      setTimeout(() => {
-        if (token) {
-          const newEs = new EventSource(`${API_URL}/api/chat/stream`, { withCredentials: true })
-          eventSourceRef.current = newEs
-        }
-      }, 5000)
-    }
-
-    return () => {
-      es.close()
-    }
-  }, [token])
-
-  // ─────────────────────────────────────────
-  // Cargar historial
+  // Cargar historial al iniciar
   // ─────────────────────────────────────────
   useEffect(() => {
     if (!token) return
     cargarHistorial()
   }, [token])
 
-  // Auto-scroll
+  // Auto-scroll al último mensaje
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [historial])
@@ -275,7 +168,7 @@ export default function App() {
       if (res.ok) {
         const data = await res.json()
         if (data.historial?.length > 0) {
-          setHistorial(data.historial.map(m => ({ ...m, tempId: m.id })))
+          setHistorial(data.historial)
         }
       }
     } catch (err) {
@@ -290,7 +183,6 @@ export default function App() {
   }
 
   const handleLogout = () => {
-    eventSourceRef.current?.close()
     localStorage.removeItem('mycompi_token')
     localStorage.removeItem('mycompi_refresh')
     localStorage.removeItem('mycompi_usuario')
@@ -299,9 +191,11 @@ export default function App() {
     setUsuario(null)
     setCliente(null)
     setHistorial([])
-    setSseConnected(false)
   }
 
+  // ─────────────────────────────────────────
+  // Enviar mensaje (respuesta directa)
+  // ─────────────────────────────────────────
   const enviar = async (e) => {
     e?.preventDefault()
     if (!mensaje.trim() || cargando) return
@@ -311,27 +205,14 @@ export default function App() {
     setError('')
     setCargando(true)
 
-    const tempId = `temp-${Date.now()}`
-
-    // Añadir mensaje del usuario Y un placeholder del agente
+    // Añadir mensaje del usuario
     setHistorial(prev => [
       ...prev,
       {
-        id: `user-${tempId}`,
+        id: `user-${Date.now()}`,
         role: 'user',
         content: texto,
         timestamp: new Date(),
-        tempId,
-      },
-      {
-        id: `agent-${tempId}`,
-        role: 'assistant',
-        content: '⏳ Procesando...',
-        timestamp: new Date(),
-        agenteId: 'paco',
-        estado: 'queued',
-        tempId,
-        isPlaceholder: true,
       }
     ])
 
@@ -342,29 +223,37 @@ export default function App() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          mensaje: texto,
-          agenteId: agente.id,
-        }),
+        body: JSON.stringify({ mensaje: texto }),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || 'Error al procesar mensaje')
-        // Quitar ambos mensajes
-        setHistorial(prev => prev.slice(0, -2))
+        if (res.status === 401) {
+          setError('Sesión expirada. Recarga la página para volver a entrar.')
+        } else {
+          setError(data.error || 'Error al procesar mensaje')
+        }
         setCargando(false)
         return
       }
 
-      // El SSE actualizará el placeholder cuando llegue la respuesta
-      // Añadir el tempId a pending para tracking
-      setPendingIds(prev => new Set([...prev, data.interaccionId]))
-
+      // Añadir respuesta de Paco
+      if (data.respuesta) {
+        setHistorial(prev => [
+          ...prev,
+          {
+            id: `agent-${data.interaccionId || Date.now()}`,
+            role: 'assistant',
+            content: data.respuesta,
+            timestamp: new Date(data.timestamp),
+            agenteId: 'paco',
+          }
+        ])
+      }
     } catch (err) {
       setError('No se pudo conectar con el servidor')
-      setHistorial(prev => prev.slice(0, -2))
+    } finally {
       setCargando(false)
     }
   }
@@ -406,20 +295,9 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Connection status */}
-          <div className={`w-2 h-2 rounded-full ${sseConnected ? 'bg-green-500' : 'bg-red-500'}`}
-               title={sseConnected ? 'Conectado' : 'Reconectando...'} />
-
-          {/* Selector de agente */}
-          <select
-            value={agente.id}
-            onChange={e => setAgente(AGENTES.find(a => a.id === e.target.value))}
-            className="bg-[#1e1e2e] border border-[#2a2a3a] text-gray-300 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer"
-          >
-            {AGENTES.map(a => (
-              <option key={a.id} value={a.id}>{a.emoji} {a.nombre}</option>
-            ))}
-          </select>
+          {/* Status */}
+          <div className={`w-2 h-2 rounded-full ${status === 'online' ? 'bg-green-500' : 'bg-red-500'}`}
+               title={status === 'online' ? 'Conectado' : 'Sin conexión'} />
 
           <button onClick={handleLogout} className="text-xs text-gray-500 hover:text-gray-300 transition-colors" title="Cerrar sesión">
             🚪
@@ -464,22 +342,22 @@ export default function App() {
         {historial.map((msg, i) => {
           const agenteMsg = msg.agenteId ? AGENTES.find(a => a.id === msg.agenteId) : AGENTES[0]
 
-          if (msg.isPlaceholder && msg.estado === 'queued') {
+          if (cargando && i === historial.length - 1 && msg.role === 'user') {
             return (
-              <div key={msg.id || i} className="flex gap-3">
-                <AgenteAvatar agente={agenteMsg} />
-                <div className="bg-[#1e1e2e] border border-[#2a2a3a] rounded-2xl rounded-tl-sm px-4 py-3 max-w-md">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
-                    <span className="text-sm text-gray-400 italic">Procesando respuesta...</span>
+              <div key={msg.id || i}>
+                <div className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  {msg.role === 'assistant' && <AgenteAvatar agente={agenteMsg} />}
+                  <div className={`max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-indigo-600 text-white rounded-tr-sm'
+                      : 'bg-[#1e1e2e] border border-[#2a2a3a] text-gray-300 rounded-tl-sm'
+                  }`}>
+                    {msg.content}
                   </div>
                 </div>
+                <TypingIndicator />
               </div>
             )
-          }
-
-          if (msg.isPlaceholder && msg.estado === 'processing') {
-            return <TypingIndicator key={msg.id || i} />
           }
 
           return (
@@ -530,11 +408,7 @@ export default function App() {
           </button>
         </div>
         <p className="text-center text-xs text-gray-600 mt-2">
-          {sseConnected
-            ? 'Conexión en tiempo real activa'
-            : 'Conectando...'}
-          {' · '}
-          {agente.id === 'paco' ? 'Paco coordina tu equipo' : `Chat directo con ${agente.nombre}`}
+          {status === 'online' ? '🤖 Paco conectado — respuesta en tiempo real' : '⚫ Sin conexión en tiempo real'}
         </p>
       </form>
     </div>
