@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import HierarchyView from './components/HierarchyView'
 import DecisionesTab from './components/tabs/DecisionesTab'
+import ActividadTab from './components/tabs/ActividadTab'
 
 const API = ''
 
@@ -484,6 +485,7 @@ export default function App() {
         {[
           { id: 'dashboard', label: 'Dashboard' },
           { id: 'jerarquia', label: 'Jerarquía' },
+          { id: 'actividad', label: 'Actividad' },
           { id: 'decisiones', label: 'Decisiones' },
           { id: 'plataforma', label: 'Mi cuenta' },
         ].map(tab => (
@@ -536,6 +538,12 @@ export default function App() {
         {vista === 'decisiones' && (
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <DecisionesTab apiCall={apiCall} />
+          </div>
+        )}
+
+        {vista === 'actividad' && (
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <ActividadTab apiCall={apiCall} />
           </div>
         )}
 

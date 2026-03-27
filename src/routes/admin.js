@@ -555,4 +555,51 @@ router.get('/aprendizajes', ownerOnly, (req, res) => {
   }
 });
 
+// ─────────────────────────────────────────
+// NOTIFICACIONES — admin ve todas
+// GET /api/admin/notificaciones?limit=50&offset=0
+// ─────────────────────────────────────────
+router.get('/notificaciones', ownerOnly, async (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+  const offset = parseInt(req.query.offset) || 0;
+
+  try {
+    const { listarTodasNotificaciones } = require('../lib/db');
+    const [notificaciones, total] = await Promise.all([
+      listarTodasNotificaciones({ take: limit, skip: offset }),
+      require('../lib/db').contarNotificaciones()
+    ]);
+    res.json({ notificaciones, total });
+  } catch (err) {
+    console.error('Error obteniendo notificaciones:', err.message);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// MARCAR NOTIFICACIÓN COMO LEÍDA
+// PATCH /api/admin/notificaciones/:id/leida
+// ─────────────────────────────────────────
+router.patch('/notificaciones/:id/leida', ownerOnly, async (req, res) => {
+  try {
+    await require('../lib/db').marcarNotificacionLeida(req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Error actualizando' });
+  }
+});
+
+// ─────────────────────────────────────────
+// MARCAR TODAS COMO LEÍDAS
+// POST /api/admin/notificaciones/marcar-todas-leidas
+// ─────────────────────────────────────────
+router.post('/notificaciones/marcar-todas-leidas', ownerOnly, async (req, res) => {
+  try {
+    await require('../lib/db').marcarTodasNotificacionesLeidas();
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 module.exports = router;
