@@ -120,6 +120,8 @@ async function refreshAccessToken() {
 
     const data = await res.json()
     setTokens(data.accessToken, data.refreshToken)
+    const expiresInMs = (data.expiresIn || 900) * 1000
+    scheduleTokenRefresh(expiresInMs)
     return true
   } catch {
     return false
@@ -162,8 +164,9 @@ function Login({ onLogin }) {
         return
       }
       setTokens(data.tokens.accessToken, data.tokens.refreshToken)
-      // Programar refresh (15 min expiry → refresh a los 10 min)
-      scheduleTokenRefresh(15 * 60 * 1000)
+      // Programar refresh basándose en expiresIn del backend (en segundos)
+      const expiresInMs = (data.tokens.expiresIn || 900) * 1000
+      scheduleTokenRefresh(expiresInMs)
       onLogin(data.usuario, data.cliente)
     } catch {
       setError('No se pudo conectar con el servidor')
@@ -277,8 +280,11 @@ export default function App() {
     if (u) setUsuario(JSON.parse(u))
     if (c) setCliente(JSON.parse(c))
 
-    // Programar refresh si hay token
-    scheduleTokenRefresh(15 * 60 * 1000)
+    // Programar refresh (15 min desde ahora si hay token válido)
+    // El refresh real se hace via 401 interceptor o antes del expiry
+    if (getAccessToken()) {
+      scheduleTokenRefresh(15 * 60 * 1000)
+    }
   }, [tokenVal])
 
   // ─────────────────────────────────────────

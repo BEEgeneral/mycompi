@@ -96,7 +96,7 @@ router.post('/register', async (req, res) => {
     const tokens = generateTokens(result.usuario.id, result.cliente.id)
 
     res.status(201).json({
-      tokens,
+      tokens: { ...tokens, expiresIn: 900 },
       cliente: {
         id: result.cliente.id,
         nombre: result.cliente.nombre,
@@ -149,7 +149,7 @@ router.post('/login', async (req, res) => {
     const tokens = generateTokens(usuario.id, usuario.clienteId)
 
     res.json({
-      tokens,
+      tokens: { ...tokens, expiresIn: 900 }, // 15 min en segundos
       usuario: {
         id: usuario.id,
         nombre: usuario.nombre,
@@ -184,7 +184,7 @@ router.post('/refresh', async (req, res) => {
     const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET)
     const tokens = generateTokens(decoded.usuarioId, decoded.clienteId)
 
-    res.json(tokens)
+    res.json({ ...tokens, expiresIn: 900 })
   } catch (err) {
     res.status(401).json({ error: 'Refresh token inválido' })
   }
