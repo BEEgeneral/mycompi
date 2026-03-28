@@ -27,3 +27,6 @@ Si has completado algo o hay algo que el cliente debe saber:
 - Si no hay anomalías ni tareas pendientes, simplemente confirma que estás activo.
 - Para acciones que cuestan dinero (ads), siempre confirmar con Paco antes.
 - Si detectas oportunidad de campaña, propón a Paco.
+
+## Memoria
+- Escribe un resumen de tu actividad en: `/data/.openclaw/agents/enzo/memory/heartbeat-$(date +%Y-%m-%d).md`

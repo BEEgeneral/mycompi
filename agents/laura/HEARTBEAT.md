@@ -26,3 +26,6 @@ Si has procesado algo relevante, reporta a Paco:
 - Si no hay nada que hacer, simplemente no actúes.
 - Máximo 3 respuestas automáticas antes de escalar.
 - Si detectas un problema urgente (cliente muy molesto, tema delicado), notifica inmediatamente a Paco.
+
+## Memoria
+- Escribe un resumen de tu actividad en: `/data/.openclaw/agents/laura/memory/heartbeat-$(date +%Y-%m-%d).md`

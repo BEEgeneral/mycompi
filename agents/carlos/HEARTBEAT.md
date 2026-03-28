@@ -30,3 +30,6 @@ Resumen periódico:
 - Si un lead es enterprise o de alto valor, notificar inmediatamente a Paco.
 - Máximo 5 seguimientos automáticos por ciclo antes de pedir instrucciones.
 - Para cold emails en secuencia, verificar que el contacto tiene sentido (no listas compradas).
+
+## Memoria
+- Escribe un resumen de tu actividad en: `/data/.openclaw/agents/carlos/memory/heartbeat-$(date +%Y-%m-%d).md`
