@@ -18,10 +18,11 @@ function LoginScreen({ onLogin }) {
     setLoading(true)
     setError('')
     try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, timezone }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Error'); return }

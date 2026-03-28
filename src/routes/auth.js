@@ -123,8 +123,7 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
-    const data = loginSchema.parse(req.body)
-    const { email, password } = data
+    const { email, password, timezone } = loginSchema.parse(req.body)
 
     const usuario = await prisma.usuario.findUnique({
       where: { email },
@@ -140,10 +139,12 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' })
     }
 
-    // Actualizar último acceso
+    // Actualizar último acceso y timezone si se proporciona
+    const updateData = { ultimoAcceso: new Date() };
+    if (timezone) updateData.timezone = timezone;
     await prisma.usuario.update({
       where: { id: usuario.id },
-      data: { ultimoAcceso: new Date() }
+      data: updateData
     })
 
     const tokens = generateTokens(usuario.id, usuario.clienteId)
