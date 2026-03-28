@@ -261,7 +261,7 @@ async function enviarEmailBienvenida(email, nombre) {
 
   try {
     await RESEND.emails.send({
-      from: 'MyCompi <noreply@mycompi.es>',
+      from: 'MyCompi <noreply@mycompi.com>',
       to: email,
       subject: '¡Bienvenido a MyCompi! Activa tu cuenta →',
       html: `
@@ -290,7 +290,7 @@ async function enviarEmailSuscripcionCancelada(email, nombre) {
   if (!process.env.RESEND_API_KEY) return;
   try {
     await RESEND.emails.send({
-      from: 'MyCompi <noreply@mycompi.es>',
+      from: 'MyCompi <noreply@mycompi.com>',
       to: email,
       subject: 'Tu suscripción en MyCompi ha sido cancelada',
       html: `<h1>Hola ${nombre},</h1><p>Tu suscripción ha sido cancelada. Si crees que es un error, contacta con nosotros.</p>`,
@@ -304,7 +304,7 @@ async function enviarEmailPagoFallido(email, nombre) {
   if (!process.env.RESEND_API_KEY) return;
   try {
     await RESEND.emails.send({
-      from: 'Mycompi <noreply@mycompi.es>',
+      from: 'MyCompi <noreply@mycompi.com>',
       to: email,
       subject: 'Aviso — Pago fallido en MyCompi',
       html: `<h1>Hola ${nombre},</h1><p>No hemos podido procesar tu pago. Por favor, revisa tus datos de pago en tu cuenta.</p>`,
