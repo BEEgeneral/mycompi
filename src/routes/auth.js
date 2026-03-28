@@ -347,16 +347,32 @@ router.post('/reset-password', async (req, res) => {
 // ─────────────────────────────────────────
 // ACTIVAR CUENTA (después del pago)
 // POST /api/auth/activar
+// Body: { token, password }
 // ─────────────────────────────────────────
 router.post('/activar', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: 'Email y contraseña requeridos' });
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ error: 'Token y contraseña requeridos' });
   if (password.length < 8) return res.status(400).json({ error: 'Mínimo 8 caracteres' });
 
+  // Validar token de activación
+  const fs2 = require('fs');
+  const path2 = require('path');
+  const activationsFile = path2.join(__dirname, '../lib/activationTokens.json');
+  let activations = {};
   try {
-    const usuario = await prisma.usuario.findUnique({ where: { email } });
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (fs2.existsSync(activationsFile)) {
+      activations = JSON.parse(fs2.readFileSync(activationsFile, 'utf8'));
+    }
+  } catch (e) {}
 
+  const act = activations[token];
+  if (!act) return res.status(400).json({ error: 'Token inválido' });
+  if (act.used) return res.status(400).json({ error: 'Este link ya fue usado' });
+  if (Date.now() > act.expiresAt) return res.status(400).json({ error: 'Este link ha expirado. Solicita uno nuevo.' });
+
+  try {
+    const usuario = await prisma.usuario.findUnique({ where: { email: act.email } });
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
     if (usuario.passwordHash !== '__pending_activation__') {
       return res.status(400).json({ error: 'Esta cuenta ya tiene contraseña. Inicia sesión.' });
     }
@@ -366,6 +382,10 @@ router.post('/activar', async (req, res) => {
       where: { id: usuario.id },
       data: { passwordHash },
     });
+
+    // Marcar token como usado
+    activations[token].used = true;
+    fs2.writeFileSync(activationsFile, JSON.stringify(activations, null, 2));
 
     // Generar tokens para login automático
     const tokens = generateTokens(updated.id, updated.clienteId);

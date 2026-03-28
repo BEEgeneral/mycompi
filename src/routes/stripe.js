@@ -237,16 +237,47 @@ async function enviarEmailBienvenida(email, nombre) {
     return;
   }
 
+  // Generar token de activación
+  const crypto = require('crypto');
+  const token = crypto.randomBytes(32).toString('hex');
+  const fechaExpiracion = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 días
+
+  // Guardar token de activación
+  const fs2 = require('fs');
+  const path2 = require('path');
+  const activationsFile = path.join(__dirname, '../lib/activationTokens.json');
+  let activations = {};
+  try {
+    if (fs2.existsSync(activationsFile)) {
+      activations = JSON.parse(fs2.readFileSync(activationsFile, 'utf8'));
+    }
+  } catch (e) {}
+  activations[token] = { email, expiresAt: fechaExpiracion, used: false };
+  try {
+    fs2.writeFileSync(activationsFile, JSON.stringify(activations, null, 2));
+  } catch (e) {}
+
+  const activationLink = `${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/activar?token=${token}`;
+
   try {
     await RESEND.emails.send({
       from: 'MyCompi <noreply@mycompi.es>',
       to: email,
-      subject: 'Bienvenido a MyCompi — Activa tu cuenta',
+      subject: '¡Bienvenido a MyCompi! Activa tu cuenta →',
       html: `
-        <h1>¡Bienvenido a MyCompi, ${nombre}!</h1>
-        <p>Tu cuenta ha sido creada. Para activar tu contraseña, pulsa el botón:</p>
-        <a href="${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/activar?email=${encodeURIComponent(email)}" style="background:#4f46e5;color:white;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:bold;">Activar mi cuenta</a>
-        <p style="color:#666;font-size:14px;margin-top:24px;">Si no solicitaste esta cuenta, ignora este email.</p>
+        <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #2D3261; padding: 32px; text-align: center; border-radius: 16px 16px 0 0;">
+            <h1 style="color: #FFD154; margin: 0; font-size: 28px;">🎉 ¡Bienvenido, ${nombre}!</h1>
+          </div>
+          <div style="background: #FCF9F1; padding: 32px; border-radius: 0 0 16px 16px;">
+            <p style="font-size: 18px; color: #333; margin-top: 0;">Tu equipo de profesionales IA ya está listo para trabajar <strong>24/7</strong> contigo.</p>
+            <p style="color: #666;">Recibirás un chat con <strong>Paco</strong>, tu orquestador, que coordinará todo el equipo según tus necesidades.</p>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${activationLink}" style="display: inline-block; background: #FFD154; color: #2D3261; font-weight: bold; padding: 16px 32px; border-radius: 9999px; text-decoration: none; font-size: 16px;">Activar mi cuenta →</a>
+            </div>
+            <p style="color: #999; font-size: 13px;">Este link expira en 7 días. Si no solicitaste esta cuenta, ignora este email.</p>
+          </div>
+        </div>
       `,
     });
     console.log(`📧 Email bienvenida enviado a ${email}`);
