@@ -94,6 +94,22 @@ router.post('/inbound', async (req, res) => {
 });
 
 // ─────────────────────────────────────────
+// SANITIZACIÓN DE INPUT EMAIL
+// ─────────────────────────────────────────
+function sanitizarInputEmail(input) {
+  if (!input || typeof input !== 'string') return '';
+  return input
+    .slice(0, 8000)                               // límite longitud
+    .replace(/\x00/g, '')                          // sin bytes nulos
+    .replace(/\r\n|\r/g, '\n')                    // normalizar saltos de línea
+    .replace(/```/g, '` ` `')                      // escapar triple backtick
+    .replace(/<script|<\/script>/gi, '')           // block script injection
+    .replace(/javascript:/gi, '')                 // block javascript: URLs
+    .replace(/on\w+\s*=/gi, '')                   // block inline event handlers
+    ;
+}
+
+// ─────────────────────────────────────────
 // PROCESAMIENTO ASINCRONO DE EMAIL
 // ─────────────────────────────────────────
 async function procesarEmailAsync(emailId, { de, para, asunto, texto, clienteId, messageId }) {
@@ -110,13 +126,19 @@ async function procesarEmailAsync(emailId, { de, para, asunto, texto, clienteId,
       ? await prisma.cliente.findUnique({ where: { id: clienteId }, include: { usuarios: true } })
       : null;
 
+    // Sanitizar todos los campos del email antes de usar en el prompt
+    const deSanitizado = sanitizarInputEmail(de);
+    const paraSanitizado = sanitizarInputEmail(para);
+    const asuntoSanitizado = sanitizarInputEmail(asunto);
+    const textoSanitizado = sanitizarInputEmail(texto);
+
     const prompt = `Eres Paco, el asistente de IA de MyCompi (mycompi.com). Has recibido un email de un cliente.
 
 EMAIL RECIBIDO:
-- De: ${de}
-- Para: ${para}
-- Asunto: ${asunto}
-- Contenido: ${texto}
+- De: ${deSanitizado}
+- Para: ${paraSanitizado}
+- Asunto: ${asuntoSanitizado}
+- Contenido: ${textoSanitizado}
 
 ${cliente ? `- Cliente: ${cliente.nombre} (${cliente.plan})` : '- Cliente: No registrado'}
 
