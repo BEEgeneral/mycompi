@@ -569,7 +569,7 @@ function EquipoPanel({ agentes, usuario }) {
 // ─────────────────────────────────────────
 function ActividadPanel() {
   const [loading, setLoading] = useState(true)
-  const [items, setItems] = useState([])
+  const [notificaciones, setNotificaciones] = useState([])
   const [token, setToken] = useState(() => localStorage.getItem('mycompi_token'))
 
   useEffect(() => {
@@ -580,9 +580,9 @@ function ActividadPanel() {
 
   useEffect(() => {
     if (!token) return
-    fetchConAuth('/api/chat?limit=30')
+    fetchConAuth('/api/notificaciones')
       .then(r => r.json())
-      .then(d => { if (d.historial) setItems(d.historial.filter(m => m.role === 'user').reverse()) })
+      .then(d => { if (d.data) setNotificaciones(d.data) })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [token])
@@ -591,22 +591,24 @@ function ActividadPanel() {
 
   return (
     <div className="space-y-3">
-      <h2 className="text-xl font-extrabold text-[#333863] mb-6">📊 Actividad reciente</h2>
-      {items.length === 0 ? (
+      <h2 className="text-xl font-extrabold text-[#333863] mb-6">📊 Actividad de tu equipo</h2>
+      {notificaciones.length === 0 ? (
         <div className="text-center py-20 border-2 border-dashed border-[#e0d8cf] rounded-2xl">
           <div className="text-5xl mb-4">📊</div>
-          <div className="text-[#333863] font-bold text-lg">Sin actividad todavía</div>
-          <div className="text-[#b0a898] text-sm mt-2">Tu actividad con Paco aparecerá aquí</div>
+          <div className="text-[#333863] font-bold text-lg">Sin notificaciones</div>
+          <div className="text-[#b0a898] text-sm mt-2">Los Compis te notificarán cuando hagan algo importante</div>
         </div>
-      ) : items.map(m => (
-        <div key={m.id} className="bg-white border border-[#e8e0d5] rounded-xl p-5 shadow-sm">
+      ) : notificaciones.map(n => (
+        <div key={n.id} className="bg-white border border-[#e8e0d5] rounded-xl p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#333863]" />
+            <div className={`w-2.5 h-2.5 rounded-full ${n.leida ? 'bg-[#d0c8be]' : 'bg-[#333863]'}`} />
             <span className="text-xs text-[#b0a898]">
-              {new Date(m.timestamp).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}
+              {new Date(n.createdAt).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}
             </span>
+            {n.agenteId && <span className="text-xs text-[#333863] font-medium ml-1">{n.agenteId}</span>}
           </div>
-          <div className="text-sm text-[#3d3d3d] leading-relaxed">{m.content}</div>
+          <div className="text-sm font-semibold text-[#333863] mb-1">{n.titulo}</div>
+          <div className="text-sm text-[#3d3d3d] leading-relaxed">{n.contenido}</div>
         </div>
       ))}
     </div>
