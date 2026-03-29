@@ -14,7 +14,7 @@ export default function Privacidad() {
 
             <section>
               <h2 className="text-lg font-bold text-brand-dark mb-2">1. Responsable del tratamiento</h2>
-              <p>BeeNoCode S.L. (en adelante, "MyCompi"), con CIF B-XXXXXXX y domicilio en España, es el responsable del tratamiento de los datos personales que nos proporcionas a través de la plataforma web mycompi.onrender.com.</p>
+              <p>BeeNoCode S.L. (en adelante, "MyCompi"), con CIF B60604238 y domicilio en España, es el responsable del tratamiento de los datos personales que nos proporcionas a través de la plataforma web mycompi.onrender.com.</p>
               <p>Email de contacto: <strong>paco@mycompi.com</strong></p>
             </section>
 
