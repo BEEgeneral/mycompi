@@ -18,6 +18,10 @@ import Activar from './pages/Activar'
 import Recuperar from './pages/Recuperar'
 import ResetPassword from './pages/ResetPassword'
 import Checkout from './pages/Checkout'
+import Privacidad from './pages/Privacidad'
+import Terminos from './pages/Terminos'
+import Cookies from './pages/Cookies'
+import AvisoLegal from './pages/AvisoLegal'
 
 function HomePage() {
   return (
@@ -51,6 +55,10 @@ export default function App() {
         <Route path="/activar" element={<Activar />} />
         <Route path="/recuperar" element={<Recuperar />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/privacidad" element={<Privacidad />} />
+        <Route path="/terminos" element={<Terminos />} />
+        <Route path="/cookies" element={<Cookies />} />
+        <Route path="/aviso-legal" element={<AvisoLegal />} />
       </Routes>
     </HashRouter>
   )
