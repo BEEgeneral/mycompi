@@ -94,21 +94,21 @@ export default function Checkout() {
               onClick={() => setPlan(id)}
               className={`flex-1 min-w-[140px] rounded-2xl border-2 px-4 py-3 text-center transition-all cursor-pointer ${
                 plan === id
-                  ? 'border-primary bg-primary/5 shadow-sm'
+                  ? 'border-brand-dark bg-brand-dark/5 shadow-sm'
                   : 'border-gray-200 bg-white hover:border-gray-300'
               }`}
             >
-              <div className={`text-xs font-bold mb-1 ${plan === id ? 'text-primary' : 'text-gray-500'}`}>{p.name}</div>
-              <div className={`text-lg font-extrabold ${plan === id ? 'text-primary' : 'text-gray-900'}`}>€{p.price}<span className="text-xs font-normal text-gray-400">/mes</span></div>
+              <div className={`text-xs font-bold mb-1 ${plan === id ? 'text-brand-dark' : 'text-gray-500'}`}>{p.name}</div>
+              <div className={`text-lg font-extrabold ${plan === id ? 'text-brand-dark' : 'text-gray-900'}`}>€{p.price}<span className="text-xs font-normal text-gray-400">/mes</span></div>
             </button>
           ))}
         </div>
 
         {/* Step indicator */}
         <div className="flex items-center gap-3 mb-10">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step >= 1 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
-          <div className="flex-1 h-0.5 bg-gray-200"><div className={`h-full bg-primary transition-all ${step >= 2 ? 'w-full' : 'w-0'}`} /></div>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step >= 2 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step >= 1 ? 'bg-brand-dark text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
+          <div className="flex-1 h-0.5 bg-gray-200"><div className={`h-full bg-brand-dark transition-all ${step >= 2 ? 'w-full' : 'w-0'}`} /></div>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step >= 2 ? 'bg-brand-dark text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
         </div>
 
         {/* Error */}
@@ -126,25 +126,25 @@ export default function Checkout() {
                 <div>
                   <label className="block text-xs font-bold text-gray-600 mb-1.5">Nombre completo</label>
                   <input type="text" value={form.nombre} onChange={e => update('nombre', e.target.value)} required placeholder="Tu nombre"
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-600 mb-1.5">Email</label>
                   <input type="email" value={form.email} onChange={e => update('email', e.target.value)} required placeholder="tu@empresa.com"
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-600 mb-1.5">Contraseña</label>
                   <input type="password" value={form.password} onChange={e => update('password', e.target.value)} required placeholder="Mínimo 8 caracteres"
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-600 mb-1.5">Empresa (opcional)</label>
                   <input type="text" value={form.nombreEmpresa} onChange={e => update('nombreEmpresa', e.target.value)} placeholder="Nombre de tu empresa"
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20" />
                 </div>
                 <button type="submit" disabled={loading}
-                  className="w-full bg-primary text-white font-extrabold py-4 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 text-base tracking-wide cursor-pointer">
+                  className="w-full bg-brand-dark text-white font-extrabold py-4 rounded-xl hover:bg-brand-dark-hover transition-colors disabled:opacity-50 text-base tracking-wide cursor-pointer">
                   {loading ? 'Registrando...' : 'Registrarse →'}
                 </button>
                 <p className="text-center text-xs text-gray-400">Sin compromiso · Sin permanencia · Cancela cuando quieras</p>
@@ -209,12 +209,12 @@ export default function Checkout() {
                 </div>
                 <div className="border-t pt-3 flex justify-between">
                   <span className="font-bold text-gray-900">Total mensual</span>
-                  <span className="font-extrabold text-primary text-lg">€{selectedPlan.price}</span>
+                  <span className="font-extrabold text-brand-dark text-lg">€{selectedPlan.price}</span>
                 </div>
               </div>
 
               <button onClick={handlePayment} disabled={loading}
-                className="w-full bg-primary text-white font-extrabold py-4 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 text-base flex items-center justify-center gap-2">
+                className="w-full bg-brand-dark text-white font-extrabold py-4 rounded-xl hover:bg-brand-dark-hover transition-colors disabled:opacity-50 text-base flex items-center justify-center gap-2">
                 {loading ? (
                   'Redirigiendo a Stripe...'
                 ) : (
@@ -241,21 +241,21 @@ export default function Checkout() {
               <h3 className="text-sm font-bold text-gray-700 mb-4">Tu equipo agéntico incluye:</h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3 text-sm text-gray-700">
-                  <span className="text-primary font-bold mt-0.5">+</span>
+                  <span className="text-brand-dark font-bold mt-0.5">+</span>
                   <div>
                     <span className="font-semibold">Acceso instantáneo</span>
                     <p className="text-gray-500 text-xs mt-0.5">Tu equipo estará activo en minutos</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-gray-700">
-                  <span className="text-primary font-bold mt-0.5">+</span>
+                  <span className="text-brand-dark font-bold mt-0.5">+</span>
                   <div>
                     <span className="font-semibold">Dashboard privado</span>
                     <p className="text-gray-500 text-xs mt-0.5">Gestiona y consulta tu equipo en tiempo real</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-gray-700">
-                  <span className="text-primary font-bold mt-0.5">+</span>
+                  <span className="text-brand-dark font-bold mt-0.5">+</span>
                   <div>
                     <span className="font-semibold">Sin permanencia</span>
                     <p className="text-gray-500 text-xs mt-0.5">Cancela cuando quieras, sin penalizaciones</p>
