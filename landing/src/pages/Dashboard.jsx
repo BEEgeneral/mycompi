@@ -47,23 +47,19 @@ async function fetchConAuth(url, options = {}) {
 // ─────────────────────────────────────────
 // AGENTES DATA
 // ─────────────────────────────────────────
+const TODOS_LOS_AGENTES = [
+  { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-[#f472b6] to-[#e11d48]', nivel: 'agente' },
+  { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-[#60a5fa] to-[#4f46e5]', nivel: 'agente' },
+  { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-[#4ade80] to-[#059669]', nivel: 'agente' },
+  { id: 'elena', nombre: 'Elena Ortega', rol: 'Operaciones', emoji: '⚙️', color: 'from-[#fb923c] to-[#ea580c]', nivel: 'agente' },
+  { id: 'diana', nombre: 'Diana Palau', rol: 'Data & Growth', emoji: '📈', color: 'from-[#a78bfa] to-[#7c3aed]', nivel: 'agente' },
+  { id: 'marcos', nombre: 'Marcos Fernández', rol: 'Desarrollo Web', emoji: '💻', color: 'from-[#22d3ee] to-[#0891b2]', nivel: 'agente' },
+]
+
 const AGENTES_POR_PLAN = {
-  BASICO: [
-    { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-[#f472b6] to-[#e11d48]', nivel: 'agente' },
-  ],
-  EQUIPO: [
-    { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-[#f472b6] to-[#e11d48]', nivel: 'agente' },
-    { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-[#60a5fa] to-[#4f46e5]', nivel: 'agente' },
-    { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-[#4ade80] to-[#059669]', nivel: 'agente' },
-  ],
-  DIRECCION: [
-    { id: 'laura', nombre: 'Laura Montes', rol: 'Atención al Cliente', emoji: '💬', color: 'from-[#f472b6] to-[#e11d48]', nivel: 'agente' },
-    { id: 'enzo', nombre: 'Enzo Herrera', rol: 'Marketing', emoji: '📊', color: 'from-[#60a5fa] to-[#4f46e5]', nivel: 'agente' },
-    { id: 'carlos', nombre: 'Carlos Mendoza', rol: 'Ventas', emoji: '💼', color: 'from-[#4ade80] to-[#059669]', nivel: 'agente' },
-    { id: 'elena', nombre: 'Elena Ortega', rol: 'Operaciones', emoji: '⚙️', color: 'from-[#fb923c] to-[#ea580c]', nivel: 'agente' },
-    { id: 'diana', nombre: 'Diana Palau', rol: 'Data & Growth', emoji: '📈', color: 'from-[#a78bfa] to-[#7c3aed]', nivel: 'agente' },
-    { id: 'marcos', nombre: 'Marcos Fernández', rol: 'Desarrollo Web', emoji: '💻', color: 'from-[#22d3ee] to-[#0891b2]', nivel: 'agente' },
-  ],
+  BASICO: TODOS_LOS_AGENTES.slice(0, 1),
+  EQUIPO: TODOS_LOS_AGENTES.slice(0, 3),
+  DIRECCION: TODOS_LOS_AGENTES,
 }
 
 // ─────────────────────────────────────────
@@ -437,126 +433,70 @@ function ChatPanel() {
   )
 }
 // ─────────────────────────────────────────
-// MI EQUIPO TAB - jerarquía visual
+// MI EQUIPO TAB - todos los Compis operativos
 // ─────────────────────────────────────────
 function EquipoPanel({ agentes, usuario }) {
-  const jerarquia = {
-    CEO: { label: 'CEO / Titular', emoji: '👑', color: 'from-[#FFD054] to-[#f59e0b]', agents: [] },
-    DIRECTOR: { label: 'Director / Orquestador', emoji: '🎯', color: 'from-[#2D3261] to-[#4a5090]', agents: [] },
-    MANAGER: { label: 'Managers', emoji: '👔', color: 'from-[#60a5fa] to-[#4f46e5]', agents: [] },
-    AGENTE: { label: 'Agentes especializados', emoji: '💬', color: 'from-[#4ade80] to-[#059669]', agents: [] },
-  }
-
-  // CEO = usuario logueado
-  if (usuario) {
-    jerarquia.CEO.agents = [{
-      id: 'ceo',
-      nombre: usuario.nombre || 'Tú',
-      rol: 'CEO / Titular',
-      emoji: '👑',
-      color: 'from-[#FFD054] to-[#f59e0b]',
-      initials: (usuario.nombre || 'T').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
-    }]
-  }
-
-  // Paco como Director
-  jerarquia.DIRECTOR.agents = [{ id: 'paco', nombre: 'Paco', rol: 'Orquestador', emoji: '🎯', color: 'from-[#2D3261] to-[#4a5090]' }]
-  jerarquia.MANAGER.agents = agentes.slice(0, 2)
-  jerarquia.AGENTE.agents = agentes.slice(2)
+  // Siempre usamos TODOS_LOS_AGENTES (7 Compis)
+  const todosLosAgentes = TODOS_LOS_AGENTES
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-extrabold text-brand-dark mb-2">Tu equipo</h2>
-        <p className="text-sm text-brand-secondary">Personas y profesionales que trabajan para tu negocio</p>
+        <h2 className="text-xl font-extrabold text-brand-dark mb-2">Tu equipo de Compis</h2>
+        <p className="text-sm text-brand-secondary">7 Compis especializados trabajando 24/7 para tu negocio</p>
       </div>
-
-      {/* CEO / Titular - siempre primero */}
-      {jerarquia.CEO.agents.length > 0 && jerarquia.CEO.agents[0].nombre !== 'Tú' && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
-            <span>👑</span> {jerarquia.CEO.label}
-          </div>
-          <div className="grid grid-cols-1 gap-3">
-            {jerarquia.CEO.agents.map(a => (
-              <div key={a.id} className="flex items-center gap-4 bg-white border-2 border-brand-yellow rounded-2xl p-4 shadow-sm">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-xl shadow-md`}>
-                  {a.emoji}
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold text-brand-dark">{a.nombre}</div>
-                  <div className="text-xs text-brand-secondary">{a.rol}</div>
-                </div>
-                <div className="px-2.5 py-1 bg-brand-yellow/20 rounded-full text-[10px] font-bold text-brand-dark">TÚ</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Director / Orquestador - Paco */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
-          <span>🎯</span> {jerarquia.DIRECTOR.label}
+          🎯 Director / Orquestador
         </div>
-        <div className="grid grid-cols-1 gap-3">
-          {jerarquia.DIRECTOR.agents.map(a => (
-            <div key={a.id} className="flex items-center gap-4 bg-white border-2 border-brand-dark rounded-2xl p-4 shadow-sm">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-xl shadow-md`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="flex items-center gap-4 bg-white border-2 border-brand-dark rounded-2xl p-4 shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2D3261] to-[#4a5090] flex items-center justify-center text-xl shadow-md">🎯</div>
+            <div className="flex-1">
+              <div className="text-sm font-bold text-brand-dark">Paco</div>
+              <div className="text-xs text-brand-secondary">Orquestador · Coordina el equipo</div>
+            </div>
+            <div className="px-2.5 py-1 bg-brand-dark/10 rounded-full text-[10px] font-bold text-brand-dark">DIRECTOR</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Los 6 Compis especializados */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
+          🤖 Compis especializados
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {todosLosAgentes.map(a => (
+            <div key={a.id} className="flex items-center gap-4 bg-white border-2 border-brand-pastel rounded-2xl p-4 shadow-sm hover:border-brand-yellow transition-all">
+              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-base shadow-md`}>
                 {a.emoji}
               </div>
               <div className="flex-1">
                 <div className="text-sm font-bold text-brand-dark">{a.nombre}</div>
                 <div className="text-xs text-brand-secondary">{a.rol}</div>
               </div>
-              <div className="px-2.5 py-1 bg-brand-dark/10 rounded-full text-[10px] font-bold text-brand-dark">DIRECTOR</div>
+              <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" title="Operativo" />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Managers */}
-      {jerarquia.MANAGER.agents.length > 0 && (
+      {/* CEO / Titular */}
+      {usuario && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
-            <span>👔</span> {jerarquia.MANAGER.label}
+            👑 Tú
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {jerarquia.MANAGER.agents.map(a => (
-              <div key={a.id} className="flex items-center gap-4 bg-white border-2 border-brand-pastel rounded-2xl p-4 shadow-sm">
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-lg shadow-md`}>
-                  {a.emoji}
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold text-brand-dark">{a.nombre}</div>
-                  <div className="text-xs text-brand-secondary">{a.rol}</div>
-                </div>
-                <div className="px-2.5 py-1 bg-brand-pastel rounded-full text-[10px] font-bold text-brand-dark">MANAGER</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Agentes */}
-      {jerarquia.AGENTE.agents.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
-            <span>💬</span> {jerarquia.AGENTE.label}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {jerarquia.AGENTE.agents.map(a => (
-              <div key={a.id} className="flex items-center gap-4 bg-white border-2 border-brand-pastel rounded-2xl p-4 shadow-sm">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-base shadow-md`}>
-                  {a.emoji}
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold text-[#333863]">{a.nombre}</div>
-                  <div className="text-xs text-[#b0a898]">{a.rol}</div>
-                </div>
-                <div className="w-2 h-2 rounded-full bg-green-400" />
-              </div>
-            ))}
+          <div className="flex items-center gap-4 bg-white border-2 border-brand-yellow rounded-2xl p-4 shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FFD054] to-[#f59e0b] flex items-center justify-center text-xl shadow-md">👑</div>
+            <div className="flex-1">
+              <div className="text-sm font-bold text-brand-dark">{usuario.nombre || 'Tú'}</div>
+              <div className="text-xs text-brand-secondary">CEO / Titular</div>
+            </div>
+            <div className="px-2.5 py-1 bg-brand-yellow/20 rounded-full text-[10px] font-bold text-brand-dark">TÚ</div>
           </div>
         </div>
       )}
