@@ -227,7 +227,6 @@ async function handleSubscriptionUpdated(sub) {
     data: { plan: 'EQUIPO', activo: true }
   });
   console.log(`🔄 Cliente actualizado: ${customer.email}`);
-  }
 }
 
 // ─────────────────────────────────────────
