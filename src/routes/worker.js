@@ -9,7 +9,7 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('./auth');
-const { executeTask, processPendingTasks, runNightShift } = require('../services/agentWorker');
+const { executeTask, processPendingTasks, runNightShift, runOnboardingResearch } = require('../services/agentWorker');
 
 // ─────────────────────────────────────────
 // Ejecutar una tarea específica
@@ -67,6 +67,30 @@ router.post('/nightshift', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error('[Worker] Error en night shift:', err.message);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ─────────────────────────────────────────
+// Trigger onboarding research para un cliente
+// POST /api/worker/research/:clienteId
+// Admin only
+// ─────────────────────────────────────────
+router.post('/research/:clienteId', authMiddleware, async (req, res) => {
+  if (req.usuario.rol_platform !== 'ADMIN') {
+    return res.status(403).json({ error: 'Solo administradores' });
+  }
+
+  const { clienteId } = req.params;
+
+  // Ejecutar async y responder inmediatamente
+  res.json({ ok: true, mensaje: 'Research iniciado en background' });
+
+  try {
+    console.log(`[Worker] Onboarding research para cliente ${clienteId}`);
+    const resultado = await runOnboardingResearch(clienteId);
+    console.log(`[Worker] Research completado:`, resultado);
+  } catch (err) {
+    console.error(`[Worker] Error en research ${clienteId}:`, err.message);
   }
 });
 

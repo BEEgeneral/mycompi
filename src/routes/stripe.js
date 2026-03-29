@@ -248,6 +248,7 @@ async function handleSubscriptionUpdated(sub) {
 // ─────────────────────────────────────────
 // ONBOARDING AUTOMÁTICO — estilo Polsia
 // Se ejecuta tras el primer pago exitoso
+// Crea una tarea de RESEARCH que se ejecuta en background
 // ─────────────────────────────────────────
 async function crearOnboardingInicial(clienteId, empresa, plan) {
   console.log(`🚀 Creando onboarding automático para cliente ${clienteId}`);
@@ -258,79 +259,34 @@ async function crearOnboardingInicial(clienteId, empresa, plan) {
   });
   const pacoId = paco?.id || 'paco';
 
-  // 1. Crear documento de MISIÓN
-  const missionTexto = empresa
-    ? `MISSION: Hacer crecer ${empresa} usando un equipo de profesionales IA especializados. El equipo coordina con Paco como orquestador. Cada profesional trabaja en su área: Laura (atención cliente), Enzo (marketing), Carlos (ventas), Elena (operaciones), Diana (data), Marcos (desarrollo).`
-    : `MISSION: Usar MyCompi para automatizar y escalar mi negocio con un equipo de profesionales IA coordinados por Paco. Cada agente aporta su especialidad: Laura, Enzo, Carlos, Elena, Diana, Marcos.`;
-
-  await prisma.documento.create({
-    data: {
-      clienteId,
-      tipo: 'MISION',
-      titulo: 'Mission',
-      contenido: missionTexto,
-    }
-  });
-
-  // 2. Crear documento de PRODUCTO
-  await prisma.documento.create({
-    data: {
-      clienteId,
-      tipo: 'PRODUCTO',
-      titulo: 'Sobre tu empresa',
-      contenido: empresa
-        ? `Tu empresa es ${empresa}. Tu plan en MyCompi es ${plan}. Tu equipo tiene agentes especializados disponibles: Laura (Atención al Cliente), Enzo (Marketing), Carlos (Ventas), Elena (Operaciones), Diana (Data), Marcos (Desarrollo).`
-        : `Todavía no has completado tu perfil. Ve a Mi Cuenta y completa los datos de tu empresa para que los agentes puedan trabajar mejor.`,
-    }
-  });
-
-  // 3. Crear documento de BRAND VOICE
+  // 1. Crear Brand Voice genérico (rápido, no necesita research)
   await prisma.documento.create({
     data: {
       clienteId,
       tipo: 'BRAND_VOICE',
       titulo: 'Brand Voice',
-      contenido: `Idioma: Español de España. Tono: Informal, directo, cercano. Tratamiento: tuteo. Evita: lenguaje corporativo forzado, salutaciones excesivas. Elsiguiente es ser útil y resolver problemas, no impresionar con palabras.`,
+      contenido: `Idioma: Español de España. Tono: Informal, directo, cercano. Tratamiento: tuteo. Evita: lenguaje corporativo forzado, salutaciones excesivas. El objetivo es ser útil y resolver problemas, no impresionar con palabras.`,
     }
   });
 
-  // 4. Crear 3 tareas iniciales universales (estilo Polsia)
-  const tareasIniciales = [
-    {
-      titulo: '🚀 Configura tu perfil de empresa',
-      descripcion: 'Ve a Mi Cuenta y completa: nombre de empresa, sector, web, descripción de tu negocio. Esto ayuda a los agentes a trabajar mejor.',
+  // 2. Crear Brand Voice con documento genérico de onboarding
+  // 3. Crear UNA tarea de RESEARCH que el worker ejecutará
+  await prisma.trabajo.create({
+    data: {
+      clienteId,
+      agenteId: pacoId,
+      titulo: '🔍 Investigar empresa y preparar onboarding personalizado',
+      descripcion: empresa
+        ? `Investigar ${empresa} — buscar información en web, generar Mission personalizada y 3 tareas específicas basadas en el sector del negocio.`
+        : 'Investigar empresa — aún no hay nombre de empresa, generar misión genérica y tareas universales.',
       prioridad: 'ALTA',
-      tags: ['onboarding', 'setup'],
-    },
-    {
-      titulo: '💬 Preséntale tu negocio a Paco',
-      descripcion: 'Escríbele a Paco en el chat. Cuéntale qué necesitas: lanzar un producto, captar clientes, automatizar tareas. Él coordina el equipo.',
-      prioridad: 'ALTA',
-      tags: ['onboarding', 'chat'],
-    },
-    {
-      titulo: '📋 Revisa las capacidades de tu equipo',
-      descripcion: 'Conoce a tu equipo: Laura (atención cliente), Enzo (marketing), Carlos (ventas), Elena (operaciones), Diana (data), Marcos (desarrollo). Cada uno puede ayudarte en su área.',
-      prioridad: 'MEDIA',
-      tags: ['onboarding', 'equipo'],
-    },
-  ];
+      estado: 'TODO',
+      tags: ['onboarding', 'research'],
+      inputData: { empresa: empresa || null, plan },
+    }
+  });
 
-  for (const tarea of tareasIniciales) {
-    await prisma.trabajo.create({
-      data: {
-        clienteId,
-        agenteId: pacoId,
-        titulo: tarea.titulo,
-        descripcion: tarea.descripcion,
-        prioridad: tarea.prioridad,
-        estado: 'TODO',
-        tags: tarea.tags,
-      }
-    });
-  }
-
-  console.log(`✅ Onboarding automático completo: 3 documentos + 3 tareas creados para cliente ${clienteId}`);
+  console.log(`✅ Onboarding creado: Brand Voice + tarea de research pendiente para cliente ${clienteId}`);
 }
 
 // ─────────────────────────────────────────

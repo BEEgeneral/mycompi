@@ -217,6 +217,12 @@ async function executeTask(taskId) {
     return { error: 'Tarea no está en estado TODO' };
   }
 
+  // Si es tarea de research onboarding, delegar a la función especializada
+  if (tarea.tags?.includes('research') && tarea.titulo.includes('Investigar')) {
+    console.log(`[Worker] Tarea de research onboarding detectada — ejecutando runOnboardingResearch`);
+    return await runOnboardingResearch(tarea.clienteId);
+  }
+
   // 2. Cargar documentos del cliente
   const documentos = await prisma.documento.findMany({
     where: { clienteId: tarea.clienteId },
@@ -472,9 +478,296 @@ async function runNightShift() {
   console.log('[NightShift] Completado');
 }
 
+// ─────────────────────────────────────────
+// RESEARCH DE ONBOARDING
+// Se ejecuta después del primer pago para investigar la empresa
+// y generar documentos + tareas personalizadas
+// ─────────────────────────────────────────
+async function runOnboardingResearch(clienteId) {
+  console.log(`[Research] Iniciando onboarding research para cliente ${clienteId}`);
+
+  // 1. Cargar datos del cliente
+  const cliente = await prisma.cliente.findUnique({
+    where: { id: clienteId }
+  });
+
+  if (!cliente) {
+    console.error(`[Research] Cliente ${clienteId} no encontrado`);
+    return { error: 'Cliente no encontrado' };
+  }
+
+  // Si no hay empresa, saltar research
+  if (!cliente.empresa) {
+    console.log(`[Research] Cliente sin empresa — saltando research`);
+    return { skipped: true, reason: 'sin empresa' };
+  }
+
+  // 2. Buscar información de la empresa
+  let businessInfo = null;
+  try {
+    businessInfo = await searchBusinessInfo(cliente.empresa, cliente.email);
+  } catch (err) {
+    console.error(`[Research] Error buscando info de ${cliente.empresa}:`, err.message);
+  }
+
+  // 3. Generar Mission + tareas específicas con OpenClaw
+  let missionText = null;
+  let tareas = null;
+
+  try {
+    const research = await generateMissionAndTasks(cliente, businessInfo);
+    missionText = research.mission;
+    tareas = research.tareas;
+  } catch (err) {
+    console.error(`[Research] Error generando mission/tareas:`, err.message);
+  }
+
+  // 4. Guardar Mission real
+  if (missionText) {
+    const existingMission = await prisma.documento.findFirst({
+      where: { clienteId, tipo: 'MISION' }
+    });
+
+    if (existingMission) {
+      await prisma.documento.update({
+        where: { id: existingMission.id },
+        data: { contenido: missionText }
+      });
+    } else {
+      await prisma.documento.create({
+        data: {
+          clienteId,
+          tipo: 'MISION',
+          titulo: 'Mission',
+          contenido: missionText,
+        }
+      });
+    }
+  }
+
+  // 5. Guardar info de negocio si tenemos
+  if (businessInfo) {
+    await prisma.documento.upsert({
+      where: { id: businessInfo.id || 'none' },
+      create: {
+        clienteId,
+        tipo: 'PRODUCTO',
+        titulo: 'Research de empresa',
+        contenido: businessInfo.summary,
+        metadata: {
+          competitors: businessInfo.competitors,
+          sector: businessInfo.sector,
+          keywords: businessInfo.keywords,
+        }
+      },
+      update: {
+        contenido: businessInfo.summary,
+        metadata: {
+          competitors: businessInfo.competitors,
+          sector: businessInfo.sector,
+          keywords: businessInfo.keywords,
+        }
+      }
+    });
+  }
+
+  // 6. Crear tareas específicas basadas en el research
+  if (tareas && tareas.length > 0) {
+    // Primero marcar las tareas genéricas de onboarding como "completadas" o eliminarlas
+    await prisma.trabajo.updateMany({
+      where: {
+        clienteId,
+        estado: 'TODO',
+        tags: { has: 'onboarding' }
+      },
+      data: { estado: 'COMPLETED', completedAt: new Date() }
+    });
+
+    // Crear las tareas específicas del research
+    for (const t of tareas) {
+      await prisma.trabajo.create({
+        data: {
+          clienteId,
+          agenteId: t.agenteId || 'paco',
+          titulo: t.titulo,
+          descripcion: t.descripcion,
+          prioridad: t.prioridad || 'MEDIA',
+          estado: 'TODO',
+          tags: ['research', 'onboarding'],
+        }
+      });
+    }
+  }
+
+  // 7. Notificar al cliente
+  await prisma.notificacion.create({
+    data: {
+      clienteId,
+      agenteId: 'paco',
+      tipo: 'COMPLETADO',
+      titulo: '🔍 Research completado — tu equipo está listo',
+      contenido: 'Hemos investigado tu empresa y preparado tareas específicas para ti. Revisa tu dashboard.',
+    }
+  });
+
+  // 8. Enviar email de "equipo listo"
+  if (RESEND) {
+    try {
+      await RESEND.emails.send({
+        from: 'MyCompi <noreply@mycompi.com>',
+        to: cliente.email,
+        subject: '🔍 Tu equipo está listo — hemos investigado tu empresa',
+        html: `
+          <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: #2D3261; padding: 24px; text-align: center; border-radius: 16px 16px 0 0;">
+              <h1 style="color: #FFD154; margin: 0; font-size: 24px;">🔍 We did the homework</h1>
+            </div>
+            <div style="background: #FCF9F1; padding: 24px; border-radius: 0 0 16px 16px;">
+              <p style="font-size: 16px; color: #333;">
+                Hola <strong>${cliente.nombre}</strong>, hemos investigado <strong>${cliente.empresa}</strong> y preparado todo para que tu equipo IA empiece a trabajar.
+              </p>
+              <div style="background: white; border-radius: 12px; padding: 16px; margin: 16px 0; border: 1px solid #e5e7eb;">
+                <p style="font-size: 14px; color: #555; margin: 0 0 8px 0;"><strong>📋 Lo que hemos hecho:</strong></p>
+                <ul style="font-size: 14px; color: #666; margin: 0; padding-left: 20px;">
+                  <li>Investigación de tu empresa y sector</li>
+                  <li>Mission personalizada</li>
+                  <li>Tareas específicas para tu negocio</li>
+                </ul>
+              </div>
+              <div style="text-align: center; margin: 24px 0;">
+                <a href="${FRONTEND_URL}/#/dashboard" style="display: inline-block; background: #FFD154; color: #2D3261; font-weight: bold; padding: 14px 28px; border-radius: 9999px; text-decoration: none; font-size: 15px;">Ver mi equipo →</a>
+              </div>
+            </div>
+          </div>
+        `,
+      });
+    } catch (err) {
+      console.error(`[Research] Error enviando email:`, err.message);
+    }
+  }
+
+  console.log(`[Research] Completado para ${cliente.empresa}`);
+  return { ok: true, cliente: cliente.empresa };
+}
+
+// ─────────────────────────────────────────
+// Buscar información de empresa con Brave Search
+// ─────────────────────────────────────────
+async function searchBusinessInfo(empresa, email) {
+  // Intentar buscar en web
+  const searchResults = await callOpenClaw(
+    `Busca información sobre la empresa "${empresa}" en internet. Dame:1. Qué hacen2. En qué sector están3. Quiénes son sus competidores principales4. Qué keywords definen su negocioResponde en español.`,
+    empresa,
+    'BASICO'
+  );
+
+  if (!searchResults) {
+    return {
+      summary: `Empresa: ${empresa}. No se encontró información adicional en web.`,
+      competitors: [],
+      sector: 'No identificado',
+      keywords: [],
+    };
+  }
+
+  // Extraer keywords y competidores con otro prompt
+  const analysis = await callOpenClaw(
+    `Analiza esta información sobre ${empresa} y extrae:
+1. Un resumen de 2-3 frases de qué hace la empresa
+2. Lista de 3-5 competidores o alternativas en su sector
+3. 5 keywords que definan su negocio
+4. El sector principal
+
+Información:
+${searchResults}
+
+Responde en JSON con este formato:
+{
+  "summary": "...",
+  "competitors": ["comp1", "comp2", ...],
+  "sector": "...",
+  "keywords": ["kw1", "kw2", ...]
+}`,
+    empresa,
+    'BASICO'
+  );
+
+  try {
+    // Intentar extraer JSON
+    const jsonMatch = analysis.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return { ...JSON.parse(jsonMatch[0]), raw: searchResults };
+    }
+  } catch (e) {}
+
+  return {
+    summary: analysis.slice(0, 500),
+    competitors: [],
+    sector: 'Ver información',
+    keywords: [],
+    raw: searchResults,
+  };
+}
+
+// ─────────────────────────────────────────
+// Generar Mission + tareas específicas con IA
+// ─────────────────────────────────────────
+async function generateMissionAndTasks(cliente, businessInfo) {
+  const info = businessInfo?.summary || `Empresa: ${cliente.empresa}`;
+
+  const prompt = `Eres el director de MyCompi. Acabas de investigar a un nuevo cliente.
+
+**Empresa:** ${cliente.empresa}
+**Email:** ${cliente.email}
+**Sector/Info:** ${info}
+
+**Tu trabajo:**
+1. Escribe una MISSION para esta empresa (2-4 frases). La misión debe reflejar qué problema resuelven, para quién, y cómo MyCompi les ayuda. Tono: inspirador pero concreto.
+
+2. Crea 3 tareas INICIALES específicas para esta empresa (no genéricas). Cada tarea debe:
+- Estar adaptada a su sector/negocio
+- Ser accionable y clara
+- Tener prioridad ALTA o MEDIA
+- Mencionar al agente correcto (Laura=atención cliente, Enzo=marketing, Carlos=ventas, Elena=operaciones, Diana=data, Marcos=desarrollo)
+
+Responde en JSON con este formato exacto:
+{
+  "mission": "tu misión aquí",
+  "tareas": [
+    {"titulo": "título tarea 1", "descripcion": "descripción", "prioridad": "ALTA", "agenteId": "agente"},
+    {"titulo": "título tarea 2", "descripcion": "descripción", "prioridad": "MEDIA", "agenteId": "agente"},
+    {"titulo": "título tarea 3", "descripcion": "descripción", "prioridad": "ALTA", "agenteId": "agente"}
+  ]
+}
+
+Solo responde con el JSON. Sin explicaciones.`;
+
+  const response = await callOpenClaw(prompt, cliente.empresa, cliente.plan);
+
+  try {
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+  } catch (e) {
+    console.error('[Research] Error parsing JSON:', e.message);
+  }
+
+  // Fallback si no se puede parsear
+  return {
+    mission: `Hacer crecer ${cliente.empresa} usando un equipo de agentes IA especializados.`,
+    tareas: [
+      { titulo: '🚀 Configurar perfil de empresa', descripcion: 'Completa los datos de tu empresa', prioridad: 'ALTA', agenteId: 'paco' },
+      { titulo: '💬 Preséntale tu negocio a Paco', descripcion: 'Cuéntale qué necesitas', prioridad: 'ALTA', agenteId: 'paco' },
+      { titulo: '📋 Revisa las capacidades de tu equipo', descripcion: 'Conoce a Laura, Enzo, Carlos...', prioridad: 'MEDIA', agenteId: 'paco' },
+    ]
+  };
+}
+
 module.exports = {
   executeTask,
   processPendingTasks,
   runNightShift,
+  runOnboardingResearch,
   buildTaskPrompt
 };
