@@ -5,7 +5,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
           <div>
             <a href="/" className="inline-block mb-4">
-              <img loading="lazy" decoding="async" src="/assets/logo.png" alt="MyCompi" className="h-[30px] md:h-[34px]" />
+              <img loading="lazy" decoding="async" src="/assets/logo-white.svg" alt="MyCompi" className="h-[30px] md:h-[34px]" />
             </a>
             <p className="text-sm text-white/60 leading-relaxed">
               Mi futuro es Hoy.<br />
