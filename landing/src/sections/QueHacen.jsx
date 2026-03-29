@@ -2,40 +2,40 @@ const semanas = [
   {
     semana: 'Semana 1',
     emoji: '⚡',
-    titulo: 'Descubrimiento + Setup',
+    titulo: 'Descubrimiento + MVP',
     desc: 'Configuramos todo y tu primer Compi ya trabaja en 24h.',
     dias: [
-      { emoji: '🎯', agente: 'Paco', tarea: 'Llamada de descubrimiento: tu negocio, clientes, pain points' },
-      { emoji: '⚙️', agente: 'Elena', tarea: 'Configura tu panel y conecta herramientas (email, web, CRM)' },
-      { emoji: '💬', agente: 'Laura', tarea: 'Atención al cliente 24/7 configurada y operativa' },
-      { emoji: '📈', agente: 'Diana', tarea: 'Auditoría de datos: qué métricas tienes, cuáles faltan' },
-      { emoji: '💼', agente: 'Carlos', tarea: 'Primeros leads qualificados + mensajes de outreach' },
+      { emoji: '🔍', agente: 'Diana', tarea: 'Research: análisis top 5 competidores directos en tu sector' },
+      { emoji: '💻', agente: 'Marcos', tarea: 'Setup inicial: tu espacio de trabajo, integrations, panel' },
+      { emoji: '💬', agente: 'Laura', tarea: 'Live: atención al cliente 24/7, respondiendo desde el día 1' },
+      { emoji: '📊', agente: 'Enzo', tarea: 'Copy para web y ads: headlines, descripción, CTAs' },
+      { emoji: '💼', agente: 'Carlos', tarea: 'Primer outreach: 10 leads qualificados y primer mensaje enviado' },
     ],
   },
   {
     semana: 'Semana 2',
     emoji: '📊',
-    titulo: 'Pipeline + Contenido',
-    desc: 'Tu negocio generando y vendiendo.',
+    titulo: 'Contenido + Outreach',
+    desc: 'Tu marca gana presencia y el pipeline de ventas se activa.',
     dias: [
-      { emoji: '💼', agente: 'Carlos', tarea: '20 leads qualificados para tu negocio' },
-      { emoji: '📊', agente: 'Enzo', tarea: '15 posts para Instagram y LinkedIn' },
-      { emoji: '💬', agente: 'Laura', tarea: 'Análisis de las 10 dudas más frecuentes → automatización' },
-      { emoji: '💼', agente: 'Carlos', tarea: 'Follow-up a leads + cierre de primeros tratos' },
-      { emoji: '📈', agente: 'Diana', tarea: 'Dashboard con métricas de tu negocio en tiempo real' },
+      { emoji: '📊', agente: 'Enzo', tarea: '15 posts para Instagram y LinkedIn + calendario editorial' },
+      { emoji: '🐦', agente: 'Enzo', tarea: 'Primer post en redes: lanzamiento de tu empresa' },
+      { emoji: '💼', agente: 'Carlos', tarea: 'Follow-up a primeros leads + 10 leads nuevos qualificados' },
+      { emoji: '🌐', agente: 'Marcos', tarea: 'Post en comunidades: Reddit, foros hispanos de tu sector' },
+      { emoji: '📧', agente: 'Carlos', tarea: 'Email de lanzamiento a tu base de contactos' },
     ],
   },
   {
     semana: 'Semana 3',
     emoji: '🚀',
-    titulo: 'Ventas + Optimización',
-    desc: 'Cerramos ventas y mejoramos con datos reales.',
+    titulo: 'Iterar + Métricas',
+    desc: 'Mejoramos con datos reales de tus primeros usuarios.',
     dias: [
-      { emoji: '💼', agente: 'Carlos', tarea: 'Análisis de por qué los leads no cierran → nueva estrategia' },
-      { emoji: '⚙️', agente: 'Elena', tarea: 'Automatizaciones: follow-up de leads fríos y carritos' },
-      { emoji: '💬', agente: 'Laura', tarea: 'Primer informe de satisfacción de tus clientes' },
-      { emoji: '📈', agente: 'Diana', tarea: 'Reporte de retención: quién compra, quién no y por qué' },
-      { emoji: '💻', agente: 'Marcos', tarea: 'Mejora de tu web o landing si la tienes' },
+      { emoji: '💬', agente: 'Laura', tarea: 'Review feedback early adopters: qué funciona, qué no' },
+      { emoji: '💻', agente: 'Marcos', tarea: 'Implementar las 2-3 features más pedidas por usuarios' },
+      { emoji: '🔍', agente: 'Diana', tarea: 'Investigar canales de adquisición: TikTok, WhatsApp, SEO' },
+      { emoji: '📈', agente: 'Diana', tarea: 'Reporte: retención, conversaciones/usuario, drop-off' },
+      { emoji: '⚙️', agente: 'Elena', tarea: 'Automatizaciones: follow-up leads fríos, respuestas rápidas' },
     ],
   },
   {
@@ -44,23 +44,23 @@ const semanas = [
     titulo: 'Growth + Informe Final',
     desc: 'Máquina de acquisition encendida y datos para decidir.',
     dias: [
-      { emoji: '📊', agente: 'Enzo', tarea: 'SEO básico: meta tags + estructura de contenido' },
-      { emoji: '💼', agente: 'Carlos', tarea: 'Informe completo: leads capturados, ratio de cierre' },
-      { emoji: '⚙️', agente: 'Elena', tarea: 'Optimización de automatizaciones según datos reales' },
-      { emoji: '📈', agente: 'Diana', tarea: 'Informe final 30 días: antes vs después' },
-      { emoji: '🎯', agente: 'Paco', tarea: 'Informe ejecutivo para ti + roadmap para el mes 2' },
+      { emoji: '💻', agente: 'Marcos', tarea: 'SEO básico: meta tags, estructura, sitemap' },
+      { emoji: '📺', agente: 'Enzo', tarea: 'Crear video ad con Sora + lanzar campaña Meta Ads (10€/día)' },
+      { emoji: '📈', agente: 'Diana', tarea: 'Informe final 30 días: antes vs después, métricas, oportunidades' },
+      { emoji: '💼', agente: 'Carlos', tarea: 'Informe de pipeline: leads capturados, ratio de cierre' },
+      { emoji: '🎯', agente: 'Paco', tarea: 'Informe ejecutivo para ti + roadmap mes 2' },
     ],
   },
 ]
 
 const agentes = [
-  { emoji: '🎯', nombre: 'Paco', rol: 'Orquestador', color: 'from-gray-800 to-gray-900', desc: 'Coordina el equipo y te reporta cada semana' },
-  { emoji: '💬', nombre: 'Laura', rol: 'Atención al Cliente', color: 'from-pink-500 to-rose-600', desc: 'Responsable 24/7 — responde, escala, raccoge feedback' },
-  { emoji: '📊', nombre: 'Enzo', rol: 'Marketing', color: 'from-blue-500 to-indigo-600', desc: 'Contenido, ads, SEO — hace crecer tu visibilidad' },
-  { emoji: '💼', nombre: 'Carlos', rol: 'Ventas', color: 'from-green-500 to-emerald-600', desc: 'Captación, qualification y cierre de leads' },
-  { emoji: '⚙️', nombre: 'Elena', rol: 'Operaciones', color: 'from-orange-500 to-amber-600', desc: 'Automatizaciones y conexión de herramientas' },
-  { emoji: '📈', nombre: 'Diana', rol: 'Data', color: 'from-purple-500 to-violet-600', desc: 'Métricas, dashboards, análisis de retención' },
-  { emoji: '💻', nombre: 'Marcos', rol: 'Desarrollo', color: 'from-cyan-500 to-teal-600', desc: 'Tu web, landing y e-commerce siempre actualizadas' },
+  { emoji: '🎯', nombre: 'Paco', rol: 'Orquestador', desc: 'Coordina el equipo y te reporta cada semana' },
+  { emoji: '💬', nombre: 'Laura', rol: 'Atención al Cliente', desc: 'Responsable 24/7 — responde, escala, raccoge feedback' },
+  { emoji: '📊', nombre: 'Enzo', rol: 'Marketing', desc: 'Contenido, ads, SEO — hace crecer tu visibilidad' },
+  { emoji: '💼', nombre: 'Carlos', rol: 'Ventas', desc: 'Captación, qualification y cierre de leads' },
+  { emoji: '⚙️', nombre: 'Elena', rol: 'Operaciones', desc: 'Automatizaciones y conexión de herramientas' },
+  { emoji: '📈', nombre: 'Diana', rol: 'Data', desc: 'Métricas, dashboards, análisis de retención' },
+  { emoji: '💻', nombre: 'Marcos', rol: 'Desarrollo', desc: 'Tu web, landing y e-commerce siempre actualizadas' },
 ]
 
 export default function QueHacen() {
@@ -74,7 +74,7 @@ export default function QueHacen() {
             Qué hacen tus Compis en 30 días
           </h2>
           <p className="text-sm text-brand-secondary max-w-[560px] mx-auto">
-            El primer mes es intensivo. Tus Compis trabajan en paralelo para tener tu negocio automatizado, metricado y generando ventas.
+            El mismo plan que usa Polsia para lanzar sus productos. Tus Compis ejecutan día a día, en paralelo, sin que tengas que gestionar nada.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function QueHacen() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
                 {s.dias.map((d, di) => (
-                  <div key={di} className="bg-white rounded-xl p-3 border border-gray-100">
+                  <div key={di} className="bg-white rounded-xl p-3 border border-gray-100 hover:border-brand-yellow transition-colors">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <span className="text-sm">{d.emoji}</span>
                       <span className="text-[10px] font-bold text-brand-dark">{d.agente}</span>
@@ -109,13 +109,13 @@ export default function QueHacen() {
         <div className="bg-brand-dark rounded-3xl p-6 md:p-10 text-center mb-14">
           <div className="text-brand-yellow text-[10px] font-bold uppercase tracking-widest mb-2">Resultado del mes 1</div>
           <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-            Negocio automatizado, metricado y con pipeline de ventas activo
+            Producto o servicio en mercado con pipeline de clientes
           </h3>
           <p className="text-sm text-white/60 max-w-[480px] mx-auto">
-            Cada Compi sabe lo que tiene que hacer. Tú solo recibes resultados. A partir del mes 2, el equipo funciona en piloto automático.
+            Cada Compi ejecuta su parte del plan. Tú recibes un informe semanal de Paco y un roadmap para el mes 2.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mt-6">
-            {['~25 tareas ejecutadas', '7 Compis trabajando', 'Dashboard con métricas', 'Pipeline de ventas activo'].map(r => (
+            {['20 días de trabajo paralelo', '7 Compis ejecutando', 'Campaña de ads activa', 'Informe final con datos'].map(r => (
               <div key={r} className="bg-white/10 rounded-full px-4 py-1.5 text-xs text-white font-medium">{r}</div>
             ))}
           </div>
@@ -130,7 +130,7 @@ export default function QueHacen() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {agentes.map((a, i) => (
             <div key={i} className="text-center">
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${a.color} flex items-center justify-center text-xl shadow-lg mx-auto mb-2`}>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-dark to-brand-dark/80 flex items-center justify-center text-xl shadow-lg mx-auto mb-2">
                 {a.emoji}
               </div>
               <div className="font-bold text-xs text-brand-dark">{a.nombre}</div>
