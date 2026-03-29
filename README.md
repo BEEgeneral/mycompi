@@ -1,22 +1,28 @@
 # MyCompi
 
-Plataforma SaaS de equipos de agentes IA para PYMES españolas.
+Plataforma SaaS de equipos de Compis agénticos para PYMES españolas. Cada cliente tiene un equipo de profesionales especializados que trabajan 24/7 para su negocio.
 
 **Web:** https://mycompi.onrender.com
+
+## Producto
+
+**Precio único: €49/mes** — todo incluido (7 Compis agénticos especializados + director)
+
+Un solo plan. Sin contratos, sin permanencia, sin sorpresas.
 
 ## Stack
 
 | Capa | Tecnología |
 |------|-----------|
-| Backend | Express.js + Prisma ORM |
+| Backend | Express.js + Prisma 6.19.2 |
 | Base de datos | PostgreSQL (Neon) |
 | Landing / Auth | React + Vite + Tailwind CDN |
 | Admin panel | React + Vite (builds to `public/admin/`) |
 | Chat panel | React + Vite (builds to `public/chat/`) |
 | Email | Resend API |
-| Pagos | Stripe |
+| Pagos | Stripe (3 planes: Básico/Equipo/Dirección — todos a 49€ en landing) |
 | Web scraping | Firecrawl API |
-| Deploy | Render |
+| Deploy | Render (service: srv-d6up1mvfte5s73df21k0) |
 
 ## Arquitectura
 
@@ -27,23 +33,24 @@ Cliente paga en landing → Stripe webhook → crea cuenta → email bienvenida
                                                     ↓
                               Chat con Paco ← Orquestador (OpenClaw)
                                    ↕
-                    ┌──────────────┼──────────────┐
-                    ↓              ↓              ↓
-               Laura          Enzo           Carlos
-           (Atención          (Marketing)      (Ventas)
-            Cliente)
-                    ↕              ↕              ↕
-                 Elena          Diana          Marcos
-              (Operaciones)     (Data)      (Desarrollo)
+        ┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐
+        ↓          ↓          ↓          ↓          ↓          ↓          ↓
+     Laura     Enzo     Carlos     Elena     Diana     Marcos    (director)
+  (Atención   (Marketing) (Ventas) (Ops)    (Data)   (Desarrollo)
+  Cliente)
 ```
 
-## Planes
+## Los 7 Compis agénticos
 
-| Plan | Precio | Agentes |
-|------|--------|---------|
-| Básico | €10/mes | Laura (Atención Cliente) |
-| Equipo | €49/mes | Laura + Enzo + Carlos + orquestador |
-| Dirección | €147/mes | 6 agentes + orquestador + director |
+| Compi | Rol | Qué hace |
+|-------|-----|----------|
+| 🎯 Paco | Director / Orquestador | Coordina el equipo, te reporta cada semana |
+| 💬 Laura | Atención al Cliente | Responde 24/7, escala cuando es necesario, raccoge feedback |
+| 📊 Enzo | Marketing | Contenido, ads, SEO — hace crecer tu visibilidad |
+| 💼 Carlos | Ventas | Captación, qualification y cierre de leads |
+| ⚙️ Elena | Operaciones | Automatizaciones y conexión de herramientas |
+| 📈 Diana | Data | Métricas, dashboards, análisis de retención |
+| 💻 Marcos | Desarrollo | Tu web, landing y e-commerce siempre actualizadas |
 
 ## Estructura del proyecto
 
@@ -57,130 +64,75 @@ mycompi/
 │   │   ├── email.js          # Inbound email webhook (Resend) + procesamiento IA
 │   │   ├── chat.js           # Chat cliente ↔ Paco (OpenClaw)
 │   │   ├── notificaciones.js # Notificaciones proactivas a clientes
-│   │   ├── digest.js         # Daily digest emails (Harvard 5PM + morning briefing)
+│   │   ├── digest.js         # Daily digest emails
 │   │   ├── admin.js          # Admin API (métricas, agentes, notificaciones owner)
 │   │   └── cola.js           # Cola de tareas asíncronas
 │   ├── services/
 │   │   ├── agentLoader.js    # Carga dinámica de agentes desde /agents
 │   │   ├── digestService.js  # Generador de digest estructurado
-│   │   └── toolRegistry.js  # Registry de herramientas (Firecrawl, etc.)
+│   │   └── toolRegistry.js   # Registry de herramientas (Firecrawl, etc.)
 │   └── lib/
-│       └── db.js             # Prisma client singleton
+│       ├── db.js             # Prisma client singleton
+│       └── activationTokens.json  # Tokens de activación (filesystem efímero — issue)
 ├── agents/                    # Agentes (SOUL.md, IDENTITY.md, SKILL.md, HEARTBEAT.md)
 │   ├── paco/                 # Orquestador — chat directo con cliente
-│   ├── laura/                # Atención al Cliente — 24/7, heartbeat 20min
-│   ├── enzo/                 # Marketing — campaigns, SEO, contenido, heartbeat 30min
-│   ├── carlos/               # Ventas — leads, cierre, enrichment, heartbeat 25min
-│   ├── elena/                # Operaciones — automatizaciones, procesos
-│   ├── diana/                # Data — métricas, reporting
-│   ├── marcos/               # Desarrollo — web, e-commerce
+│   ├── laura/                # Atención al Cliente — heartbeat 20min
+│   ├── enzo/                 # Marketing — heartbeat 30min
+│   ├── carlos/               # Ventas — heartbeat 25min
+│   ├── elena/                # Operaciones
+│   ├── diana/                # Data
+│   ├── marcos/               # Desarrollo
 │   ├── pelayo/               # Asistente personal de Alberto
 │   └── policia-tokens/       # Auditor de gasto IA
-├── landing/                   # Landing page pública (React + Vite)
+├── landing/                   # Landing page pública (React + Vite + Tailwind)
+│   └── src/sections/
+│       ├── Hero.jsx
+│       ├── Stats.jsx
+│       ├── Services.jsx
+│       ├── Pricing.jsx       # Plan único 49€/mes
+│       ├── TeamPresentation.jsx
+│       ├── Comparativa.jsx   # 7 Compis vs ~10.300€/mes empleados
+│       ├── FAQ.jsx            # Grid + filtro por categoría
+│       └── ...
 ├── admin-panel/               # Panel admin para Alberto (React + Vite)
 ├── chat-panel/                # Dashboard chat del cliente (React + Vite)
 ├── prisma/
 │   └── schema.prisma          # Modelos: Cliente, Usuario, Agente, Pago, Notificacion, etc.
 └── public/                    # Build output static
-    ├── index.html             # Landing
-    ├── admin/                  # Admin panel
-    └── chat/                   # Chat panel
 ```
-
-## Modelos de base de datos
-
-```
-Cliente             — empresa con plan, stripeCustomerId, activo, timezone
-Usuario             — users por cliente (email, passwordHash, rol)
-Agente             — agentes activos por cliente
-Trabajo            — tareas en cola
-Pago               — historial de pagos Stripe
-Notificacion       — notificaciones proactivas (clienteId, agenteId, tipo, titulo, contenido)
-InteraccionChat    — aprendizaje del chat cliente-Paco
-Email              — emails recibidos/enviados con estado
-Mensaje            — mensajes internos entre agentes
-```
-
-## Agentes — Heartbeats
-
-Los heartbeats son trabajos cron que despiertan a los agentes periódicamente:
-
-| Agente | Schedule | Estado |
-|--------|----------|--------|
-| Laura (Atención Cliente) | Cada 20 min | ✅ Activo |
-| Enzo (Marketing) | Cada 30 min | ✅ Activo |
-| Carlos (Ventas) | Cada 25 min | ✅ Activo (timeout 180s) |
-
-Ver jobs activos: `openclaw cron list`
 
 ## Onboarding de un cliente nuevo
 
 1. Cliente pulsa "Contratar" en landing → Checkout Stripe
 2. Stripe webhook `checkout.session.completed` → crea Cliente + Usuario en BD
-3. Stripe envía email de bienvenida con link de activación (`/activar?token=...`)
-4. Cliente activa cuenta, setea contraseña → accede a dashboard
+3. Email bienvenida enviado via Resend (requiere `RESEND_API_KEY` configurado en Render)
+4. Cliente activa cuenta con token → accede al dashboard
 5. Dashboard: Chat con Paco + acceso a agentes según plan
-
-## Email transaccional
-
-| Trigger | From | Asunto |
-|---------|------|--------|
-| Post-pago (nuevo cliente) | noreply@mycompi.com | "¡Bienvenido a MyCompi! Activa tu cuenta →" |
-| Cancelación suscripción | noreply@mycompi.com | "Tu suscripción en MyCompi ha sido cancelada" |
-| Pago fallido | noreply@mycompi.com | "Aviso — Pago fallido en MyCompi" |
-| Inbound email | paco@mycompi.com | Respuesta de Paco |
-| Digest 5PM | paco@mycompi.com | Resumen diario de actividad |
-| Morning briefing | paco@mycompi.com | Briefing matutino |
-
-## Inbound email (Resend webhook)
-
-`POST /api/email/inbound` — Recibe emails de clientes, los procesa con sanitización anti-prompt-injection, y responde como Paco.
 
 ## API Endpoints principales
 
 ### Auth
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| POST | `/api/auth/register` | No | Registrar nuevo cliente |
-| POST | `/api/auth/login` | No | Login (devuelve access + refresh token) |
-| POST | `/api/auth/refresh` | No | Refrescar access token |
-| GET | `/api/auth/me` | Bearer | Usuario actual |
-| POST | `/api/auth/activar` | No | Activar cuenta con token |
-| POST | `/api/auth/forgot-password` | No | Solicitar reset contraseña |
-| POST | `/api/auth/reset-password` | No | Resetear con token |
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/api/auth/register` | Registrar nuevo cliente |
+| POST | `/api/auth/login` | Login (access + refresh token) |
+| POST | `/api/auth/refresh` | Refrescar access token |
+| POST | `/api/auth/activar` | Activar cuenta con token |
+| POST | `/api/auth/forgot-password` | Solicitar reset contraseña |
 
 ### Stripe
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| GET | `/api/stripe/config` | No | Public key Stripe |
-| POST | `/api/stripe/create-checkout` | Bearer | Crear sesión de pago |
-| GET | `/api/stripe/subscription` | Bearer | Estado suscripción |
-| POST | `/api/stripe/cancel` | Bearer | Cancelar suscripción |
-| POST | `/api/stripe/portal` | Bearer | Abrir portal Stripe |
-| POST | `/api/stripe/webhook` | Stripe sig | Webhook (raw body) |
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/api/stripe/create-checkout` | Crear sesión de pago |
+| POST | `/api/stripe/webhook` | Webhook (raw body, verificado) |
 
 ### Chat
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| GET | `/api/chat` | Bearer | Historial de chat |
-| POST | `/api/chat` | Bearer | Enviar mensaje (Paco/OpenClaw) |
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/api/chat` | Historial de chat con Paco |
+| POST | `/api/chat` | Enviar mensaje a Paco |
 
-### Notificaciones
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| GET | `/api/notificaciones` | Bearer | Listar notificaciones del cliente |
-| GET | `/api/notificaciones/no-leidas` | Bearer | Contar no leídas |
-| PATCH | `/api/notificaciones/:id/leida` | Bearer | Marcar como leída |
-
-### Admin (Alberto)
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| GET | `/api/admin/notificaciones` | Owner | Todas las notificaciones |
-| PATCH | `/api/admin/notificaciones/:id/leida` | Owner | Marcar leída |
-| POST | `/api/admin/notificaciones/marcar-todas-leidas` | Owner | Marcar todas leídas |
-| GET | `/api/admin/metrics/dashboard` | Owner | Métricas de gasto |
-
-## Variables de entorno
+## Variables de entorno (.env)
 
 ```env
 DATABASE_URL=postgresql://...
@@ -189,10 +141,10 @@ JWT_REFRESH_SECRET=...
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_PUBLISHABLE_KEY=pk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
-RESEND_API_KEY=re_...
+RESEND_API_KEY=re_TRtcXVky_54TGjwu7juDeY9cbQFCW2Ahj
 OPENCLAW_URL=http://localhost:18789
 OPENCLAW_TOKEN=...
-FIRECRAP_API_KEY=fc_...
+FIRECRAP_API_KEY=fc-661a99cbd41648e99db5ec72d4d94d4a
 FRONTEND_URL=https://mycompi.onrender.com
 PORT=3000
 ```
@@ -200,40 +152,53 @@ PORT=3000
 ## Comandos
 
 ```bash
-npm install              # Instalar dependencias
-npm run dev             # Desarrollo (puerto 3000, --watch)
-npm run build           # Build landing + admin + chat
-npm run build:landing   # Solo landing
-npm run build:admin     # Solo admin
-npm run build:chat      # Solo chat
-npx prisma migrate dev # Migrar BD (desarrollo)
-npx prisma migrate deploy # Migrar BD (producción)
-npx prisma generate     # Generar cliente Prisma
+npm install                 # Instalar dependencias
+npm run dev                # Desarrollo (puerto 3000)
+npm run build              # Build landing + admin + chat
+npm run build:landing      # Solo landing
+npx prisma migrate deploy  # Migrar BD (producción)
+npx prisma generate        # Generar cliente Prisma
 ```
 
 ## Deployment
 
-- **Render**: `render.yaml` define el servicio web
-- Build command: `npm install && npx prisma migrate deploy && npm run build && npx prisma generate`
+- **Render**: service `srv-d6up1mvfte5s73df21k0`
+- Build command: `npm install && npm run build && npx prisma migrate deploy && npx prisma generate`
 - Start command: `node src/index.js`
-- Static files servidos por Express desde `public/`
-- Admin en `/admin/`, chat en `/chat/`, landing en `/`
+- Webhook Stripe: `https://mycompi.onrender.com/api/stripe/webhook`
+
+## Pendientes técnicos
+
+- [ ] `RESEND_API_KEY` añadir como environment variable en Render Dashboard
+- [ ] Email bienvenida post-pago: el código existe pero necesita `RESEND_API_KEY` en producción
+- [ ] Activation tokens en JSON filesystem efímero → migrar a tabla Prisma
+- [ ] Heartbeats de agentes (Laura 20min, Enzo 30min, Carlos 25min) — jobs cron en OpenClaw
+- [ ] Mensajes proactivos al cliente (modelo BD + endpoints ya creados, frontend pendiente)
+- [ ] Seguridad prompt injection — Alberto pidió que se le recuerde
 
 ## Seguridad
 
-- **Prompt injection emails**: Input sanitizado antes de construir prompts (límite 8000 chars, escape triple backtick, elimina script/event handlers)
+- **Prompt injection emails**: Input sanitizado (límite 8000 chars, escape triple backtick, elimina scripts)
 - **JWT**: Access token (15min) + Refresh token (7 días) con rotación
 - **Stripe webhook**: Verificado con signature
-- **Password**: Hash con bcrypt, nunca se guarda en texto plano
-- **CORS**: Configurado para frontend en producción
+- **Password**: Hash con bcrypt
+
+## Commits recientes del landing redesign
+
+| Commit | Cambio |
+|--------|--------|
+| `7b1f695` | SEO meta tags con keywords IA/asistente virtual |
+| `3d94439` | Reemplazar "agente/agentes IA" por "Compis agénticos" en toda la landing |
+| `087d552` | Nueva sección Comparativa (7 Compis vs ~10.300€/mes empleados) |
+| `d86eaee` | Hero subheadline "Todo por 49€/mes" (sin "desde") |
+| `ee02070` | Eliminar botón "Conoce a tu equipo" (ancla rota) + pravatar |
+| `d6656ec` | FAQ con grid + filtro por categoría (sin acordeón) |
+| `232626b` | Hero headline "Tu equipo de Compis profesionales" |
+| `de41947` | Precio único 49€ en toda la landing + fotos pravatar |
+| `ba25b19` | Downgrade Prisma 7 → 6.19.2 |
+| `c35dcd3` | Fix syntax error `}` extra en stripe.js |
 
 ## Backup
 
-Backup completo en: `/data/backups/backup_2026-03-29_04-46/`
-Git bundle: `mycompi_88aabbe.bundle`
-
-## Pendiente
-
-- [ ] Test end-to-end email bienvenida post-pago (requiere Stripe CLI)
-- [ ] Frontend: sidebar + ActividadTab en chat-panel (notificaciones proactivas para cliente)
-- [ ] Verificar que inbound email de Resend funciona correctamente (test manual)
+Backup completo en: `/data/.openclaw/workspace/backups/backup_2026-03-30_01-24/` (724MB)
+Backup git: `mycompi/` del workspace ya hace sync automático
