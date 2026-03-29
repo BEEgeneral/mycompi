@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const cron = require('node-cron');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -110,8 +111,35 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
+// ─────────────────────────────────────────
+// CRON JOBS — Tareas automáticas
+// ─────────────────────────────────────────
+let cronNightShiftStarted = false;
+
+function startCronJobs() {
+  if (cronNightShiftStarted) return;
+  cronNightShiftStarted = true;
+
+  // Night shift V2: cada día a las 8:00 AM (hora del servidor)
+  cron.schedule('0 8 * * *', async () => {
+    console.log('[CRON] Iniciando night shift V2 automático...');
+    try {
+      const { runNightShiftV2 } = require('./services/agentWorker');
+      await runNightShiftV2();
+      console.log('[CRON] Night shift V2 completado');
+    } catch (err) {
+      console.error('[CRON] Error en night shift:', err.message);
+    }
+  }, {
+    timezone: 'Europe/Madrid'
+  });
+
+  console.log('[CRON] Jobs programados: Night shift V2 diario a las 8:00 AM (Madrid)');
+}
+
 app.listen(PORT, () => {
   console.log(`🚀 MyCompi corriendo en puerto ${PORT}`);
+  startCronJobs();
 });
 
 module.exports = app;
