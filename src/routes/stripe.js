@@ -266,14 +266,48 @@ async function crearOnboardingInicial(clienteId, empresa, plan) {
   }
 
   console.log(`✅ Onboarding creado: 5 tareas secuenciales + Brand Voice`);
-}
 
-  console.log(`✅ Onboarding creado: Brand Voice + tarea de research pendiente para cliente ${clienteId}`);
-}
+  // ─────────────────────────────────────────
+  // DISPARAR EJECUCIÓN INMEDIATA DEL ONBOARDING
+  // Tomar la primera tarea (orden=1) y ejecutarla ahora
+  // Las demás se ejecutarán en el próximo night shift o next tick
+  // ─────────────────────────────────────────
+  try {
+    const { executeTask } = require('../services/agentWorker');
 
-// ─────────────────────────────────────────
-// EMAILS DE BIENVENIDA / NOTIFICACIÓN
-// ─────────────────────────────────────────
+    const primeraTarea = await prisma.trabajo.findFirst({
+      where: { clienteId, tags: { has: 'onboarding' } },
+      orderBy: [{ inputData: { orden: 'asc' } }, { createdAt: 'asc' }]
+    });
+
+    if (primeraTarea) {
+      console.log(`🚀 Ejecutando primera tarea de onboarding: "${primeraTarea.titulo}"`);
+      // Ejecutar en background (no awaited) para no bloquear el webhook
+      executeTask(primeraTarea.id).catch(err => {
+        console.error(`[Webhook] Error ejecutando tarea ${primeraTarea.id}:`, err.message);
+      });
+    }
+
+    //También ejecutar la tarea de research (orden=2) con delay
+    const segundaTarea = await prisma.trabajo.findFirst({
+      where: { clienteId, tags: { has: 'onboarding' } },
+      orderBy: [{ inputData: { orden: 'asc' } }, { createdAt: 'asc' }],
+      skip: 1
+    });
+
+    if (segundaTarea) {
+      setTimeout(() => {
+        console.log(`🚀 Ejecutando segunda tarea de onboarding: "${segundaTarea.titulo}"`);
+        executeTask(segundaTarea.id).catch(err => {
+          console.error(`[Webhook] Error ejecutando tarea ${segundaTarea.id}:`, err.message);
+        });
+      }, 5000); // 5s delay para no saturar
+    }
+  } catch (err) {
+    console.error('[Webhook] Error disparando onboarding:', err.message);
+    // No fallar el webhook por esto — las tareas quedan en cola para night shift
+  }
+}
 
 async function enviarEmailBienvenida(email, nombre) {
   if (!process.env.RESEND_API_KEY) {
