@@ -98,6 +98,17 @@ export default function ColaTab({ apiCall }) {
     } catch (e) { console.error(e) }
   }
 
+  const ejecutarConIA = async (id) => {
+    if (!confirm('¿Ejecutar esta tarea con IA? Se usará OpenClaw para generar la respuesta.')) return
+    try {
+      await apiCall(`/api/worker/execute/${id}`, { method: 'POST' })
+      alert('✅ Tarea ejecutada. Recarga para ver el resultado.')
+      cargar()
+    } catch (e) {
+      alert('❌ Error: ' + e.message)
+    }
+  }
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -183,10 +194,17 @@ export default function ColaTab({ apiCall }) {
                 {/* Actions */}
                 <div className="flex gap-1 flex-shrink-0">
                   {tarea.estado === 'TODO' && (
-                    <button onClick={() => completarTarea(tarea.id)}
-                      className="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-lg hover:bg-green-200 font-semibold">
-                      ✓ Completar
-                    </button>
+                    <>
+                      <button onClick={() => ejecutarConIA(tarea.id)}
+                        className="text-xs bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg hover:bg-indigo-200 font-semibold"
+                        title="Ejecutar con IA">
+                        🤖 Ejecutar
+                      </button>
+                      <button onClick={() => completarTarea(tarea.id)}
+                        className="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-lg hover:bg-green-200 font-semibold">
+                        ✓ Completar
+                      </button>
+                    </>
                   )}
                   {tarea.estado !== 'COMPLETED' && tarea.estado !== 'FAILED' && (
                     <button onClick={() => fallarTarea(tarea.id)}
