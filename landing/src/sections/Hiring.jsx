@@ -8,8 +8,8 @@ const equipo = [
     emoji: '🎯',
     rol: 'Director de Equipo',
     color: 'from-gray-800 to-gray-900',
-    funciones: ['Coordina todo tu equipo agéntico', 'Toma decisiones estratégicas contigo', 'Supervisa que cada agente cumpla sus objetivos', 'Te reporta el progreso semanal'],
-    ejemplo: 'Cada lunes te envía un resumen de lo que hizo cada agente durante la semana.',
+    funciones: ['Coordina todo tu equipo de Compis', 'Toma decisiones estratégicas contigo', 'Supervisa que cada Compi cumpla sus objetivos', 'Te reporta el progreso semanal'],
+    ejemplo: 'Cada lunes te envía un resumen de lo que hizo cada Compi durante la semana.',
   },
   {
     nombre: 'Enzo Herrera',
@@ -54,9 +54,9 @@ const equipo = [
 ]
 
 const planes = [
-  { id: 'BASICO', name: 'Profesional Agéntico', price: 49, agents: 1, desc: '1 agente especializado' },
-  { id: 'EQUIPO', name: 'Equipo Agéntico', price: 49, agents: 6, desc: '1 manager + 5 especializados', popular: true },
-  { id: 'DIRECCION', name: 'Equipos con Dirección', price: 49, agents: 31, desc: '1 Director + 5 Managers + 25 agentes' },
+  { id: 'BASICO', name: 'Profesional Agéntico', price: 49, agents: 1, desc: '1 Compi especializado' },
+  { id: 'EQUIPO', name: 'Equipo Agéntico', price: 49, agents: 6, desc: '1 manager + 5 Compis', popular: true },
+  { id: 'DIRECCION', name: 'Equipos con Dirección', price: 49, agents: 31, desc: '1 Director + 5 Managers + 25 Compis' },
 ]
 
 function AgentRow({ agent, expanded, onToggle }) {
@@ -128,7 +128,7 @@ export default function Hiring() {
           <div className="max-w-[900px] mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Tu equipo agéntico</h2>
-              <p className="text-sm text-gray-500">Cada agente tiene un rol claro.-reportan a un director que los coordina. Tu delegas, ellos ejecutan.</p>
+              <p className="text-sm text-gray-500">Cada Compi tiene un rol claro. Reportan a un director que los coordina. Tú delegas, ellos ejecutan.</p>
             </div>
 
             {/* Director highlight */}
@@ -155,7 +155,7 @@ export default function Hiring() {
               </div>
             </div>
 
-            {/* Resto de agentes */}
+            {/* Resto de Compis */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {equipo.slice(1).map((agent, i) => (
                 <AgentRow
@@ -210,11 +210,11 @@ export default function Hiring() {
           <div className="max-w-[600px] mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Preguntas frecuentes</h2>
             {[
-              { q: '¿Qué es un Profesional Agéntico?', a: 'Es un agente de IA especializado en un área concreta (marketing, ventas, atención al cliente, operaciones o data) que trabaja para tu negocio de forma autónoma, 24/7.' },
+              { q: '¿Qué es un Compi Agéntico?', a: 'Es un Compi especializado en un área concreta (marketing, ventas, atención al cliente, operaciones o data) que trabaja para tu negocio de forma autónoma, 24/7.' },
               { q: '¿Necesito conocimientos técnicos?', a: 'No. Lo configuramos todo nosotros. Tú solo nos dices qué necesitas.' },
               { q: '¿Puedo cancelar cuando quiera?', a: 'Sí. Sin permanencias ni penalizaciones. Cancela cuando quieras desde tu panel.' },
-              { q: '¿Cómo funcionan los agentes?', a: 'Les defines objetivos y trabajan de forma autónoma. Recibes reportes periódicos y puedes hablar con ellos en cualquier momento.' },
-              { q: '¿Qué incluye el soporte?', a: 'Soporte por email incluido. Puedes hablar con Paco o cualquier agente desde tu panel de control.' },
+              { q: '¿Cómo funcionan los Compis?', a: 'Les defines objetivos y trabajan de forma autónoma. Recibes reportes periódicos y puedes hablar con ellos en cualquier momento.' },
+              { q: '¿Qué incluye el soporte?', a: 'Soporte por email incluido. Puedes hablar con Paco o cualquier Compi desde tu panel de control.' },
             ].map((f, i) => (
               <div key={i} className="border border-gray-200 rounded-xl mb-2 bg-white overflow-hidden">
                 <div className="px-6 py-4 font-semibold text-sm text-gray-900">{f.q}</div>
@@ -236,3 +236,5 @@ export default function Hiring() {
     </div>
   )
 }
+
+

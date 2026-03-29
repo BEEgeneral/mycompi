@@ -787,7 +787,7 @@ function DocumentosPanel({ token }) {
       <div className="flex items-center justify-between mb-2">
         <div>
           <h2 className="text-xl font-extrabold text-[#333863]">📄 Mis documentos</h2>
-          <p className="text-sm text-[#8b8075] mt-1">Documentos clave de tu equipo. Cada agente los lee para trabajar mejor.</p>
+          <p className="text-sm text-[#8b8075] mt-1">Documentos clave de tu equipo. Cada Compi los lee para trabajar mejor.</p>
         </div>
         <div className="text-2xl">🗂</div>
       </div>

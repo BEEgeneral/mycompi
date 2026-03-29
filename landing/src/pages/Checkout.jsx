@@ -159,7 +159,7 @@ export default function Checkout() {
                 <ul className="space-y-2.5 mb-6">
                   <li className="flex items-center gap-2 text-sm text-white/90">
                     <span className="text-brand-yellow font-bold">✓</span>
-                    {selectedPlan.agents} agente{selectedPlan.agents !== 1 ? 's' : ''} especializado{selectedPlan.agents !== 1 ? 's' : ''}
+                    {selectedPlan.agents} Compi{selectedPlan.agents !== 1 ? 's' : ''} especializado{selectedPlan.agents !== 1 ? 's' : ''}
                   </li>
                   <li className="flex items-center gap-2 text-sm text-white/90">
                     <span className="text-brand-yellow font-bold">✓</span>

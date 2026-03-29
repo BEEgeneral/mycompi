@@ -6,11 +6,11 @@ const planes = [
     price: '49',
     popular: true,
     features: [
-      '🎯 7 profesionales IA especializados',
+      '🎯 7 Compis agénticos especializados',
       '📊 Marketing, ventas, atención, operaciones, data y desarrollo',
       '🤖 Investigación automática de tu empresa',
       '📋 5 tareas de onboarding personalizadas',
-      '⚡ 3 tareas proactivas diarias por cada profesional',
+      '⚡ 3 tareas proactivas diarias por cada Compi',
       '📈 Reporting y análisis continuo',
       '💬 Chat con Paco, tu orquestador 24/7',
       '🔄 Mejora y optimización diaria del negocio',

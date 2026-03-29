@@ -77,7 +77,7 @@ export default function Comparativa() {
 
         {/* Bottom line */}
         <div className="text-center">
-          <p className="text-white/50 text-xs mb-4">7 agentes vs 6 empleados = diferencia de <span className="text-red-400 font-bold">~10.250€/mes</span> a tu favor</p>
+          <p className="text-white/50 text-xs mb-4">7 Compis agénticos vs 6 empleados = diferencia de <span className="text-red-400 font-bold">~10.250€/mes</span> a tu favor</p>
           <a
             href="/#/checkout"
             className="inline-block bg-brand-yellow text-brand-dark font-bold text-sm px-10 py-4 rounded-pill hover:bg-white transition-all shadow-lg"
