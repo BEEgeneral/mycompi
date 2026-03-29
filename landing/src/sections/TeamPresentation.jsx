@@ -37,7 +37,7 @@ const equipo = [
     emoji: '💼',
     rol: 'Ventas',
     color: 'from-green-500 to-emerald-600',
-    foto: 'https://ui-avatars.com/api/?name=Carlos+Mendoza&background=059669&color=fff&size=160&font-size=0.35&bold=true',
+    foto: 'https://i.pravatar.cc/160?img=53',
     funciones: [
       'Captura y qualifica leads nuevos',
       'Hace seguimiento automático de prospects',

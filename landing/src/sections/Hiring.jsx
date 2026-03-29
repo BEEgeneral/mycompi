@@ -97,9 +97,6 @@ function AgentRow({ agent, expanded, onToggle }) {
 
 export default function Hiring() {
   const [openAgent, setOpenAgent] = useState(null)
-  const [selectedPlan, setSelectedPlan] = useState('EQUIPO')
-
-  const plan = planes.find(p => p.id === selectedPlan)
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -176,39 +173,34 @@ export default function Hiring() {
         <section id="planes" className="py-16 px-6 bg-white border-t border-gray-100">
           <div className="max-w-[900px] mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Planes transparentes</h2>
-              <p className="text-sm text-gray-500">Sin costes de contratación. Cancela cuando quieras.</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Un solo plan, todo incluido</h2>
+              <p className="text-sm text-gray-500">Sin costes de contratación. Sin sorpresas. Cancela cuando quieras.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              {planes.map(p => (
-                <div
-                  key={p.id}
-                  onClick={() => setSelectedPlan(p.id)}
-                  className={`rounded-2xl p-6 cursor-pointer border-2 transition-all ${selectedPlan === p.id ? 'border-brand-yellow shadow-lg' : 'border-gray-200 hover:border-gray-300'}`}
-                >
-                  {p.popular && (
-                    <div className="text-[10px] font-bold bg-brand-yellow text-gray-900 px-3 py-1 rounded-full inline-block mb-3">Popular</div>
-                  )}
-                  <div className="font-bold text-base text-gray-900 mb-1">{p.name}</div>
-                  <div className="text-xs text-gray-500 mb-4">{p.desc}</div>
-                  <div className="text-[32px] font-extrabold text-gray-900 leading-none">
-                    <sup className="text-lg align-top">€</sup>{p.price}
-                  </div>
-                  <div className="text-xs text-gray-400 mt-1 mb-4">por mes</div>
-                  <div className="text-xs text-gray-600">{p.agents} agente{p.agents !== 1 ? 's' : ''}</div>
+            <div className="flex justify-center mb-8">
+              <div className="rounded-[2rem] bg-brand-dark text-white shadow-2xl max-w-[520px] w-full p-8 md:p-10">
+                <span className="inline-block bg-brand-yellow text-brand-dark text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-pill mb-4">Equipo Completo</span>
+                <div className="text-2xl font-bold mb-1 text-white">Tu Equipo Completo de Compis</div>
+                <div className="text-sm mb-6 text-white/70">7 profesionales IA trabajando 24/7 para tu negocio</div>
+                <div className="text-[48px] font-extrabold tracking-tight leading-none text-brand-yellow mb-1">
+                  €49<span className="text-xl font-normal text-white/50">/mes</span>
                 </div>
-              ))}
-            </div>
-
-            <div className="text-center">
-              <Link
-                to="/checkout"
-                className="inline-block bg-brand-yellow text-gray-900 font-bold px-10 py-4 rounded-xl hover:bg-brand-yellow-dark transition-all text-base"
-              >
-                Contratar plan {plan.name} — {plan.price}/mes
-              </Link>
-              <p className="text-xs text-gray-400 mt-3">Sin compromiso. Cancela cuando quieras.</p>
+                <ul className="space-y-2 mb-8 mt-5 text-sm text-white/80">
+                  <li className="flex items-start gap-2"><span className="text-brand-yellow font-bold">✓</span> 7 profesionales IA especializados</li>
+                  <li className="flex items-start gap-2"><span className="text-brand-yellow font-bold">✓</span> Manager + 5 especializados + director</li>
+                  <li className="flex items-start gap-2"><span className="text-brand-yellow font-bold">✓</span> Chat con Paco, tu orquestador 24/7</li>
+                  <li className="flex items-start gap-2"><span className="text-brand-yellow font-bold">✓</span> Tareas proactivas diarias</li>
+                  <li className="flex items-start gap-2"><span className="text-brand-yellow font-bold">✓</span> Reporting y análisis continuo</li>
+                  <li className="flex items-start gap-2"><span className="text-brand-yellow font-bold">✓</span> 5 tareas de onboarding personalizadas</li>
+                </ul>
+                <Link
+                  to="/checkout"
+                  className="block text-center font-bold text-sm bg-brand-yellow text-brand-dark px-6 py-4 rounded-pill hover:bg-white transition-colors shadow-md"
+                >
+                  Contratar ahora →
+                </Link>
+                <p className="text-center text-xs text-white/40 mt-4">Pago seguro con Stripe · Cancela cuando quieras</p>
+              </div>
             </div>
           </div>
         </section>
@@ -222,7 +214,7 @@ export default function Hiring() {
               { q: '¿Necesito conocimientos técnicos?', a: 'No. Lo configuramos todo nosotros. Tú solo nos dices qué necesitas.' },
               { q: '¿Puedo cancelar cuando quiera?', a: 'Sí. Sin permanencias ni penalizaciones. Cancela cuando quieras desde tu panel.' },
               { q: '¿Cómo funcionan los agentes?', a: 'Les defines objetivos y trabajan de forma autónoma. Recibes reportes periódicos y puedes hablar con ellos en cualquier momento.' },
-              { q: '¿Qué incluye el soporte?', a: 'Email en Básico, prioritario en Equipo, y dedicado 24/7 en Dirección. Siempre tienes a alguien disponible.' },
+              { q: '¿Qué incluye el soporte?', a: 'Soporte por email incluido. Puedes hablar con Paco o cualquier agente desde tu panel de control.' },
             ].map((f, i) => (
               <div key={i} className="border border-gray-200 rounded-xl mb-2 bg-white overflow-hidden">
                 <div className="px-6 py-4 font-semibold text-sm text-gray-900">{f.q}</div>

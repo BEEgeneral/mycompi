@@ -30,7 +30,7 @@ export default function Pricing() {
 
         <div className="flex justify-center">
           <div className="rounded-[2.5rem] bg-brand-dark text-white shadow-2xl shadow-brand-dark/30 max-w-[520px] w-full p-8 md:p-12">
-            <span className="inline-block bg-brand-yellow text-brand-dark text-[10px] md:text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-pill mb-4">El más completo</span>
+            <span className="inline-block bg-brand-yellow text-brand-dark text-[10px] md:text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-pill mb-4">Equipo Completo</span>
 
             <div className="text-2xl md:text-3xl font-bold mb-1 text-white">Tu Equipo Completo</div>
             <div className="text-sm mb-6 text-white/70">Todo lo que necesitas para automatizar y hacer crecer tu negocio</div>
