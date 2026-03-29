@@ -60,9 +60,9 @@ export default function Hero() {
             <div className="flex items-center gap-3">
               <div className="flex -space-x-2">
                 {[
-                  'https://i.pravatar.cc/64?img=12',
-                  'https://i.pravatar.cc/64?img=51',
-                  'https://i.pravatar.cc/64?img=53',
+                  require('../assets/agents/proof1.jpg'),
+                  require('../assets/agents/proof2.jpg'),
+                  require('../assets/agents/proof3.jpg'),
                 ].map((src, i) => (
                   <img key={i} src={src} className="w-7 h-7 rounded-full object-cover border-2 border-white" alt="" />
                 ))}

@@ -3,11 +3,11 @@ import { useState } from 'react'
 const equipo = [
   {
     id: 'director',
-    nombre: 'Alberto Gala',
+    nombre: 'Daniel Herrera',
     emoji: '🎯',
     rol: 'Director',
     color: 'from-brand-dark to-brand-dark/80',
-    foto: 'https://ui-avatars.com/api/?name=Alberto+Gala&background=2D3261&color=FFD154&size=160&font-size=0.35&bold=true',
+    foto: require('../assets/agents/director.jpg'),
     funciones: [
       'Coordina todo tu equipo de profesionales',
       'Toma decisiones estratégicas contigo',
@@ -22,7 +22,7 @@ const equipo = [
     emoji: '📊',
     rol: 'Marketing',
     color: 'from-blue-500 to-blue-600',
-    foto: 'https://ui-avatars.com/api/?name=Enzo+Herrera&background=2563eb&color=fff&size=160&font-size=0.35&bold=true',
+    foto: require('../assets/agents/enzo.jpg'),
     funciones: [
       'Crea contenido para redes sociales y blog',
       'Gestiona campañas de publicidad (Meta, Google Ads)',
@@ -37,7 +37,7 @@ const equipo = [
     emoji: '💼',
     rol: 'Ventas',
     color: 'from-green-500 to-emerald-600',
-    foto: 'https://i.pravatar.cc/160?img=53',
+    foto: require('../assets/agents/carlos.jpg'),
     funciones: [
       'Captura y qualifica leads nuevos',
       'Hace seguimiento automático de prospects',
@@ -52,7 +52,7 @@ const equipo = [
     emoji: '💬',
     rol: 'Atención al Cliente',
     color: 'from-pink-500 to-rose-600',
-    foto: 'https://ui-avatars.com/api/?name=Laura+Montes&background=db2777&color=fff&size=160&font-size=0.35&bold=true',
+    foto: require('../assets/agents/laura.jpg'),
     funciones: [
       'Responde dudas de tus clientes al instante',
       'Gestiona quejas y escala cuando es necesario',
@@ -67,7 +67,7 @@ const equipo = [
     emoji: '⚙️',
     rol: 'Operaciones',
     color: 'from-orange-500 to-amber-600',
-    foto: 'https://ui-avatars.com/api/?name=Elena+Ortega&background=ea580c&color=fff&size=160&font-size=0.35&bold=true',
+    foto: require('../assets/agents/elena.jpg'),
     funciones: [
       'Automatiza procesos repetitivos de tu negocio',
       'Conecta herramientas que no hablan entre sí',
@@ -82,7 +82,7 @@ const equipo = [
     emoji: '📈',
     rol: 'Data & Growth',
     color: 'from-purple-500 to-violet-600',
-    foto: 'https://ui-avatars.com/api/?name=Diana+Palau&background=7c3aed&color=fff&size=160&font-size=0.35&bold=true',
+    foto: require('../assets/agents/diana.jpg'),
     funciones: [
       'Analiza datos de tu negocio para encontrar oportunidades',
       'Identifica patrones de comportamiento de clientes',
