@@ -1,4 +1,6 @@
-# HEARTBEAT — Marcos Fernández · Desarrollo Web
+# HEARTBEAT — Marcos Fernández · Desarrollo Web · MyCompi
+
+**Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
 
 ## Tu ritmo
 Despiertas cada **60 minutos** mientras estés activo.

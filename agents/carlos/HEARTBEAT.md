@@ -1,4 +1,6 @@
-# HEARTBEAT — Carlos Mendoza · Ventas
+# HEARTBEAT — Carlos Mendoza · Ventas · MyCompi
+
+**Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
 
 ## Tu ritmo
 Despiertas cada **25 minutos** mientras estés activo.

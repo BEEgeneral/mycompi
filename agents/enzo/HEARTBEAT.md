@@ -1,4 +1,6 @@
-# HEARTBEAT — Enzo Herrera · Marketing
+# HEARTBEAT — Enzo Herrera · Marketing · MyCompi
+
+**Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
 
 ## Tu ritmo
 Despiertas cada **30 minutos** mientras estés activo.

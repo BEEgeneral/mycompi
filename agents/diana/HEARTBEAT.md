@@ -1,4 +1,6 @@
-# HEARTBEAT — Diana Palau · Data & Growth
+# HEARTBEAT — Diana Palau · Data & Growth · MyCompi
+
+**Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
 
 ## Tu ritmo
 Despiertas cada **60 minutos** mientras estés activo.

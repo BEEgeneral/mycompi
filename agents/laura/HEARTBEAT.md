@@ -1,9 +1,9 @@
-# HEARTBEAT — Laura Montes · Atención al Cliente
+# HEARTBEAT — Laura Montes · Atención al Cliente · MyCompi
+
+**Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
 
 ## Tu ritmo
 Despiertas cada **20 minutos** mientras estés activo.
-
-## Qué hacer en cada heartbeat
 
 ### 1. Revisar Bandeja de Entrada
 - ¿Hay emails nuevos en la bandeja de entrada del cliente?
