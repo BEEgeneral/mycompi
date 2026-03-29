@@ -176,6 +176,10 @@ async function handleCheckoutCompleted(session) {
 
     // Enviar email de bienvenida
     await enviarEmailBienvenida(customer_email, nombre);
+
+    // Crear tareas iniciales + documentos (onboarding automático estilo Polsia)
+    await crearOnboardingInicial(cliente.id, empresa, plan);
+
   } else {
     // Actualizar cliente existente
     await prisma.cliente.update({
@@ -242,6 +246,94 @@ async function handleSubscriptionUpdated(sub) {
 }
 
 // ─────────────────────────────────────────
+// ONBOARDING AUTOMÁTICO — estilo Polsia
+// Se ejecuta tras el primer pago exitoso
+// ─────────────────────────────────────────
+async function crearOnboardingInicial(clienteId, empresa, plan) {
+  console.log(`🚀 Creando onboarding automático para cliente ${clienteId}`);
+
+  // Obtener el agente Paco (orquestador) del cliente
+  const paco = await prisma.agente.findFirst({
+    where: { clienteId, tipo: 'CEO' }
+  });
+  const pacoId = paco?.id || 'paco';
+
+  // 1. Crear documento de MISIÓN
+  const missionTexto = empresa
+    ? `MISSION: Hacer crecer ${empresa} usando un equipo de profesionales IA especializados. El equipo coordina con Paco como orquestador. Cada profesional trabaja en su área: Laura (atención cliente), Enzo (marketing), Carlos (ventas), Elena (operaciones), Diana (data), Marcos (desarrollo).`
+    : `MISSION: Usar MyCompi para automatizar y escalar mi negocio con un equipo de profesionales IA coordinados por Paco. Cada agente aporta su especialidad: Laura, Enzo, Carlos, Elena, Diana, Marcos.`;
+
+  await prisma.documento.create({
+    data: {
+      clienteId,
+      tipo: 'MISION',
+      titulo: 'Mission',
+      contenido: missionTexto,
+    }
+  });
+
+  // 2. Crear documento de PRODUCTO
+  await prisma.documento.create({
+    data: {
+      clienteId,
+      tipo: 'PRODUCTO',
+      titulo: 'Sobre tu empresa',
+      contenido: empresa
+        ? `Tu empresa es ${empresa}. Tu plan en MyCompi es ${plan}. Tu equipo tiene agentes especializados disponibles: Laura (Atención al Cliente), Enzo (Marketing), Carlos (Ventas), Elena (Operaciones), Diana (Data), Marcos (Desarrollo).`
+        : `Todavía no has completado tu perfil. Ve a Mi Cuenta y completa los datos de tu empresa para que los agentes puedan trabajar mejor.`,
+    }
+  });
+
+  // 3. Crear documento de BRAND VOICE
+  await prisma.documento.create({
+    data: {
+      clienteId,
+      tipo: 'BRAND_VOICE',
+      titulo: 'Brand Voice',
+      contenido: `Idioma: Español de España. Tono: Informal, directo, cercano. Tratamiento: tuteo. Evita: lenguaje corporativo forzado, salutaciones excesivas. Elsiguiente es ser útil y resolver problemas, no impresionar con palabras.`,
+    }
+  });
+
+  // 4. Crear 3 tareas iniciales universales (estilo Polsia)
+  const tareasIniciales = [
+    {
+      titulo: '🚀 Configura tu perfil de empresa',
+      descripcion: 'Ve a Mi Cuenta y completa: nombre de empresa, sector, web, descripción de tu negocio. Esto ayuda a los agentes a trabajar mejor.',
+      prioridad: 'ALTA',
+      tags: ['onboarding', 'setup'],
+    },
+    {
+      titulo: '💬 Preséntale tu negocio a Paco',
+      descripcion: 'Escríbele a Paco en el chat. Cuéntale qué necesitas: lanzar un producto, captar clientes, automatizar tareas. Él coordina el equipo.',
+      prioridad: 'ALTA',
+      tags: ['onboarding', 'chat'],
+    },
+    {
+      titulo: '📋 Revisa las capacidades de tu equipo',
+      descripcion: 'Conoce a tu equipo: Laura (atención cliente), Enzo (marketing), Carlos (ventas), Elena (operaciones), Diana (data), Marcos (desarrollo). Cada uno puede ayudarte en su área.',
+      prioridad: 'MEDIA',
+      tags: ['onboarding', 'equipo'],
+    },
+  ];
+
+  for (const tarea of tareasIniciales) {
+    await prisma.trabajo.create({
+      data: {
+        clienteId,
+        agenteId: pacoId,
+        titulo: tarea.titulo,
+        descripcion: tarea.descripcion,
+        prioridad: tarea.prioridad,
+        estado: 'TODO',
+        tags: tarea.tags,
+      }
+    });
+  }
+
+  console.log(`✅ Onboarding automático completo: 3 documentos + 3 tareas creados para cliente ${clienteId}`);
+}
+
+// ─────────────────────────────────────────
 // EMAILS DE BIENVENIDA / NOTIFICACIÓN
 // ─────────────────────────────────────────
 
@@ -286,6 +378,16 @@ async function enviarEmailBienvenida(email, nombre) {
           <div style="background: #FCF9F1; padding: 32px; border-radius: 0 0 16px 16px;">
             <p style="font-size: 18px; color: #333; margin-top: 0;">Tu equipo de profesionales IA ya está listo para trabajar <strong>24/7</strong> contigo.</p>
             <p style="color: #666;">Recibirás un chat con <strong>Paco</strong>, tu orquestador, que coordinará todo el equipo según tus necesidades.</p>
+
+            <div style="margin: 24px 0; padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
+              <p style="font-size: 14px; font-weight: bold; color: #2D3261; margin: 0 0 12px 0;">📋 Tu primer paso — 3 tareas que hemos preparado para ti:</p>
+              <ol style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
+                <li><strong>Configura tu perfil</strong> — Completa los datos de tu empresa para que los agentes trabajen mejor</li>
+                <li><strong>Escríbele a Paco</strong> — Cuéntale qué necesitas y él coordinará al equipo</li>
+                <li><strong>Conoce a tu equipo</strong> — Laura, Enzo, Carlos, Elena, Diana y Marcos están listos</li>
+              </ol>
+            </div>
+
             <div style="text-align: center; margin: 32px 0;">
               <a href="${activationLink}" style="display: inline-block; background: #FFD154; color: #2D3261; font-weight: bold; padding: 16px 32px; border-radius: 9999px; text-decoration: none; font-size: 16px;">Activar mi cuenta →</a>
             </div>
