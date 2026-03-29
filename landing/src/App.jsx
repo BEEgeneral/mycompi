@@ -5,6 +5,7 @@ import Stats from './sections/Stats'
 import Services from './sections/Services'
 import Pricing from './sections/Pricing'
 import TeamPresentation from './sections/TeamPresentation'
+import QueHacen from './sections/QueHacen'
 import Testimonials from './sections/Testimonials'
 import FAQ from './sections/FAQ'
 import Contact from './sections/Contact'
@@ -28,6 +29,7 @@ function HomePage() {
         <Services />
         <Pricing />
         <TeamPresentation />
+        <QueHacen />
         <Testimonials />
         <FAQ />
         <Contact />
