@@ -1,16 +1,19 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
 const PLANES = {
-  BASICO: { name: 'Profesional Agéntico', price: 10, agents: 1, desc: '1 agente especializado', planId: 'basico' },
-  EQUIPO: { name: 'Equipo Agéntico', price: 49, agents: 6, desc: '1 manager + 5 especializados', planId: 'profesional', popular: true },
-  DIRECCION: { name: 'Equipos con Dirección', price: 147, agents: 31, desc: '1 Director + 5 Managers + 25 agentes', planId: 'enterprise' },
+  BASICO: { name: 'Tu Primer Profesional', price: 10, agents: 1, desc: '1 agente especializado', planId: 'basico' },
+  EQUIPO: { name: 'Tu Equipo Completo', price: 49, agents: 6, desc: '1 manager + 5 especializados', planId: 'profesional', popular: true },
+  DIRECCION: { name: 'Con Equipo de Dirección', price: 147, agents: 31, desc: '1 Director + 5 Managers + 25 agentes', planId: 'enterprise' },
 }
 
 export default function Checkout() {
-  const navigate = useNavigate()
-  const [plan, setPlan] = useState('EQUIPO')
+  const [searchParams] = useSearchParams()
+  const [plan, setPlan] = useState(() => {
+    const p = searchParams.get('plan')
+    return PLANES[p] ? p : 'EQUIPO'
+  })
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ nombre: '', email: '', password: '', nombreEmpresa: '' })
   const [loading, setLoading] = useState(false)
@@ -81,7 +84,25 @@ export default function Checkout() {
         </div>
 
         <h1 className="text-2xl font-extrabold text-gray-900 mb-2">Contrata tu equipo agéntico</h1>
-        <p className="text-sm text-gray-500 mb-8">Completa tu registro y pago para activar tu equipo.</p>
+        <p className="text-sm text-gray-500 mb-6">Completa tu registro y pago para activar tu equipo.</p>
+
+        {/* Plan selector — visible y claro */}
+        <div className="flex gap-3 mb-8 flex-wrap">
+          {Object.entries(PLANES).map(([id, p]) => (
+            <button
+              key={id}
+              onClick={() => setPlan(id)}
+              className={`flex-1 min-w-[140px] rounded-2xl border-2 px-4 py-3 text-center transition-all cursor-pointer ${
+                plan === id
+                  ? 'border-primary bg-primary/5 shadow-sm'
+                  : 'border-gray-200 bg-white hover:border-gray-300'
+              }`}
+            >
+              <div className={`text-xs font-bold mb-1 ${plan === id ? 'text-primary' : 'text-gray-500'}`}>{p.name}</div>
+              <div className={`text-lg font-extrabold ${plan === id ? 'text-primary' : 'text-gray-900'}`}>€{p.price}<span className="text-xs font-normal text-gray-400">/mes</span></div>
+            </button>
+          ))}
+        </div>
 
         {/* Step indicator */}
         <div className="flex items-center gap-3 mb-10">
@@ -100,7 +121,7 @@ export default function Checkout() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Form */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-base font-bold text-gray-900 mb-5">Datos de tu cuenta</h2>
+              <h2 className="text-base font-bold text-gray-900 mb-5">Tus datos</h2>
               <form onSubmit={handleRegister} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-600 mb-1.5">Nombre completo</label>
@@ -124,8 +145,9 @@ export default function Checkout() {
                 </div>
                 <button type="submit" disabled={loading}
                   className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 text-sm">
-                  {loading ? 'Registrando...' : 'Continuar'}
+                  {loading ? 'Registrando...' : 'Ir al pago →'}
                 </button>
+                <p className="text-center text-xs text-gray-400">Sin compromiso. Sin permanencia. Cancela cuando quieras.</p>
               </form>
             </div>
 
@@ -166,11 +188,11 @@ export default function Checkout() {
         {step === 2 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-base font-bold text-gray-900 mb-5">Resumen del pedido</h2>
+              <h2 className="text-base font-bold text-gray-900 mb-5">Tu pedido</h2>
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">{selectedPlan.name}</span>
-                  <span className="font-bold text-gray-900">{selectedPlan.price} EUR/mes</span>
+                  <span className="font-bold text-gray-900">€{selectedPlan.price}/mes</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">IVA</span>
@@ -178,15 +200,28 @@ export default function Checkout() {
                 </div>
                 <div className="border-t pt-3 flex justify-between">
                   <span className="font-bold text-gray-900">Total mensual</span>
-                  <span className="font-extrabold text-primary text-lg">{selectedPlan.price} EUR</span>
+                  <span className="font-extrabold text-primary text-lg">€{selectedPlan.price}</span>
                 </div>
               </div>
 
               <button onClick={handlePayment} disabled={loading}
-                className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 text-sm">
-                {loading ? 'Redirigiendo a Stripe...' : 'Pagar con Stripe'}
+                className="w-full bg-primary text-white font-extrabold py-4 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 text-base flex items-center justify-center gap-2">
+                {loading ? (
+                  'Redirigiendo a Stripe...'
+                ) : (
+                  <>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#635BFF"/><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z" fill="#FFF"/></svg>
+                    Pagar €{selectedPlan.price} con Stripe →
+                  </>
+                )}
               </button>
-              <p className="text-center text-xs text-gray-400 mt-3">Pago 100% seguro con Stripe. Cancela cuando quieras.</p>
+              <div className="flex items-center justify-center gap-4 mt-3">
+                <span className="text-xs text-gray-400">🔒 Pago seguro</span>
+                <span className="text-xs text-gray-400">·</span>
+                <span className="text-xs text-gray-400">Stripe encriptado</span>
+                <span className="text-xs text-gray-400">·</span>
+                <span className="text-xs text-gray-400">Cancela cuando quieras</span>
+              </div>
 
               <div className="mt-6 pt-6 border-t">
                 <p className="text-xs text-gray-500">Al contratar aceptas nuestros términos y condiciones. Tu suscripción se renovará automáticamente cada mes. Puedes cancelar en cualquier momento desde tu cuenta.</p>
