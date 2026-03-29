@@ -330,3 +330,19 @@ enum TipoMensaje {
   REPORTE
   SOLICITUD
 }
+
+// ============================================
+// ACTIVATION TOKENS — Tokens de activación de cuenta
+// ============================================
+model ActivationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([email])
+}

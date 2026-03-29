@@ -314,25 +314,14 @@ async function enviarEmailBienvenida(email, nombre) {
     return;
   }
 
-  // Generar token de activación
+  // Generar token de activación en BD
   const crypto = require('crypto');
   const token = crypto.randomBytes(32).toString('hex');
-  const fechaExpiracion = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 días
+  const fechaExpiracion = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
 
-  // Guardar token de activación
-  const fs2 = require('fs');
-  const path2 = require('path');
-  const activationsFile = path.join(__dirname, '../lib/activationTokens.json');
-  let activations = {};
-  try {
-    if (fs2.existsSync(activationsFile)) {
-      activations = JSON.parse(fs2.readFileSync(activationsFile, 'utf8'));
-    }
-  } catch (e) {}
-  activations[token] = { email, expiresAt: fechaExpiracion, used: false };
-  try {
-    fs2.writeFileSync(activationsFile, JSON.stringify(activations, null, 2));
-  } catch (e) {}
+  await prisma.activationToken.create({
+    data: { token, email, expiresAt: fechaExpiracion },
+  });
 
   const activationLink = `${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/activar?token=${token}`;
 

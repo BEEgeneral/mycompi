@@ -355,21 +355,11 @@ router.post('/activar', async (req, res) => {
   if (!token || !password) return res.status(400).json({ error: 'Token y contraseña requeridos' });
   if (password.length < 8) return res.status(400).json({ error: 'Mínimo 8 caracteres' });
 
-  // Validar token de activación
-  const fs2 = require('fs');
-  const path2 = require('path');
-  const activationsFile = path2.join(__dirname, '../lib/activationTokens.json');
-  let activations = {};
-  try {
-    if (fs2.existsSync(activationsFile)) {
-      activations = JSON.parse(fs2.readFileSync(activationsFile, 'utf8'));
-    }
-  } catch (e) {}
-
-  const act = activations[token];
+  // Validar token de activación en BD
+  const act = await prisma.activationToken.findUnique({ where: { token } });
   if (!act) return res.status(400).json({ error: 'Token inválido' });
   if (act.used) return res.status(400).json({ error: 'Este link ya fue usado' });
-  if (Date.now() > act.expiresAt) return res.status(400).json({ error: 'Este link ha expirado. Solicita uno nuevo.' });
+  if (new Date() > act.expiresAt) return res.status(400).json({ error: 'Este link ha expirado. Solicita uno nuevo.' });
 
   try {
     const usuario = await prisma.usuario.findUnique({ where: { email: act.email } });
@@ -385,8 +375,10 @@ router.post('/activar', async (req, res) => {
     });
 
     // Marcar token como usado
-    activations[token].used = true;
-    fs2.writeFileSync(activationsFile, JSON.stringify(activations, null, 2));
+    await prisma.activationToken.update({
+      where: { token },
+      data: { used: true, usedAt: new Date() },
+    });
 
     // Generar tokens para login automático
     const tokens = generateTokens(updated.id, updated.clienteId);
