@@ -23,8 +23,8 @@ export default function Hero() {
 
           {/* Subheadline */}
           <p className="text-[15px] md:text-[18px] text-brand-secondary leading-relaxed mb-8 max-w-[560px] mx-auto">
-            Profesionales especializados que conocen tu negocio. Responden clientes, cierran ventas, crean contenido.{' '}
-            <strong className="text-brand-dark font-semibold">Desde 49€/mes.</strong>
+            Tu propio equipo de agentes IA trabaja 24/7 en tu negocio: responde clientes, cierra ventas, crea contenido y genera informes.{' '}
+            <strong className="text-brand-dark font-semibold">Todo por 49€/mes.</strong>
           </p>
 
           {/* CTA buttons — pill-shaped */}
