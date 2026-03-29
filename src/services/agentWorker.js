@@ -217,6 +217,20 @@ async function executeTask(taskId) {
     return { error: 'Tarea no está en estado TODO' };
   }
 
+  // Bloqueo para evitar ejecuciones concurrentes
+  const workerId = `worker_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const lockTimeout = 5 * 60 * 1000; // 5 min
+
+  const locked = await prisma.trabajo.updateMany({
+    where: { id: taskId, ejecutor: null, estado: 'TODO' },
+    data: { ejecutor: workerId }
+  });
+
+  if (locked.count === 0) {
+    console.log(`[Worker] Tarea ${taskId} ya está siendo ejecutada por otro worker`);
+    return { error: 'Tarea bloqueada por otro worker' };
+  }
+
   // Si es tarea de research onboarding, delegar a la función especializada
   if (tarea.tags?.includes('research') && tarea.titulo.includes('Investigar')) {
     console.log(`[Worker] Tarea de research onboarding detectada — ejecutando runOnboardingResearch`);
@@ -259,6 +273,7 @@ async function executeTask(taskId) {
       completedAt: errorMsg ? null : new Date(),
       outputData: resultado ? { respuesta: resultado } : null,
       errorMsg: errorMsg || null,
+      ejecutor: null, // Liberar lock
     }
   });
 
@@ -883,6 +898,54 @@ async function runNightShiftV2() {
   console.log('[NightShift] V2 completado');
 }
 
+// ─────────────────────────────────────────
+// MICRO CICLO — Procesa tareas TODO cada 10 min
+// Solo ejecuta: onboarding pendientes + tareas con más de 15min esperando
+// No crea tareas nuevas (eso es job del night shift)
+// ─────────────────────────────────────────
+async function runMicroCycle() {
+  const { prisma } = require('../lib/db');
+
+  // Buscar clientes con tareas TODO que lleve > 15min sin ejecutarse
+  const cutoff = new Date(Date.now() - 15 * 60 * 1000); // 15 min
+
+  const tareasPendientes = await prisma.trabajo.findMany({
+    where: {
+      estado: 'TODO',
+      createdAt: { lte: cutoff }
+    },
+    orderBy: [
+      { tags: 'onboarding' },  // priorizar onboarding
+      { createdAt: 'asc' }
+    ],
+    take: 3, // Máx 3 por ciclo para no saturar
+    include: { cliente: true }
+  });
+
+  if (tareasPendientes.length === 0) {
+    return { ok: true, procesadas: 0 };
+  }
+
+  console.log(`[MicroCycle] Procesando ${tareasPendientes.length} tareas pendientes`);
+
+  let procesadas = 0;
+  for (const tarea of tareasPendientes) {
+    // Skip si ya se está ejecutando (lock)
+    if (tarea.ejecutor) continue;
+
+    try {
+      await executeTask(tarea.id);
+      procesadas++;
+      await new Promise(r => setTimeout(r, 2000)); // 2s entre tareas
+    } catch (err) {
+      console.error(`[MicroCycle] Error en tarea ${tarea.id}:`, err.message);
+    }
+  }
+
+  console.log(`[MicroCycle] Completado: ${procesadas} tareas procesadas`);
+  return { ok: true, procesadas };
+}
+
 module.exports = {
   executeTask,
   processPendingTasks,
@@ -890,5 +953,6 @@ module.exports = {
   runNightShiftV2,
   runOnboardingResearch,
   createDailyRecurrentTasks,
+  runMicroCycle,
   buildTaskPrompt
 };

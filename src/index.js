@@ -134,7 +134,19 @@ function startCronJobs() {
     timezone: 'Europe/Madrid'
   });
 
-  console.log('[CRON] Jobs programados: Night shift V2 diario a las 8:00 AM (Madrid)');
+  // Micro ciclo: procesar tareas pendientes cada 10 minutos
+  // Esto asegura que el onboarding se ejecute rápido (no esperar a 8AM)
+  cron.schedule('*/10 * * * *', async () => {
+    console.log('[CRON] Micro ciclo — procesando tareas pendientes...');
+    try {
+      const { runMicroCycle } = require('./services/agentWorker');
+      await runMicroCycle();
+    } catch (err) {
+      console.error('[CRON] Error en micro ciclo:', err.message);
+    }
+  });
+
+  console.log('[CRON] Jobs programados: Night shift V2 diario a las 8:00 AM (Madrid) + Micro ciclo cada 10 min');
 }
 
 app.listen(PORT, () => {

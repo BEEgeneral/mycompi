@@ -9,7 +9,7 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('./auth');
-const { executeTask, processPendingTasks, runNightShift, runNightShiftV2, runOnboardingResearch, createDailyRecurrentTasks } = require('../services/agentWorker');
+const { executeTask, processPendingTasks, runNightShift, runNightShiftV2, runOnboardingResearch, createDailyRecurrentTasks, runMicroCycle } = require('../services/agentWorker');
 
 // ─────────────────────────────────────────
 // Ejecutar una tarea específica
@@ -112,6 +112,26 @@ router.post('/research/:clienteId', authMiddleware, async (req, res) => {
     console.log(`[Worker] Research completado:`, resultado);
   } catch (err) {
     console.error(`[Worker] Error en research ${clienteId}:`, err.message);
+  }
+});
+
+// ─────────────────────────────────────────
+// Trigger micro ciclo manualmente
+// POST /api/worker/micro
+// Admin only — procesa tareas pendientes (>15min) ahora
+// ─────────────────────────────────────────
+router.post('/micro', authMiddleware, async (req, res) => {
+  if (req.usuario.rol_platform !== 'ADMIN') {
+    return res.status(403).json({ error: 'Solo administradores' });
+  }
+
+  try {
+    console.log(`[Worker] Micro ciclo triggered by ${req.usuario.email}`);
+    const resultado = await runMicroCycle();
+    res.json({ ok: true, ...resultado });
+  } catch (err) {
+    console.error('[Worker] Error en micro ciclo:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
