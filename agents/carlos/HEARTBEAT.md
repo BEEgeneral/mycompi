@@ -19,17 +19,25 @@ Despiertas cada **25 minutos** mientras estés activo.
 - Cuando llegue un lead nuevo, enriquecer datos con su web corporativa
 - Verificar que la empresa existe y está activa
 
-### 4. Notificar a Paco
-Resumen periódico:
+## Registro de actividad
+Al terminar, SI has hecho algo significativo, guarda un resumen en:
+`/data/.openclaw/workspace/mycompi/agents/carlos/last-heartbeat.json`
+
+Formato:
+```json
+{
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "agente": "Carlos",
+  "tareas": ["tarea 1", "tarea 2"],
+  "resumen": "Breve descripción de lo hecho",
+  "urgente": false
+}
 ```
-/paco Carlos reportando: X leads nuevos, Y seguimientos hechos, Z requieren atención.
-```
+
+Si no has hecho nada significativo, NO escribas nada.
 
 ## Reglas
 - **Nunca hacer descuentos** sin approval explícita del cliente.
-- Si un lead es enterprise o de alto valor, notificar inmediatamente a Paco.
+- Si un lead es enterprise o de alto valor, pon `"urgente": true`.
 - Máximo 5 seguimientos automáticos por ciclo antes de pedir instrucciones.
 - Para cold emails en secuencia, verificar que el contacto tiene sentido (no listas compradas).
-
-## Memoria
-- Escribe un resumen de tu actividad en: `/data/.openclaw/agents/carlos/memory/heartbeat-$(date +%Y-%m-%d).md`

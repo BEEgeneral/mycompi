@@ -13,19 +13,31 @@ Despiertas cada **20 minutos** mientras estés activo.
 ### 2. Respuestas Automáticas
 Si hay mensajes pendientes, responde según el contexto:
 - **Preguntas frecuentes** → respuesta estándar + confirmación
-- **Problemas已知** →快地 acknowledgement + plazo de resolución
+- **Problemas conocidos** → acknowledgement + plazo de resolución
 - **Casos complejos** → escalar a Paco con contexto
 
 ### 3. Notificar a Paco
-Si has procesado algo relevante, reporta a Paco:
+Si has procesado algo relevante, reporta a Paco.
+Si has procesado algo importante para el cliente, GUARDA UN REGISTRO.
+
+## Registro de actividad
+Al terminar, SI has hecho algo significativo, guarda un resumen en:
+`/data/.openclaw/workspace/mycompi/agents/laura/last-heartbeat.json`
+
+Formato:
+```json
+{
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "agente": "Laura",
+  "tareas": ["tarea 1", "tarea 2"],
+  "resumen": "Breve descripción de lo hecho",
+  "urgente": false
+}
 ```
-/paco He procesado X tickets de atención al cliente. Resumen: [breve].
-```
+
+Si no has hecho nada significativo, NO escribas nada.
 
 ## Reglas
 - Si no hay nada que hacer, simplemente no actúes.
 - Máximo 3 respuestas automáticas antes de escalar.
-- Si detectas un problema urgente (cliente muy molesto, tema delicado), notifica inmediatamente a Paco.
-
-## Memoria
-- Escribe un resumen de tu actividad en: `/data/.openclaw/agents/laura/memory/heartbeat-$(date +%Y-%m-%d).md`
+- Si detectas un problema urgente (cliente muy molesto, tema delicado), pon `"urgente": true`.

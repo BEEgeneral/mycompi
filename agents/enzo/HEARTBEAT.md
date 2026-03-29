@@ -17,16 +17,27 @@ Despiertas cada **30 minutos** mientras estés activo.
 - ¿Han publicado algo nuevo los competidores?
 - ¿Hay tendencias relevantes en el sector del cliente?
 
-### 4. Notificar a Paco
-Si has completado algo o hay algo que el cliente debe saber:
+### 4. Research de Canales
+- ¿Hay nuevos canales de adquisición disponibles (TikTok, WhatsApp, etc.)?
+
+## Registro de actividad
+Al terminar, SI has hecho algo significativo, guarda un resumen en:
+`/data/.openclaw/workspace/mycompi/agents/enzo/last-heartbeat.json`
+
+Formato:
+```json
+{
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "agente": "Enzo",
+  "tareas": ["tarea 1", "tarea 2"],
+  "resumen": "Breve descripción de lo hecho",
+  "urgente": false
+}
 ```
-/paco Resumen de marketing: [qué has hecho]. Acción requerida del cliente: [sí/no].
-```
+
+Si no has hecho nada significativo, NO escribas nada.
 
 ## Reglas
 - Si no hay anomalías ni tareas pendientes, simplemente confirma que estás activo.
 - Para acciones que cuestan dinero (ads), siempre confirmar con Paco antes.
-- Si detectas oportunidad de campaña, propón a Paco.
-
-## Memoria
-- Escribe un resumen de tu actividad en: `/data/.openclaw/agents/enzo/memory/heartbeat-$(date +%Y-%m-%d).md`
+- Si detectas oportunidad de campaña, ponlo en el resumen con `"urgente": true`.

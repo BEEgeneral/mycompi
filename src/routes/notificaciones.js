@@ -1,8 +1,9 @@
 /**
  * notificaciones.js — Notificaciones proactivas
  *
- * POST /api/notificaciones  → crear una notificación
- * GET  /api/notificaciones  → listar notificaciones del cliente
+ * POST /api/notificaciones/interna  → crear notificación (agentes, con API key)
+ * POST /api/notificaciones           → crear notificación (cliente auth)
+ * GET  /api/notificaciones           → listar notificaciones del cliente
  * GET  /api/notificaciones/no-leidas → contar no leídas
  * PATCH /api/notificaciones/:id/leida → marcar como leída
  */
@@ -11,8 +12,43 @@ const router = express.Router();
 const { authMiddleware } = require('./auth');
 const prisma = require('../lib/db');
 
+const AGENT_API_KEY = process.env.AGENT_API_KEY || 'mycompi-agent-secret';
+
 // ─────────────────────────────────────────
 // Crear notificación (interno — llamado por agentes)
+// POST /api/notificaciones/interna
+// ─────────────────────────────────────────
+router.post('/interna', async (req, res) => {
+  const key = req.headers['x-agent-key'];
+  if (key !== AGENT_API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { clienteId, agenteId, tipo, titulo, contenido } = req.body;
+
+  if (!clienteId || !titulo || !contenido) {
+    return res.status(400).json({ error: 'clienteId, titulo y contenido requeridos' });
+  }
+
+  try {
+    const notificacion = await prisma.notificacion.create({
+      data: {
+        clienteId,
+        agenteId: agenteId || 'sistema',
+        tipo: tipo || 'INFO',
+        titulo: titulo.slice(0, 200),
+        contenido: contenido.slice(0, 1000),
+      }
+    });
+    res.json({ ok: true, id: notificacion.id });
+  } catch (err) {
+    console.error('Error creando notificación interna:', err.message);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// ─────────────────────────────────────────
+// Crear notificación (cliente auth)
 // POST /api/notificaciones
 // ─────────────────────────────────────────
 router.post('/', authMiddleware, async (req, res) => {
@@ -35,7 +71,7 @@ router.post('/', authMiddleware, async (req, res) => {
       }
     });
 
-    res.json({ ok: true, notificacionId: notificacion.id });
+    res.json({ ok: true, id: notificacion.id });
   } catch (err) {
     console.error('Error creando notificación:', err.message);
     res.status(500).json({ error: 'Error interno' });
@@ -77,7 +113,7 @@ router.get('/', authMiddleware, async (req, res) => {
       prisma.notificacion.count({ where })
     ]);
 
-    res.json({ notificaciones, total });
+    res.json({ data: notificaciones, total });
   } catch (err) {
     console.error('Error listando notificaciones:', err.message);
     res.status(500).json({ error: 'Error interno' });
