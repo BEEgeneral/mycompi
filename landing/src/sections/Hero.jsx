@@ -15,7 +15,7 @@ export default function Hero() {
             Deja de hacer horas extra.
             <br />
             <span className="relative">
-              <span className="relative z-10">Tu equipo de profesionales</span>
+              <span className="relative z-10">Tu equipo de Compis profesionales</span>
               <span className="absolute bottom-1 left-0 right-0 h-3 bg-brand-yellow/60 -z-0 rounded-sm" style={{ height: '0.6em', bottom: '0.1em' }} />
             </span>{' '}
             trabaja 24/7.
