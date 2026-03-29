@@ -52,7 +52,7 @@ REGLAS DE OPERATIVIDAD:
 - Si no puedes hacer algo en este momento (no tienes acceso a sus datos), dilo claramente y sugiere cómo lo resolvemos
 - Sé útil desde el primer mensaje — no hagas deque el cliente tenga que repetir`;
 
-const PACO_TIMEOUT_MS = 60000; // 60 segundos — OpenClaw puede tardar en despertar
+const PACO_TIMEOUT_MS = 20000; // 60 segundos — OpenClaw puede tardar en despertar
 
 // ─────────────────────────────────────────
 // Llamada al gateway de OpenClaw via HTTP
