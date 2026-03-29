@@ -3,9 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
 const planes = [
-  { id: 'BASICO', name: 'Profesional Agéntico', price: 10, desc: '1 agente especializado' },
+  { id: 'BASICO', name: 'Profesional Agéntico', price: 49, desc: '1 agente especializado' },
   { id: 'EQUIPO', name: 'Equipo Agéntico', price: 49, desc: '1 manager + 5 especializados', popular: true },
-  { id: 'DIRECCION', name: 'Equipos con Dirección', price: 147, desc: '1 Director + 5 Managers + 25 agentes' },
+  { id: 'DIRECCION', name: 'Equipos con Dirección', price: 49, desc: '1 Director + 5 Managers + 25 agentes' },
 ]
 
 export default function Register() {

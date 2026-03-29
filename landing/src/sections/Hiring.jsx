@@ -54,9 +54,9 @@ const equipo = [
 ]
 
 const planes = [
-  { id: 'BASICO', name: 'Profesional Agéntico', price: 10, agents: 1, desc: '1 agente especializado' },
+  { id: 'BASICO', name: 'Profesional Agéntico', price: 49, agents: 1, desc: '1 agente especializado' },
   { id: 'EQUIPO', name: 'Equipo Agéntico', price: 49, agents: 6, desc: '1 manager + 5 especializados', popular: true },
-  { id: 'DIRECCION', name: 'Equipos con Dirección', price: 147, agents: 31, desc: '1 Director + 5 Managers + 25 agentes' },
+  { id: 'DIRECCION', name: 'Equipos con Dirección', price: 49, agents: 31, desc: '1 Director + 5 Managers + 25 agentes' },
 ]
 
 function AgentRow({ agent, expanded, onToggle }) {

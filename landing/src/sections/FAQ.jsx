@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: '¿Cómo se diferencia de contratar a alguien?',
-    a: 'Un profesional de MyCompi no enferma, no pide vacaciones, no se distrae, trabaja 24/7 y cuesta desde 10€/mes. No sustituye al 100% de una persona — pero sí puede hacer el trabajo de un junior en muchas tareas repetitivas, por una fracción del coste.',
+    a: 'Un profesional de MyCompi no enferma, no pide vacaciones, no se distrae, trabaja 24/7 y cuesta desde 49€/mes. No sustituye al 100% de una persona — pero sí puede hacer el trabajo de un junior en muchas tareas repetitivas, por una fracción del coste.',
   },
   {
     q: '¿Mis clientes sabrán que es un profesional automatizado?',
