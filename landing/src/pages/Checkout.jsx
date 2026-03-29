@@ -15,7 +15,7 @@ export default function Checkout() {
     return PLANES[p] ? p : 'EQUIPO'
   })
   const [step, setStep] = useState(1)
-  const [form, setForm] = useState({ nombre: '', email: '', password: '', nombreEmpresa: '' })
+  const [form, setForm] = useState({ nombre: '', email: '', password: '', nombreEmpresa: '', cupon: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -59,6 +59,7 @@ export default function Checkout() {
           email: form.email,
           nombre: form.nombre,
           empresa: form.nombreEmpresa,
+          couponCode: form.cupon || null,
         }),
       })
       const data = await res.json()
@@ -141,6 +142,11 @@ export default function Checkout() {
                 <div>
                   <label className="block text-xs font-bold text-gray-600 mb-1.5">Empresa (opcional)</label>
                   <input type="text" value={form.nombreEmpresa} onChange={e => update('nombreEmpresa', e.target.value)} placeholder="Nombre de tu empresa"
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-600 mb-1.5">Código promocional <span className="font-normal text-gray-400">(opcional)</span></label>
+                  <input type="text" value={form.cupon} onChange={e => update('cupon', e.target.value.toUpperCase())} placeholder="Ej: HORUS100"
                     className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20" />
                 </div>
                 <button type="submit" disabled={loading}

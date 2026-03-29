@@ -30,7 +30,7 @@ router.get('/config', (req, res) => {
 // POST /api/stripe/create-checkout
 // ─────────────────────────────────────────
 router.post('/create-checkout', async (req, res) => {
-  const { planId, email, nombre, empresa } = req.body;
+  const { planId, email, nombre, empresa, couponCode } = req.body;
   if (!planId || !email) return res.status(400).json({ error: 'Faltan datos' });
 
   const prices = {
@@ -43,15 +43,22 @@ router.post('/create-checkout', async (req, res) => {
   if (!priceId) return res.status(400).json({ error: 'Plan no válido' });
 
   try {
-    const session = await getStripe().checkout.sessions.create({
+    const sessionParams = {
       payment_method_types: ['card'],
       mode: 'subscription',
       customer_email: email,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/checkout/exito?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/checkout/cancelado`,
-      metadata: { planId, nombre: nombre || '', empresa: empresa || '' },
-    });
+      metadata: { planId, nombre: nombre || '', empresa: empresa || '', couponCode: couponCode || '' },
+    };
+
+    // Aplicar cupón de descuento si se proporciona
+    if (couponCode) {
+      sessionParams.discounts = [{ coupon: couponCode }];
+    }
+
+    const session = await getStripe().checkout.sessions.create(sessionParams);
     res.json({ sessionId: session.id, url: session.url });
   } catch (err) {
     console.error('Stripe checkout error:', err);
@@ -112,12 +119,13 @@ router.post('/webhook', async (req, res) => {
 // ─────────────────────────────────────────
 
 async function handleCheckoutCompleted(session) {
-  const { customer_email, metadata, customer: stripeCustomerId } = session;
+  const { customer_email, metadata, customer: stripeCustomerId, amount_total, subscription, discount } = session;
   if (!customer_email) return;
 
   const planId = metadata?.planId || 'basico';
   const nombre = metadata?.nombre || customer_email.split('@')[0];
   const empresa = metadata?.empresa || '';
+  const couponCode = metadata?.couponCode || '';
 
   const planMap = {
     basico: 'BASICO',
@@ -126,7 +134,13 @@ async function handleCheckoutCompleted(session) {
   };
   const plan = planMap[planId] || 'BASICO';
 
-  console.log(`🎉 Nuevo cliente: ${customer_email} - Plan: ${plan}`);
+  // Cupón 100% off = amount_total es 0 o null
+  const esCupon100 = (amount_total === 0 || amount_total === null) && discount;
+  if (esCupon100) {
+    console.log(`🎉 Checkout con cupón 100%: ${customer_email} - Plan: ${plan}`);
+  }
+
+  console.log(`🎉 Checkout completado: ${customer_email} - Plan: ${plan}${esCupon100 ? ' [CUPÓN 100%]' : ''}`);
 
   // Buscar si el cliente ya existe
   let cliente = await prisma.cliente.findUnique({
