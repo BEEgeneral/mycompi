@@ -76,6 +76,7 @@ function Sidebar({ tab, onTabChange, agentes, onLogout }) {
     { id: 'chat', emoji: '🎯', label: 'Chat con Paco' },
     { id: 'equipo', emoji: '🤖', label: 'Mi equipo' },
     { id: 'actividad', emoji: '📊', label: 'Actividad' },
+    { id: 'documentos', emoji: '📄', label: 'Mis documentos' },
     { id: 'decisiones', emoji: '📋', label: 'Decisiones' },
     { id: 'cuenta', emoji: '⚙️', label: 'Mi cuenta' },
   ]
@@ -725,6 +726,117 @@ function DecisionesPanel() {
 }
 
 // ─────────────────────────────────────────
+// DOCUMENTOS TAB — Mis documentos clave
+// ─────────────────────────────────────────
+function DocumentosPanel({ token }) {
+  const [documentos, setDocumentos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [expandedId, setExpandedId] = useState(null)
+
+  useEffect(() => {
+    fetchDocumentos()
+  }, [])
+
+  const fetchDocumentos = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/clientes/documentos', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error('Error cargando documentos')
+      const data = await res.json()
+      setDocumentos(data.documentos || [])
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const tipoLabel = {
+    MISION: { emoji: '🎯', color: '#333863' },
+    PRODUCTO: { emoji: '💼', color: '#2D7DD2' },
+    BRAND_VOICE: { emoji: '✍️', color: '#E84545' },
+    USER_RESEARCH: { emoji: '🔍', color: '#45B69C' },
+    TECNICO: { emoji: '⚙️', color: '#8B5CF6' },
+    MEMORIA_AGENTE: { emoji: '🧠', color: '#F59E0B' },
+  }
+
+  if (loading) {
+    return (
+      <div className="text-center py-16 text-[#b0a898]">
+        <div className="text-4xl mb-3">⏳</div>
+        <div>Cargando documentos...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-16 text-red-500">
+        <div className="text-4xl mb-3">❌</div>
+        <div>{error}</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <h2 className="text-xl font-extrabold text-[#333863]">📄 Mis documentos</h2>
+          <p className="text-sm text-[#8b8075] mt-1">Documentos clave de tu equipo. Cada agente los lee para trabajar mejor.</p>
+        </div>
+        <div className="text-2xl">🗂</div>
+      </div>
+
+      {documentos.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed border-[#e0d8cf] rounded-2xl">
+          <div className="text-4xl mb-3">📝</div>
+          <div className="text-[#333863] font-bold">Sin documentos aún</div>
+          <div className="text-[#b0a898] text-sm mt-1">Los documentos de tu equipo aparecerán aquí</div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {documentos.map(doc => {
+          const info = tipoLabel[doc.tipo] || { emoji: '📄', color: '#333863' }
+          const isOpen = expandedId === doc.id
+          return (
+            <div key={doc.id} className="bg-white border border-[#e8e0d5] rounded-2xl overflow-hidden">
+              <button
+                onClick={() => setExpandedId(isOpen ? null : doc.id)}
+                className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-[#faf6f0] transition-colors"
+              >
+                <span className="text-2xl">{info.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-[#333863]">{doc.titulo}</div>
+                  <div className="text-xs text-[#b0a898]">{doc.tipo}</div>
+                </div>
+                <span className="text-[#b0a898] text-sm">{isOpen ? '▲' : '▼'}</span>
+              </button>
+              {isOpen && (
+                <div className="px-5 pb-5 border-t border-[#f0e8df] pt-4">
+                  <pre className="text-sm text-[#555] whitespace-pre-wrap font-sans leading-relaxed"
+                    style={{ fontFamily: "'Poppins', sans-serif" }}>
+                    {doc.contenido}
+                  </pre>
+                  <div className="text-xs text-[#b0a898] mt-3">
+                    Actualizado: {new Date(doc.updatedAt).toLocaleDateString('es-ES')}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
 // CUENTA TAB
 // ─────────────────────────────────────────
 function CuentaPanel({ usuario, plan, token, onLogout }) {
@@ -861,6 +973,11 @@ export default function Dashboard() {
               {tab === 'actividad' && (
                 <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm">
                   <ActividadPanel />
+                </div>
+              )}
+              {tab === 'documentos' && (
+                <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm">
+                  <DocumentosPanel token={token} />
                 </div>
               )}
               {tab === 'decisiones' && (

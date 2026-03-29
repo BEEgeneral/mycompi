@@ -4,6 +4,26 @@ const { authMiddleware } = require('./auth');
 
 const router = express.Router();
 
+// ─────────────────────────────────────────
+// GET DOCUMENTOS del cliente
+// GET /api/clientes/documentos
+// ─────────────────────────────────────────
+router.get('/documentos', authMiddleware, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, tipo, titulo, contenido, metadata, created_at, updated_at
+       FROM documentos
+       WHERE cliente_id = $1
+       ORDER BY updated_at DESC`,
+      [req.clienteId]
+    );
+    res.json({ documentos: result.rows });
+  } catch (err) {
+    console.error('Error obteniendo documentos:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 // Obtener cliente actual
 router.get('/', authMiddleware, async (req, res) => {
   try {
