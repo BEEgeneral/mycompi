@@ -727,7 +727,29 @@ function DecisionesPanel() {
 // ─────────────────────────────────────────
 // CUENTA TAB
 // ─────────────────────────────────────────
-function CuentaPanel({ usuario, plan, onLogout }) {
+function CuentaPanel({ usuario, plan, token, onLogout }) {
+  const [portalLoading, setPortalLoading] = useState(false)
+
+  const abrirPortal = async () => {
+    setPortalLoading(true)
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.open(data.url, '_blank')
+      } else {
+        alert('No se pudo abrir el portal. Inténtalo de nuevo.')
+      }
+    } catch {
+      alert('No se pudo conectar con el servidor.')
+    } finally {
+      setPortalLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-5 max-w-lg">
       <div>
@@ -750,10 +772,10 @@ function CuentaPanel({ usuario, plan, onLogout }) {
           <span className="text-green-600 text-sm font-semibold">● Activo</span>
         </div>
       </div>
-      <a href="https://billing.stripe.com/p/login/test" target="_blank" rel="noreferrer"
-        className="block w-full text-center bg-[#333863] text-white font-bold py-4 rounded-2xl hover:bg-[#4a5090] transition-colors shadow-md text-sm">
-        Gestionar suscripción en Stripe →
-      </a>
+      <button onClick={abrirPortal} disabled={portalLoading}
+        className="block w-full text-center bg-[#333863] text-white font-bold py-4 rounded-2xl hover:bg-[#4a5090] transition-colors shadow-md text-sm disabled:opacity-60 cursor-pointer">
+        {portalLoading ? 'Abriendo portal...' : 'Gestionar suscripción en Stripe →'}
+      </button>
       <button onClick={onLogout} className="w-full text-center text-red-400 hover:text-red-600 py-3 text-sm transition-colors">
         Cerrar sesión
       </button>
@@ -848,7 +870,7 @@ export default function Dashboard() {
               )}
               {tab === 'cuenta' && (
                 <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm">
-                  <CuentaPanel usuario={usuario} plan={plan} onLogout={logout} />
+                  <CuentaPanel usuario={usuario} plan={plan} token={token} onLogout={logout} />
                 </div>
               )}
             </div>
