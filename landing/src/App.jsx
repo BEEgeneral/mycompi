@@ -29,7 +29,6 @@ function HomePage() {
         <Services />
         <Pricing />
         <TeamPresentation />
-        <QueHacen />
         <Testimonials />
         <FAQ />
         <Contact />
