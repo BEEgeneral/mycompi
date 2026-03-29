@@ -28,19 +28,14 @@ router.get('/config', (req, res) => {
 // ─────────────────────────────────────────
 // CREATE SUBSCRIPTION CHECKOUT
 // POST /api/stripe/create-checkout
+// Un solo plan: €49/mes — 7 agentes
 // ─────────────────────────────────────────
 router.post('/create-checkout', async (req, res) => {
-  const { planId, email, nombre, empresa, couponCode } = req.body;
-  if (!planId || !email) return res.status(400).json({ error: 'Faltan datos' });
+  const { email, nombre, empresa, couponCode } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email requerido' });
 
-  const prices = {
-    basico: 'price_1TEXi9FnOlGTfuoBl8zSYAZL',
-    profesional: 'price_1TEXiAFnOlGTfuoBgSv2DSR8',
-    enterprise: 'price_1TEXiAFnOlGTfuoBetVGAB8Q',
-  };
-
-  const priceId = prices[planId];
-  if (!priceId) return res.status(400).json({ error: 'Plan no válido' });
+  // Un solo plan: €49/mes
+  const priceId = 'price_1TEXiAFnOlGTfuoBgSv2DSR8';
 
   try {
     const sessionParams = {
@@ -50,7 +45,7 @@ router.post('/create-checkout', async (req, res) => {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/checkout/exito?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.FRONTEND_URL || 'https://mycompi.onrender.com'}/#/checkout/cancelado`,
-      metadata: { planId, nombre: nombre || '', empresa: empresa || '', couponCode: couponCode || '' },
+      metadata: { planId: 'profesional', nombre: nombre || '', empresa: empresa || '', couponCode: couponCode || '' },
     };
 
     // Aplicar cupón de descuento si se proporciona
@@ -122,17 +117,13 @@ async function handleCheckoutCompleted(session) {
   const { customer_email, metadata, customer: stripeCustomerId, amount_total, subscription, discount } = session;
   if (!customer_email) return;
 
-  const planId = metadata?.planId || 'basico';
+  const planId = metadata?.planId || 'profesional';
   const nombre = metadata?.nombre || customer_email.split('@')[0];
   const empresa = metadata?.empresa || '';
   const couponCode = metadata?.couponCode || '';
 
-  const planMap = {
-    basico: 'BASICO',
-    profesional: 'EQUIPO',
-    enterprise: 'DIRECCION',
-  };
-  const plan = planMap[planId] || 'BASICO';
+  // Un solo plan: EQUIPO con todos los agentes
+  const plan = 'EQUIPO';
 
   // Cupón 100% off = amount_total es 0 o null
   const esCupon100 = (amount_total === 0 || amount_total === null) && discount;
@@ -230,18 +221,12 @@ async function handleSubscriptionUpdated(sub) {
   });
   if (!customer) return;
 
-  const planId = sub.items?.data?.[0]?.price?.metadata?.planId;
-  const planMap = {
-    basico: 'BASICO',
-    profesional: 'EQUIPO',
-    enterprise: 'DIRECCION',
-  };
-  if (planId && planMap[planId]) {
-    await prisma.cliente.update({
-      where: { id: customer.id },
-      data: { plan: planMap[planId], activo: true }
-    });
-    console.log(`🔄 Plan actualizado para ${customer.email}: ${planMap[planId]}`);
+  // Un solo plan: EQUIPO
+  await prisma.cliente.update({
+    where: { id: customer.id },
+    data: { plan: 'EQUIPO', activo: true }
+  });
+  console.log(`🔄 Cliente actualizado: ${customer.email}`);
   }
 }
 

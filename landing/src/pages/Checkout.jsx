@@ -3,9 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
 const PLANES = {
-  BASICO: { name: 'Tu Primer Profesional', price: 10, agents: 1, desc: '1 agente especializado', planId: 'basico' },
-  EQUIPO: { name: 'Tu Equipo Completo', price: 49, agents: 6, desc: '1 manager + 5 especializados', planId: 'profesional', popular: true },
-  DIRECCION: { name: 'Con Equipo de Dirección', price: 147, agents: 31, desc: '1 Director + 5 Managers + 25 agentes', planId: 'enterprise' },
+  EQUIPO: { name: 'Tu Equipo Completo', price: 49, agents: 7, desc: '7 profesionales IA trabajando 24/7', planId: 'profesional' },
 }
 
 export default function Checkout() {
@@ -87,22 +85,11 @@ export default function Checkout() {
         <h1 className="text-2xl font-extrabold text-gray-900 mb-2">Contrata tu equipo agéntico</h1>
         <p className="text-sm text-gray-500 mb-6">Completa tu registro y pago para activar tu equipo.</p>
 
-        {/* Plan selector — visible y claro */}
-        <div className="flex gap-3 mb-8 flex-wrap">
-          {Object.entries(PLANES).map(([id, p]) => (
-            <button
-              key={id}
-              onClick={() => setPlan(id)}
-              className={`flex-1 min-w-[140px] rounded-2xl border-2 px-4 py-3 text-center transition-all cursor-pointer ${
-                plan === id
-                  ? 'border-brand-dark bg-brand-dark/5 shadow-sm'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
-              }`}
-            >
-              <div className={`text-xs font-bold mb-1 ${plan === id ? 'text-brand-dark' : 'text-gray-500'}`}>{p.name}</div>
-              <div className={`text-lg font-extrabold ${plan === id ? 'text-brand-dark' : 'text-gray-900'}`}>€{p.price}<span className="text-xs font-normal text-gray-400">/mes</span></div>
-            </button>
-          ))}
+        {/* Plan único */}
+        <div className="bg-brand-dark/5 border-2 border-brand-dark rounded-2xl px-6 py-4 mb-8 text-center">
+          <div className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Tu Equipo Completo</div>
+          <div className="text-3xl font-extrabold text-brand-dark">€49<span className="text-sm font-normal text-gray-500">/mes</span></div>
+          <div className="text-sm text-gray-600 mt-1">7 profesionales IA trabajando 24/7 para tu negocio</div>
         </div>
 
         {/* Step indicator */}

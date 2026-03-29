@@ -24,7 +24,7 @@ export default function Hero() {
           {/* Subheadline */}
           <p className="text-[15px] md:text-[18px] text-brand-secondary leading-relaxed mb-8 max-w-[560px] mx-auto">
             Profesionales especializados que conocen tu negocio. Responden clientes, cierran ventas, crean contenido.{' '}
-            <strong className="text-brand-dark font-semibold">Desde 10€/mes.</strong>
+            <strong className="text-brand-dark font-semibold">Desde 49€/mes.</strong>
           </p>
 
           {/* CTA buttons — pill-shaped */}
