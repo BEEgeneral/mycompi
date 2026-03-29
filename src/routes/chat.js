@@ -43,16 +43,16 @@ TU ESTILO:
 - Usa emojis de forma natural, no en exceso
 - Responde en español de España
 - Si no sabes algo, dilo honestamente
-- Siempre sugiere el siguiente paso concreto
-- Cuando derive a otro agente, sé específico sobre qué podrán hacer
+- SIEMPRE propón un siguiente paso concreto y accionable
+- No saludes de forma genérica una y otra vez — ve al grano
+- Cuando el cliente pida algo, NO digas "lo estoy procesando" — hazlo o dérivale rápido
 
-RESPUESTAS:
-- Cuando el cliente pregunte por su equipo, menciona los agentes que tiene según su plan
-- Cuando pida algo de un agente específico, confirma que se lo derivas
-- Para preguntas de información general, responde tú directamente con ayuda del equipo
-- Sé proactivo: sugiere cosas útiles que podrían necesitar según el contexto`;
+REGLAS DE OPERATIVIDAD:
+- Si el cliente pide algo específico ("un informe de ventas", "contactar con un lead", "crear una campaña"), confirma que lo haces y menciona al agente que lo ejecutará
+- Si no puedes hacer algo en este momento (no tienes acceso a sus datos), dilo claramente y sugiere cómo lo resolvemos
+- Sé útil desde el primer mensaje — no hagas deque el cliente tenga que repetir`;
 
-const PACO_TIMEOUT_MS = 25000; // 25 segundos
+const PACO_TIMEOUT_MS = 60000; // 60 segundos — OpenClaw puede tardar en despertar
 
 // ─────────────────────────────────────────
 // Llamada al gateway de OpenClaw via HTTP
@@ -167,7 +167,7 @@ function getFallbackResponse(mensaje, clienteNombre, plan) {
     return `Puedo ayudarte con casi cualquier cosa relacionada con tu negocio. Solo dime qué necesitas y yo coordino con el agente adecuado.\n\nAlgunos ejemplos:\n• "Crea una campaña de email"\n• "Resumen de mis leads"\n• "Automatiza mi respuesta a clientes"\n• "Analiza mi tráfico web"`;
   }
 
-  return `He recibido tu mensaje: "${mensaje.slice(0, 50)}${mensaje.length > 50 ? '...' : ''}"\n\nLo estoy procesando. Si es urgente, dime qué necesitas y lo traslado al agente correspondiente.\n\nTambién puedes preguntarme sobre precios, tu equipo, o qué pueden hacer Laura, Enzo, Carlos, Elena, Diana o Marcos.`;
+  return `¡Recibido! Lo estoy coordinando con el equipo ahora mismo.\n\nTe respondo en breve. Mientras tanto, algunas ideas de lo que podemos hacer:\n\n• "Crea una campaña de email marketing"\n• "Resumen de mis leads de esta semana"\n• "Automatiza el follow-up de clientes"\n• "Analiza mi tráfico web"\n• "Genera un informe de ventas"\n\n¿Te suena bien o prefieres que empiece por algo concreto?`;
 }
 
 // ─────────────────────────────────────────
