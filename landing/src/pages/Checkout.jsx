@@ -116,13 +116,13 @@ export default function Checkout() {
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-6">{error}</div>
         )}
 
-        {/* STEP 1: Registro */}
+        {/* STEP 1: Registro + Pago */}
         {step === 1 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Form */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+            {/* Form — 3 cols */}
+            <div className="lg:col-span-3 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
               <h2 className="text-base font-bold text-gray-900 mb-5">Tus datos</h2>
-              <form onSubmit={handleRegister} className="space-y-4">
+              <form id="checkout-form" onSubmit={handleRegister} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-600 mb-1.5">Nombre completo</label>
                   <input type="text" value={form.nombre} onChange={e => update('nombre', e.target.value)} required placeholder="Tu nombre"
@@ -144,48 +144,50 @@ export default function Checkout() {
                     className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
                 </div>
                 <button type="submit" disabled={loading}
-                  className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 text-sm">
-                  {loading ? 'Registrando...' : 'Ir al pago →'}
+                  className="w-full bg-primary text-white font-extrabold py-4 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 text-base tracking-wide cursor-pointer">
+                  {loading ? 'Registrando...' : 'Registrarse →'}
                 </button>
-                <p className="text-center text-xs text-gray-400">Sin compromiso. Sin permanencia. Cancela cuando quieras.</p>
+                <p className="text-center text-xs text-gray-400">Sin compromiso · Sin permanencia · Cancela cuando quieras</p>
               </form>
             </div>
 
-            {/* Plan summary */}
-            <div>
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm sticky top-24">
-                <h3 className="text-sm font-bold text-gray-700 mb-4">Resumen del plan</h3>
+            {/* Plan summary — 2 cols, sticky */}
+            <div className="lg:col-span-2">
+              <div className="bg-brand-dark rounded-2xl p-6 shadow-xl sticky top-24 text-white">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-extrabold text-lg">
-                    {selectedPlan.price}
+                  <div className="w-14 h-14 rounded-xl bg-brand-yellow flex items-center justify-center text-brand-dark font-extrabold text-2xl">
+                    €{selectedPlan.price}
                   </div>
                   <div>
-                    <div className="font-bold text-gray-900">{selectedPlan.name}</div>
-                    <div className="text-xs text-gray-500">EUR / mes</div>
+                    <div className="font-bold text-sm">{selectedPlan.name}</div>
+                    <div className="text-xs text-white/60">por mes · IVA incluido</div>
                   </div>
                 </div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-primary font-bold">+</span> {selectedPlan.agents} agente{selectedPlan.agents !== 1 ? 's' : ''} especializado{selectedPlan.agents !== 1 ? 's' : ''}
+                <ul className="space-y-2.5 mb-6">
+                  <li className="flex items-center gap-2 text-sm text-white/90">
+                    <span className="text-brand-yellow font-bold">✓</span>
+                    {selectedPlan.agents} agente{selectedPlan.agents !== 1 ? 's' : ''} especializado{selectedPlan.agents !== 1 ? 's' : ''}
                   </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-primary font-bold">+</span> Dashboard en tiempo real
+                  <li className="flex items-center gap-2 text-sm text-white/90">
+                    <span className="text-brand-yellow font-bold">✓</span>
+                    Dashboard en tiempo real
                   </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-primary font-bold">+</span> Soporte incluido
+                  <li className="flex items-center gap-2 text-sm text-white/90">
+                    <span className="text-brand-yellow font-bold">✓</span>
+                    Soporte incluido
                   </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-primary font-bold">+</span> Cancela cuando quieras
+                  <li className="flex items-center gap-2 text-sm text-white/90">
+                    <span className="text-brand-yellow font-bold">✓</span>
+                    Cancela cuando quieras
                   </li>
                 </ul>
-                <p className="text-center text-xs text-gray-400 mt-2">🔒 Pago seguro con Stripe · Cancela cuando quieras</p>
-                <button
-                  onClick={() => document.querySelector('form button[type=submit]')?.click()}
-                  className="w-full bg-primary text-white font-extrabold py-3.5 rounded-xl hover:bg-primary-hover transition-colors text-sm mt-4 flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#635BFF"/><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z" fill="#FFF"/></svg>
-                  Ir al pago →
-                </button>
+                <div className="border-t border-white/10 pt-4">
+                  <p className="text-center text-xs text-white/50 mb-1">Pago seguro</p>
+                  <div className="flex items-center justify-center gap-1 text-xs text-white/50">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#635BFF"/><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z" fill="#FFF"/></svg>
+                    Procesado por Stripe
+                  </div>
+                </div>
               </div>
             </div>
           </div>
