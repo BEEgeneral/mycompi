@@ -231,20 +231,15 @@ async function handleSubscriptionUpdated(sub) {
 }
 
 // ─────────────────────────────────────────
-// ONBOARDING AUTOMÁTICO — estilo Polsia
-// Se ejecuta tras el primer pago exitoso
-// Crea una tarea de RESEARCH que se ejecuta en background
+// ONBOARDING AUTOMÁTICO — 5 tareas secuenciales
+// Se ejecutan en orden: 1→2→3→4→5
 // ─────────────────────────────────────────
 async function crearOnboardingInicial(clienteId, empresa, plan) {
-  console.log(`🚀 Creando onboarding automático para cliente ${clienteId}`);
+  console.log(`🚀 Creando onboarding: 5 tareas secuenciales para cliente ${clienteId}`);
 
-  // Obtener el agente Paco (orquestador) del cliente
-  const paco = await prisma.agente.findFirst({
-    where: { clienteId, tipo: 'CEO' }
-  });
-  const pacoId = paco?.id || 'paco';
+  const { TAREA_ONBOARDING } = require('../services/tareas');
 
-  // 1. Crear Brand Voice genérico (rápido, no necesita research)
+  // 1. Crear Brand Voice genérico
   await prisma.documento.create({
     data: {
       clienteId,
@@ -254,22 +249,24 @@ async function crearOnboardingInicial(clienteId, empresa, plan) {
     }
   });
 
-  // 2. Crear Brand Voice con documento genérico de onboarding
-  // 3. Crear UNA tarea de RESEARCH que el worker ejecutará
-  await prisma.trabajo.create({
-    data: {
-      clienteId,
-      agenteId: pacoId,
-      titulo: '🔍 Investigar empresa y preparar onboarding personalizado',
-      descripcion: empresa
-        ? `Investigar ${empresa} — buscar información en web, generar Mission personalizada y 3 tareas específicas basadas en el sector del negocio.`
-        : 'Investigar empresa — aún no hay nombre de empresa, generar misión genérica y tareas universales.',
-      prioridad: 'ALTA',
-      estado: 'TODO',
-      tags: ['onboarding', 'research'],
-      inputData: { empresa: empresa || null, plan },
-    }
-  });
+  // 2. Crear las 5 tareas de onboarding en orden
+  for (const tarea of TAREA_ONBOARDING) {
+    await prisma.trabajo.create({
+      data: {
+        clienteId,
+        agenteId: tarea.agenteId || 'paco',
+        titulo: tarea.titulo,
+        descripcion: tarea.descripcion,
+        prioridad: tarea.prioridad,
+        estado: 'TODO',
+        tags: tarea.tags,
+        inputData: { orden: tarea.orden, empresa: empresa || null },
+      }
+    });
+  }
+
+  console.log(`✅ Onboarding creado: 5 tareas secuenciales + Brand Voice`);
+}
 
   console.log(`✅ Onboarding creado: Brand Voice + tarea de research pendiente para cliente ${clienteId}`);
 }

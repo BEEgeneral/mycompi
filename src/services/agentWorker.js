@@ -764,10 +764,131 @@ Solo responde con el JSON. Sin explicaciones.`;
   };
 }
 
+// ─────────────────────────────────────────
+// CREAR TAREAS DIARIAS RECURRENTES
+// Se ejecuta cada día para cada cliente activo
+// ─────────────────────────────────────────
+async function createDailyRecurrentTasks(clienteId) {
+  const { TAREAS_POR_AGENTE, AGENTES_DIARIOS } = require('./tareas');
+
+  const hoy = new Date();
+  const fechaStr = hoy.toISOString().split('T')[0]; // YYYY-MM-DD
+
+  // Check si ya se crearon hoy
+  const yaExiste = await prisma.trabajo.findFirst({
+    where: {
+      clienteId,
+      tags: { has: 'recurrente_diaria' },
+      createdAt: {
+        gte: new Date(hoy.setHours(0, 0, 0, 0)),
+        lt: new Date(hoy.setHours(23, 59, 59, 999)),
+      }
+    }
+  });
+
+  if (yaExiste) {
+    console.log(`[Worker] Tareas diarias ya creadas hoy para cliente ${clienteId}`);
+    return { skipped: true, reason: 'ya creadas hoy' };
+  }
+
+  let creadas = 0;
+  for (const agenteId of AGENTES_DIARIOS) {
+    const tareas = TAREAS_POR_AGENTE[agenteId] || [];
+    for (const tarea of tareas) {
+      await prisma.trabajo.create({
+        data: {
+          clienteId,
+          agenteId,
+          titulo: tarea.titulo,
+          descripcion: tarea.descripcion,
+          prioridad: tarea.prioridad,
+          estado: 'TODO',
+          tags: [...tarea.tags, 'recurrente_diaria'],
+          inputData: { fecha: fechaStr },
+        }
+      });
+      creadas++;
+    }
+  }
+
+  console.log(`[Worker] Creadas ${creadas} tareas diarias recurrentes para cliente ${clienteId}`);
+  return { ok: true, creadas };
+}
+
+// ─────────────────────────────────────────
+// NIGHT SHIFT MEJORADO
+// 1. Crear tareas recurrentes diarias si no existen
+// 2. Procesar tareas de onboarding en orden
+// 3. Procesar tareas recurrentes
+// ─────────────────────────────────────────
+async function runNightShiftV2() {
+  console.log('[NightShift] Iniciando V2...');
+
+  const clientes = await prisma.cliente.findMany({
+    where: { activo: true },
+    select: { id: true, email: true, nombre: true, plan: true }
+  });
+
+  console.log(`[NightShift] Revisando ${clientes.length} clientes`);
+
+  for (const cliente of clientes) {
+    // 1. Crear tareas diarias recurrentes si no existen
+    await createDailyRecurrentTasks(cliente.id);
+
+    // 2. Procesar tareas pendientes de onboarding en orden
+    const onboardingPendientes = await prisma.trabajo.findMany({
+      where: {
+        clienteId: cliente.id,
+        estado: 'TODO',
+        tags: { has: 'onboarding' }
+      },
+      orderBy: [{ inputData: { orden: 'asc' } }, { createdAt: 'asc' }],
+      take: 1 // Solo la siguiente en secuencia
+    });
+
+    if (onboardingPendientes.length > 0) {
+      const tarea = onboardingPendientes[0];
+      console.log(`[NightShift] Ejecutando onboarding: ${tarea.titulo}`);
+      try {
+        await executeTask(tarea.id);
+      } catch (err) {
+        console.error(`[NightShift] Error en onboarding ${tarea.id}:`, err.message);
+      }
+    }
+
+    // 3. Procesar tareas recurrentes del día
+    const recurrentes = await prisma.trabajo.findMany({
+      where: {
+        clienteId: cliente.id,
+        estado: 'TODO',
+        tags: { has: 'recurrente_diaria' }
+      },
+      orderBy: [
+        { prioridad: 'desc' },
+        { createdAt: 'asc' }
+      ],
+      take: 5 // Máx 5 tareas recurrentes por ciclo
+    });
+
+    for (const tarea of recurrentes) {
+      try {
+        await executeTask(tarea.id);
+        await new Promise(r => setTimeout(r, 1000)); // 1s entre tareas
+      } catch (err) {
+        console.error(`[NightShift] Error en tarea ${tarea.id}:`, err.message);
+      }
+    }
+  }
+
+  console.log('[NightShift] V2 completado');
+}
+
 module.exports = {
   executeTask,
   processPendingTasks,
   runNightShift,
+  runNightShiftV2,
   runOnboardingResearch,
+  createDailyRecurrentTasks,
   buildTaskPrompt
 };

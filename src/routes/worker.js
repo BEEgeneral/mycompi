@@ -9,7 +9,7 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('./auth');
-const { executeTask, processPendingTasks, runNightShift, runOnboardingResearch } = require('../services/agentWorker');
+const { executeTask, processPendingTasks, runNightShift, runNightShiftV2, runOnboardingResearch, createDailyRecurrentTasks } = require('../services/agentWorker');
 
 // ─────────────────────────────────────────
 // Ejecutar una tarea específica
@@ -51,9 +51,9 @@ router.post('/process/:clienteId', authMiddleware, async (req, res) => {
 });
 
 // ─────────────────────────────────────────
-// Trigger night shift manualmente
+// Trigger night shift V2 manualmente
 // POST /api/worker/nightshift
-// Admin only
+// Admin only — incluye onboarding secuencial + tareas recurrentes diarias
 // ─────────────────────────────────────────
 router.post('/nightshift', authMiddleware, async (req, res) => {
   if (req.usuario.rol_platform !== 'ADMIN') {
@@ -61,11 +61,32 @@ router.post('/nightshift', authMiddleware, async (req, res) => {
   }
 
   try {
-    console.log(`[Worker] Night shift triggered by ${req.usuario.email}`);
-    await runNightShift();
-    res.json({ ok: true, mensaje: 'Night shift completado' });
+    console.log(`[Worker] Night shift V2 triggered by ${req.usuario.email}`);
+    await runNightShiftV2();
+    res.json({ ok: true, mensaje: 'Night shift V2 completado' });
   } catch (err) {
     console.error('[Worker] Error en night shift:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─────────────────────────────────────────
+// Crear tareas diarias recurrentes para un cliente
+// POST /api/worker/daily/:clienteId
+// Admin only
+// ─────────────────────────────────────────
+router.post('/daily/:clienteId', authMiddleware, async (req, res) => {
+  if (req.usuario.rol_platform !== 'ADMIN') {
+    return res.status(403).json({ error: 'Solo administradores' });
+  }
+
+  const { clienteId } = req.params;
+
+  try {
+    const resultado = await createDailyRecurrentTasks(clienteId);
+    res.json({ ok: true, clienteId, ...resultado });
+  } catch (err) {
+    console.error(`[Worker] Error creando tareas diarias:`, err.message);
     res.status(500).json({ error: err.message });
   }
 });
