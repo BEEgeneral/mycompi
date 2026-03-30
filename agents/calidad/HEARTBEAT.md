@@ -1,4 +1,4 @@
-# HEARTBEAT — Valeria · Quality Assurance · MyCompi
+# HEARTBEAT — Valeria Sanz · Quality Assurance · MyCompi
 
 **Tu cliente actual: Beenocode / MyCompi (CIF B60604238)**
 

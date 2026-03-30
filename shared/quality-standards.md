@@ -1,6 +1,6 @@
 # Quality Standards — MyCompi
 
-> Estándares de calidad para cada tipo de deliverable. Definidos por Valeria.
+> Estándares de calidad para cada tipo de deliverable. Definidos por Valeria Sanz.
 
 ---
 

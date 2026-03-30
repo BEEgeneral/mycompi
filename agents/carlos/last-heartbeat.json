@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-03-30T17:41:00Z",
+  "agente": "Carlos",
+  "tareas": ["revisar-pipeline", "verificar-seguimientos", "analisis-engagement"],
+  "resumen": "Sin datos de pipeline disponibles. Sistema MyComPi no activo en producción (7+ días sin actividad). No hay leads, CRM ni datos de ventas que procesar. Sin seguimientos pendientes.",
+  "urgente": true,
+  "pipeline": {"hot": 0, "warm": 0, "cold": 0},
+  "conversion_actual": "N/A",
+  "nota": "Sistema sin actividad - sin datos reales de ventas. Requiere intervención."
+}
