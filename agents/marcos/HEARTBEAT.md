@@ -34,6 +34,30 @@ Despiertas cada **45 minutos** mientras estés activo. (Optimizado: antes 60min)
 - ¿Los últimos cambios están en producción?
 - **Mínimo**: hacer backup antes de deploy
 
+### 6. Research & Strategy (1x por semana, el mismo día cada semana)
+**TU ESPECIALIDAD:** Web development, SEO, devops, technical improvements
+
+Busca activamente:
+- Trends en web dev para 2026 (edge computing, AI-assisted coding, new frameworks)
+- SEO trends (voice search, schema markup, Core Web Vitals importance)
+- Devops efficiencies (CI/CD improvements, monitoring, alerting)
+
+Si encuentras algo relevante, añádelo a:
+`/data/.openclaw/workspace/mycompi/shared/strategy-proposals.md` → sección Marcos
+
+**Formato de proposal:**
+```markdown
+### Marcos — Semana YYYY-MM-DD
+
+**Proposal:** [título]
+- **Trend/Fuente:** [de dónde viene el insight]
+- **Viabilidad:** 🟢/🟡/🔴
+- **Esfuerzo:** bajo/medio/alto
+- **Expected Impact:** [qué esperas conseguir]
+- **Resumen:** [por qué aplica al cliente]
+- **Technical notes:** [requisitos técnicos, dependencias]
+```
+
 ## Registro de actividad
 **SIEMPRE** guarda un resumen en:
 `/data/.openclaw/workspace/mycompi/agents/marcos/last-heartbeat.json`

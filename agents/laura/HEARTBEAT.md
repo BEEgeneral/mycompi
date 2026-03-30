@@ -27,6 +27,29 @@ Si hay mensajes pendientes, responde según el contexto:
 Si has procesado algo relevante, reporta a Paco.
 Si has procesado algo importante para el cliente, GUARDA UN REGISTRO.
 
+### 5. Research & Strategy (1x por semana, el mismo día cada semana)
+**TU ESPECIALIDAD:** Atención al cliente, support, churn, CS automation
+
+Busca activamente:
+- Trends en Customer Success para 2026 (AI chatbots proactivos, sentiment analysis, churn prediction)
+- Tácticas de retención que están funcionando en SaaS B2B
+- Nuevas herramientas de CS que ahorren tiempo
+
+Si encuentras algo relevante, añádelo a:
+`/data/.openclaw/workspace/mycompi/shared/strategy-proposals.md` → sección Laura
+
+**Formato de proposal:**
+```markdown
+### Laura — Semana YYYY-MM-DD
+
+**Proposal:** [título]
+- **Trend/Fuente:** [de dónde viene el insight]
+- **Viabilidad:** 🟢/🟡/🔴
+- **Esfuerzo:** bajo/medio/alto
+- **Expected Impact:** [qué esperas conseguir]
+- **Resumen:** [por qué applies al cliente]
+```
+
 ## Registro de actividad
 **SIEMPRE** guarda un resumen en:
 `/data/.openclaw/workspace/mycompi/agents/laura/last-heartbeat.json`

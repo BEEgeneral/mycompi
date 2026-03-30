@@ -30,6 +30,30 @@ Despiertas cada **45 minutos** mientras estés activo. (Optimizado: antes 60min)
 - ¿Oportunidades de onboarding que mejorar?
 - **Si detectas opportunity de growth** → documenta con datos y propone a Paco
 
+### 5. Research & Strategy (1x por semana, el mismo día cada semana)
+**TU ESPECIALIDAD:** Data analytics, growth, metrics, experimentation, BI
+
+Busca activamente:
+- Trends en growth y analytics para 2026 (product-led growth, usage-based pricing, churn prediction models)
+- Tácticas de activation y retention que funcionan en SaaS (onboarding experiments, feature flags, cohort analysis)
+- Herramientas de BI y dashboards nuevas (no-code BI, embedded analytics, real-time dashboards)
+
+Si encuentras algo relevante, añádelo a:
+`/data/.openclaw/workspace/mycompi/shared/strategy-proposals.md` → sección Diana
+
+**Formato de proposal:**
+```markdown
+### Diana — Semana YYYY-MM-DD
+
+**Proposal:** [título]
+- **Trend/Fuente:** [de dónde viene el insight]
+- **Viabilidad:** 🟢/🟡/🔴
+- **Esfuerzo:** bajo/medio/alto
+- **Expected Impact:** [qué esperas conseguir]
+- **Resumen:** [por qué aplica al cliente]
+- **Datos de soporte:** [benchmarks, case studies, estadísticas]
+```
+
 ## Registro de actividad
 **SIEMPRE** guarda un resumen en:
 `/data/.openclaw/workspace/mycompi/agents/diana/last-heartbeat.json`

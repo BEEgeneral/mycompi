@@ -28,6 +28,30 @@ Despiertas cada **25 minutos** mientras estés activo. (Optimizado: antes 30min)
 - Si has hecho algo o detectado algo importante, guarda el registro.
 - **Incidencias críticas** → avisa a Paco inmediatamente
 
+### 5. Research & Strategy (1x por semana, el mismo día cada semana)
+**TU ESPECIALIDAD:** Automatizaciones, ops, integraciones, efficiency
+
+Busca activamente:
+- Trends en automations para 2026 (AI-powered workflows, no-code tools, MCP integrations)
+- Herramientas que conectan mejor con el stack actual (Zapier, Make, n8n updates)
+- Efficiency hacks para ops (observability, alerting, incident response)
+
+Si encuentras algo relevante, añádelo a:
+`/data/.openclaw/workspace/mycompi/shared/strategy-proposals.md` → sección Elena
+
+**Formato de proposal:**
+```markdown
+### Elena — Semana YYYY-MM-DD
+
+**Proposal:** [título]
+- **Trend/Fuente:** [de dónde viene el insight]
+- **Viabilidad:** 🟢/🟡/🔴
+- **Esfuerzo:** bajo/medio/alto
+- **Expected Impact:** [qué esperas conseguir]
+- **Resumen:** [por qué aplica al cliente]
+- **Stack compatibility:** [qué herramientas necesitas]
+```
+
 ## Registro de actividad
 **SIEMPRE** guarda un resumen en:
 `/data/.openclaw/workspace/mycompi/agents/elena/last-heartbeat.json`

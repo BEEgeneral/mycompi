@@ -29,6 +29,30 @@ Despiertas cada **20 minutos** mientras estés activo. (Optimizado: antes 25min)
 - ¿Qué objeciones aparecen más?
 - **Si un lead está en objections recurrentes → escalar a Paco**
 
+### 5. Research & Strategy (1x por semana, el mismo día cada semana)
+**TU ESPECIALIDAD:** Ventas B2B, outbound, pipeline, closing, CRM
+
+Busca activamente:
+- Trends en outbound B2B para 2026 (secuencias cortas, video outreach, social selling)
+- Tácticas de closing que funcionan en SaaS (trial-to-paid, usage-based pricing, annual discounts)
+- Herramientas de sales automation nuevas (Apollo v3, Smartlead, Instantly.ai)
+
+Si encuentras algo relevante, añádelo a:
+`/data/.openclaw/workspace/mycompi/shared/strategy-proposals.md` → sección Carlos
+
+**Formato de proposal:**
+```markdown
+### Carlos — Semana YYYY-MM-DD
+
+**Proposal:** [título]
+- **Trend/Fuente:** [de dónde viene el insight]
+- **Viabilidad:** 🟢/🟡/🔴
+- **Esfuerzo:** bajo/medio/alto
+- **Expected Impact:** [qué esperas conseguir]
+- **Resumen:** [por qué aplica al cliente]
+- **Datos de soporte:** [stats, case studies, referencias]
+```
+
 ## Registro de actividad
 **SIEMPRE** guarda un resumen en:
 `/data/.openclaw/workspace/mycompi/agents/carlos/last-heartbeat.json`

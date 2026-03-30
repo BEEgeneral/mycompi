@@ -32,6 +32,30 @@ Despiertas cada **25 minutos** mientras estés activo. (Optimizado: antes 30min)
 - ¿Hay menciones del cliente en redes o prensa?
 - ¿Hay conversaciones relevantes que monitorizar?
 
+### 6. Research & Strategy (1x por semana, el mismo día cada semana)
+**TU ESPECIALIDAD:** Marketing digital, content, paid acquisition, SEO, brand
+
+Busca activamente:
+- Trends en marketing digital B2B SaaS para 2026 (AI content generation, personalized outreach, video)
+- Tácticas de growth que están funcionando (LinkedIn Thought Leader ads, newsletter affiliate programs)
+- Channels nuevos para probar (TikTok, WhatsApp Business, emerging platforms)
+
+Si encuentras algo relevante, añádelo a:
+`/data/.openclaw/workspace/mycompi/shared/strategy-proposals.md` → sección Enzo
+
+**Formato de proposal:**
+```markdown
+### Enzo — Semana YYYY-MM-DD
+
+**Proposal:** [título]
+- **Trend/Fuente:** [de dónde viene el insight]
+- **Viabilidad:** 🟢/🟡/🔴
+- **Esfuerzo:** bajo/medio/alto
+- **Expected Impact:** [qué esperas conseguir]
+- **Resumen:** [por qué aplica al cliente]
+- **Test sugerido:** [cómo medir si funciona]
+```
+
 ## Registro de actividad
 **SIEMPRE** guarda un resumen en:
 `/data/.openclaw/workspace/mycompi/agents/enzo/last-heartbeat.json`
