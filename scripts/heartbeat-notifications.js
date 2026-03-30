@@ -18,6 +18,7 @@ const agentes = [
   { id: 'Elena', dir: '/data/.openclaw/workspace/mycompi/agents/elena' },
   { id: 'Diana', dir: '/data/.openclaw/workspace/mycompi/agents/diana' },
   { id: 'Marcos', dir: '/data/.openclaw/workspace/mycompi/agents/marcos' },
+  { id: 'Valeria', dir: '/data/.openclaw/workspace/mycompi/agents/calidad' },
 ]
 
 function hoy() {
