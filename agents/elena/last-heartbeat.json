@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-03-30T19:15:00Z",
+  "agente": "Elena",
+  "tareas": ["health_check_rapido"],
+  "resumen": "Heartbeat nocturno — sin incidencias detectadas. Revisión de strategy-proposals.md: Carlos tiene proposals activas de ventas/CRM. Sprint backlog vacío (sin tareas activas). Sin automatizaciones nuevas pendientes ni incidencias en sistemas.",
+  "urgente": false,
+  "systems_status": "all_green",
+  "automatizaciones_creadas": 0
+}

@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-03-30T19:34:00Z",
+  "agente": "Diana",
+  "tareas": [
+    "Revisión métricas cliente MyCompi",
+    "Check actividad plataforma (trabajos, mensajes, pagos)",
+    "Verificar dashboards y reports"
+  ],
+  "resumen": "Heartbeat 2026-03-30 19:34 UTC. Sistema en fase early stage: 9 clientes (todos BASICO), 0 pagos, 0 trabajos, 0 mensajes. 8/9 clientes creados en últimos 7 días — launches/recientes. Sin anomalías de datos. Sin Oportunidades de growth urgentes. Sin research pendiente esta semana (próxima: semana misma fecha).",
+  "urgente": false,
+  "metrics_highlight": {
+    "total_clientes": 9,
+    "clientes_nuevos_7d": 8,
+    "clientes_nuevos_30d": 9,
+    "plan_basico": 9,
+    "plan_equipo": 0,
+    "plan_direccion": 0,
+    "plan_completo": 0,
+    "clientes_inactivos": 0,
+    "total_pagos_30d": 0,
+    "total_trabajos": 0,
+    "total_mensajes": 0,
+    "mrr": "0€ (sin pagos registrados)"
+  },
+  "insights": [
+    "Sistema early stage — 8/9 clientes creados en últimos 7 días, probable fase de onboarding/lanzamiento",
+    "Todos los clientes en plan BASICO (9€-49€/mes estimado) — ningún upgrade a planes superiores",
+    "Sin revenue todavía: 0 pagos en 30 días — prioridad de negocio debería ser activar primeros pagos",
+    "Sin usage: 0 trabajos, 0 mensajes — usuarios no están generando contenido/uso todavía",
+    "No hay broken tracking — la base de datos responde correctamente; no hay missing data por errores técnicos"
+  ],
+  "alerts": [],
+  "growth_opportunities": [],
+  "research_pending": false,
+  "next_research_week": "2026-04-06"
+}

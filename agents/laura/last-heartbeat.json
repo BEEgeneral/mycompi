@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-30T19:20:00Z",
+  "agente": "Laura",
+  "tareas": ["revision-bandeja"],
+  "resumen": "Heartbeat 03:20 MYT. Revisada bandeja de entrada — sin emails pendientes, sin tickets, sin mensajes encolados. Sistema operativo con normalidad.",
+  "urgente": false,
+  "sentiment": "neutral"
+}
