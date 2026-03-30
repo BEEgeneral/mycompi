@@ -1,12 +1,11 @@
 /**
- * chat.js — Chat con OpenClaw real para Paco
+ * chat.js — Chat de Paco con MiniMax directo
  *
- * POST /api/chat  → llama a OpenClaw gateway y devuelve respuesta
+ * POST /api/chat  → llama a MiniMax API y devuelve respuesta
  * GET  /api/chat  → historial de mensajes
  * GET  /api/chat/:id → estado de un mensaje
  *
- * Usa el endpoint /v1/chat/completions del gateway de OpenClaw
- * (disponible en localhost:18789 cuando ambos corren en el mismo host)
+ * Usa MiniMax API directamente para respuestas rápidas
  */
 const express = require('express');
 const router = express.Router();
@@ -14,10 +13,10 @@ const { authMiddleware } = require('./auth');
 const prisma = require('../lib/db');
 
 // ─────────────────────────────────────────
-// Configuración OpenClaw (desde variables de entorno o valores por defecto)
+// Configuración MiniMax (llamada directa)
 // ─────────────────────────────────────────
-const OPENCLAW_URL = process.env.OPENCLAW_URL || 'http://127.0.0.1:18789';
-const OPENCLAW_TOKEN = process.env.OPENCLAW_TOKEN || process.env.OPENCLAW_GATEWAY_TOKEN || '';
+const MINIMAX_API_KEY = process.env.MINIMAX_API_KEY || '';
+const MINIMAX_BASE_URL = 'https://api.minimax.io/v1';
 
 // Contexto del sistema para Paco
 const PACO_SYSTEM_PROMPT = `Eres **Paco**, el orquestador de MyCompi — una plataforma SaaS que ofrece equipos de agentes IA especializados para PYMES españolas.
@@ -52,18 +51,18 @@ REGLAS DE OPERATIVIDAD:
 - Si no puedes hacer algo en este momento (no tienes acceso a sus datos), dilo claramente y sugiere cómo lo resolvemos
 - Sé útil desde el primer mensaje — no hagas deque el cliente tenga que repetir`;
 
-const PACO_TIMEOUT_MS = 20000; // 60 segundos — OpenClaw puede tardar en despertar
+const PACO_TIMEOUT_MS = 15000; // 15 segundos para respuesta rápida
 
 // ─────────────────────────────────────────
-// Llamada al gateway de OpenClaw via HTTP
+// Llamada directa a MiniMax API
 // ─────────────────────────────────────────
-async function callOpenClaw(mensaje, clienteNombre, plan, historial = []) {
-  if (!OPENCLAW_TOKEN) {
-    console.warn('[Paco] OPENCLAW_TOKEN no configurado, usando fallback');
+async function callMiniMax(mensaje, clienteNombre, plan, historial = []) {
+  if (!MINIMAX_API_KEY) {
+    console.warn('[Paco] MINIMAX_API_KEY no configurado, usando fallback');
     return null;
   }
 
-  // Construir mensajes para OpenAI-compatible API
+  // Construir mensajes
   const messages = [
     { role: 'system', content: `${PACO_SYSTEM_PROMPT}\n\nCliente actual: ${clienteNombre} (plan: ${plan})` },
     ...historial.slice(-10).map(m => ({
@@ -77,18 +76,17 @@ async function callOpenClaw(mensaje, clienteNombre, plan, historial = []) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), PACO_TIMEOUT_MS);
 
-    const response = await fetch(`${OPENCLAW_URL}/v1/chat/completions`, {
+    const response = await fetch(`${MINIMAX_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENCLAW_TOKEN}`,
-        'Content-Type': 'application/json',
-        'x-openclaw-agent-id': 'main'
+        'Authorization': `Bearer ${MINIMAX_API_KEY}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'minimax/MiniMax-M2.7',
+        model: 'MiniMax-M2.7',
         messages,
-        max_tokens: 1024,
-        temperature: 0.8
+        max_tokens: 800,
+        temperature: 0.7
       }),
       signal: controller.signal
     });
@@ -97,7 +95,7 @@ async function callOpenClaw(mensaje, clienteNombre, plan, historial = []) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Paco] OpenClaw error ${response.status}:`, errorText);
+      console.error(`[Paco] MiniMax error ${response.status}:`, errorText.slice(0, 200));
       return null;
     }
 
@@ -105,16 +103,16 @@ async function callOpenClaw(mensaje, clienteNombre, plan, historial = []) {
     const content = data?.choices?.[0]?.message?.content;
 
     if (!content) {
-      console.error('[Paco] Respuesta vacía de OpenClaw');
+      console.error('[Paco] Respuesta vacía de MiniMax');
       return null;
     }
 
     return content;
   } catch (err) {
     if (err.name === 'AbortError') {
-      console.warn('[Paco] Timeout llamando a OpenClaw');
+      console.warn('[Paco] Timeout llamando a MiniMax');
     } else {
-      console.error('[Paco] Error conectando a OpenClaw:', err.message);
+      console.error('[Paco] Error conectando a MiniMax:', err.message);
     }
     return null;
   }
@@ -219,8 +217,8 @@ router.post('/', authMiddleware, async (req, res) => {
     console.warn('Error obteniendo historial:', err.message);
   }
 
-  // Intentar OpenClaw, si falla usar fallback
-  let respuestaTexto = await callOpenClaw(mensaje.trim(), clienteNombre, plan, historial);
+  // Intentar MiniMax, si falla usar fallback
+  let respuestaTexto = await callMiniMax(mensaje.trim(), clienteNombre, plan, historial);
 
   if (!respuestaTexto) {
     respuestaTexto = getFallbackResponse(mensaje.trim(), clienteNombre, plan);
