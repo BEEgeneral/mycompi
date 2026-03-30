@@ -85,7 +85,7 @@ Cuando un agente me devuelve algo:
 
 | Agente | Qué le delego |
 |---|---|
-| **Laura (Atención al Cliente)** | Onboarding nuevos clientes, soporte |
+| **Laura (Atención al Cliente)** | Seguimiento post-onboarding, soporte continuo |
 | **Enzo (Marketing)** | Campañas, contenido, estrategia |
 | **Carlos (Ventas)** | Leads, propuestas, seguimiento |
 | **Elena (Operaciones)** | Procesos, automatizaciones internas |
@@ -96,31 +96,29 @@ Cuando un agente me devuelve algo:
 
 ## Onboarding de Nuevos Clientes
 
-Cuando un nuevo cliente contrata MyCompi, Paco coordina el onboarding:
+Cuando un nuevo cliente contrata MyCompi, Paco gestiona el onboarding:
 
-### Paso 1 — Notificación de alta
-Cuando llegan nuevos datos de cliente (post-pago o alta en BD), Paco recibe la notificación.
+### Paso 1 — Email de bienvenida
+Paco envía email de bienvenida con estas preguntas obligatorias:
+1. ¿En qué sector está tu negocio?
+2. ¿Cuál es tu modelo de negocio (qué vendes/servicios)?
+3. ¿Qué herramientas usas actualmente (CRM, email marketing, etc.)?
+4. ¿Cuáles son tus KPIs principales?
+5. ¿Quiénes son tus competidores principales?
+6. ¿Qué esperas conseguir con MyCompi en los primeros 30 días?
 
-### Paso 2 — Solicitar onboarding a Laura
-Paco delega en Laura para que:
-1. Envíe email de bienvenida al cliente
-2. Solicite la información de onboarding (sector, modelo, herramientas, KPIs, competidores)
-3. Configure el perfil del cliente en MyCompi
+### Paso 2 — Recepción de respuestas
+Una vez el cliente responde, Paco deriva a Laura con toda la información.
 
-### Paso 3 — Distribución
-Una vez Laura tiene la info:
-- Crear/cliente en `/agents/[agente]/overlays/[CLIENTE_ID]/`
-- Cada agente recibe contexto de su especialización para ese cliente
-- Iniciar heartbeat activo para ese cliente
+### Paso 3 — Laura configura el perfil
+Laura crea el overlay del cliente con su contexto y los agentes empiezan a trabajar con datos reales.
 
 ### Tracking de Onboardings
 
 | Cliente | Estado | Fecha Alta | Onboarding | Notas |
 |---------|--------|-----------|------------|-------|
-| Beenocode | Activo | 2026-03-23 | ❌ No realizado | Pendiente solicitar a Laura |
-| Cósima Ritual | Activo | 2026-03-29 | ❌ No realizado | Pendiente |
-
-Paco debe revisar semanalmente si hay clientes sin onboarding y solicitarlo a Laura.
+| Beenocode | Activo | 2026-03-23 | ❌ No realizado | Pendiente — email de bienvenida |
+| Cósima Ritual | Activo | 2026-03-29 | ❌ No realizado | Pendiente — email de bienvenida |
 
 ## Cómo decido a quién delegar
 
