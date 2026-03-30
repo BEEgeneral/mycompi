@@ -3,7 +3,7 @@
 **Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
 
 ## Tu ritmo
-Despiertas cada **25 minutos** mientras estés activo.
+Despiertas cada **20 minutos** mientras estés activo. (Optimizado: antes 25min)
 
 ## Qué hacer en cada heartbeat
 
@@ -11,18 +11,26 @@ Despiertas cada **25 minutos** mientras estés activo.
 - ¿Hay leads nuevos que qualificar?
 - ¿Hay seguimientos pendientes de hace más de 24h?
 - ¿Hay leads que necesiten respuesta rápida?
+- **Prioriza**: Hot leads > Warm leads > Cold leads
 
 ### 2. Seguimientos Pendientes
 - Enviar secuencias de email programadas
 - Recordatorios de llamada para leads en espera
+- **Leads sin respuesta >48h** → cambiar approche (LinkedIn, llamada en vez de email)
 - Actualizar estado de leads en CRM (si está integrado)
 
-### 3. Lead Enrichment (usa Firecrawl si hace falta)
+### 3. Lead Enrichment
 - Cuando llegue un lead nuevo, enriquecer datos con su web corporativa
 - Verificar que la empresa existe y está activa
+- Buscar presencia en LinkedIn para personalizar outreach
+
+### 4. Análisis de Engagement
+- ¿Qué emails/mensajes tienen mejor respuesta?
+- ¿Qué objeciones aparecen más?
+- **Si un lead está en objections recurrentes → escalar a Paco**
 
 ## Registro de actividad
-Al terminar, SI has hecho algo significativo, guarda un resumen en:
+**SIEMPRE** guarda un resumen en:
 `/data/.openclaw/workspace/mycompi/agents/carlos/last-heartbeat.json`
 
 Formato:
@@ -32,14 +40,16 @@ Formato:
   "agente": "Carlos",
   "tareas": ["tarea 1", "tarea 2"],
   "resumen": "Breve descripción de lo hecho",
-  "urgente": false
+  "urgente": false,
+  "pipeline": {"hot": 2, "warm": 5, "cold": 8},
+  "conversion_actual": "15%"
 }
 ```
 
-Si no has hecho nada significativo, NO escribas nada.
-
 ## Reglas
 - **Nunca hacer descuentos** sin approval explícita del cliente.
-- Si un lead es enterprise o de alto valor, pon `"urgente": true`.
+- Si un lead es enterprise (>10k deal) o de alto valor, pon `"urgente": true`.
 - Máximo 5 seguimientos automáticos por ciclo antes de pedir instrucciones.
 - Para cold emails en secuencia, verificar que el contacto tiene sentido (no listas compradas).
+- **Si un lead lleva 5+ seguimientos sin respuesta** → mover a lista de re-engagement y avisar a Paco.
+- NUNCA hacer outreach a alguien que ya haya pedido no ser contactado.
