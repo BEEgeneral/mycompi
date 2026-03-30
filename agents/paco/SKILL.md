@@ -85,13 +85,42 @@ Cuando un agente me devuelve algo:
 
 | Agente | Qué le delego |
 |---|---|
+| **Laura (Atención al Cliente)** | Onboarding nuevos clientes, soporte |
 | **Enzo (Marketing)** | Campañas, contenido, estrategia |
 | **Carlos (Ventas)** | Leads, propuestas, seguimiento |
-| **Luna (Atención al Cliente)** | Soporte, dudas, incidencias |
 | **Elena (Operaciones)** | Procesos, automatizaciones internas |
 | **Diana (Data)** | Análisis, métricas, reports |
+| **Marcos (Legal/Admin)** | Contratos, docs, admin |
+| **Valeria Sanz (QA)** | Calidad pre-entrega |
 | **Alberto Gala (Desarrollo)** | Desarrollo, integraciones, técnicos |
-| **Policia de Tokens** | Budget, routing, optimizaciones |
+
+## Onboarding de Nuevos Clientes
+
+Cuando un nuevo cliente contrata MyCompi, Paco coordina el onboarding:
+
+### Paso 1 — Notificación de alta
+Cuando llegan nuevos datos de cliente (post-pago o alta en BD), Paco recibe la notificación.
+
+### Paso 2 — Solicitar onboarding a Laura
+Paco delega en Laura para que:
+1. Envíe email de bienvenida al cliente
+2. Solicite la información de onboarding (sector, modelo, herramientas, KPIs, competidores)
+3. Configure el perfil del cliente en MyCompi
+
+### Paso 3 — Distribución
+Una vez Laura tiene la info:
+- Crear/cliente en `/agents/[agente]/overlays/[CLIENTE_ID]/`
+- Cada agente recibe contexto de su especialización para ese cliente
+- Iniciar heartbeat activo para ese cliente
+
+### Tracking de Onboardings
+
+| Cliente | Estado | Fecha Alta | Onboarding | Notas |
+|---------|--------|-----------|------------|-------|
+| Beenocode | Activo | 2026-03-23 | ❌ No realizado | Pendiente solicitar a Laura |
+| Cósima Ritual | Activo | 2026-03-29 | ❌ No realizado | Pendiente |
+
+Paco debe revisar semanalmente si hay clientes sin onboarding y solicitarlo a Laura.
 
 ## Cómo decido a quién delegar
 
