@@ -53,6 +53,7 @@ const stripeRoutes = require('./routes/stripe');
 const toolsRoutes = require('./routes/tools');
 const { router: notificacionesRoutes } = require('./routes/notificaciones');
 const colaRoutes = require('./routes/cola');
+const seedPlan30Routes = require('./routes/seedPlan30');
 const workerRoutes = require('./routes/worker');
 
 const { AGENTS } = require('./services/agentLoader');
@@ -67,6 +68,7 @@ app.use('/api/email', emailRoutes);
 app.use('/api/stripe', stripeRoutes);
 app.use('/api/notificaciones', notificacionesRoutes);
 app.use('/api/cola', colaRoutes);
+app.use('/api/clientes', seedPlan30Routes);
 app.use('/api/worker', workerRoutes);
 
 // Exponer AGENTS para las rutas

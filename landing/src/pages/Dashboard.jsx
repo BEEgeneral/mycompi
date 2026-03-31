@@ -476,73 +476,300 @@ function ChatPanel() {
   )
 }
 // ─────────────────────────────────────────
-// MI EQUIPO TAB - todos los Compis operativos
+// MI EQUIPO TAB - Jerarquía visual + SEO de Paco
 // ─────────────────────────────────────────
+// ─────────────────────────────────────────
+// MI EQUIPO TAB — Jerarquía visual: CEO → Paco → 7 Compis
+// ─────────────────────────────────────────
+function JerarquiaCard({ agente, onClick, expanded }) {
+  return (
+    <div
+      onClick={() => onClick(agente.id)}
+      className={`relative flex flex-col items-center cursor-pointer group transition-all duration-200 ${
+        expanded ? '' : 'hover:scale-105'
+      }`}
+    >
+      <div className={`relative bg-gradient-to-br ${agente.color} rounded-2xl p-4 text-white shadow-lg transition-all ${
+        expanded ? 'ring-4 ring-brand-yellow ring-offset-2' : 'group-hover:shadow-xl'
+      }`}
+        style={{ minWidth: 130 }}
+      >
+        <div className="text-3xl mb-1">{agente.emoji}</div>
+        <div className="font-bold text-sm text-center leading-tight">{agente.nombre}</div>
+        <div className="text-[10px] text-white/70 text-center mt-0.5">{agente.rol}</div>
+        <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-white" />
+        {agente.jobsActivos > 0 && (
+          <div className="absolute -top-1.5 -right-1.5 bg-brand-yellow text-brand-dark text-[9px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow">
+            {agente.jobsActivos}
+          </div>
+        )}
+      </div>
+      {agente.hijos && <div className="w-0.5 h-5 bg-[#e0d8cf]" />}
+    </div>
+  )
+}
+
+function AgenteJobsPanel({ agente, jobs, onClose }) {
+  if (!agente) return null
+  const prioridadColor = {
+    CRITICA: 'bg-red-100 text-red-700 border-red-200',
+    ALTA: 'bg-orange-100 text-orange-700 border-orange-200',
+    MEDIA: 'bg-blue-100 text-blue-700 border-blue-200',
+    BAJA: 'bg-gray-100 text-gray-600 border-gray-200',
+  }
+  return (
+    <div className="border-t-2 border-brand-pastel pt-5 mt-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${agente.color} flex items-center justify-center text-lg shadow`}>
+            {agente.emoji}
+          </div>
+          <div>
+            <div className="font-bold text-brand-dark">{agente.nombre}</div>
+            <div className="text-xs text-brand-secondary">{agente.rol}</div>
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          className="text-brand-muted hover:text-brand-dark transition-colors text-sm px-3 py-1.5 rounded-xl hover:bg-brand-pastel/30"
+        >
+          ✕ Cerrar
+        </button>
+      </div>
+
+      {jobs.length === 0 ? (
+        <div className="text-center py-8 border-2 border-dashed border-brand-pastel rounded-xl">
+          <div className="text-3xl mb-2">{agente.emoji}</div>
+          <div className="text-sm text-brand-secondary font-medium">{agente.nombre} no tiene tareas activas ahora mismo</div>
+          <div className="text-xs text-brand-muted mt-1">Las tareas aparecerán cuando Paco le asigne trabajo</div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <div className="text-xs font-bold text-brand-muted uppercase tracking-widest mb-3">
+            {jobs.length} tarea{jobs.length !== 1 ? 's' : ''} activa{jobs.length !== 1 ? 's' : ''}
+          </div>
+          {jobs.map((job, i) => (
+            <div key={job.id || i} className={`flex items-start gap-3 p-4 rounded-xl border text-sm ${
+              prioridadColor[job.prioridad] || prioridadColor.MEDIA
+            }`}>
+              <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
+                job.estado === 'IN_PROGRESS' ? 'bg-blue-500 animate-pulse' :
+                job.estado === 'TODO' ? 'bg-gray-400' :
+                job.estado === 'COMPLETED' ? 'bg-green-500' : 'bg-red-500'
+              }`} />
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold leading-snug">{job.titulo}</div>
+                {job.descripcion && (
+                  <div className="text-xs mt-1 opacity-75 leading-relaxed line-clamp-2">
+                    {job.descripcion.substring(0, 120)}{job.descripcion.length > 120 ? '…' : ''}
+                  </div>
+                )}
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span className="text-[10px] font-bold uppercase">{job.estado.replace('_', ' ')}</span>
+                  <span className="text-[10px] opacity-60">·</span>
+                  <span className="text-[10px] opacity-60">{job.prioridad}</span>
+                  {job.tags?.filter(t => t.startsWith('semana')).length > 0 && (
+                    <>
+                      <span className="text-[10px] opacity-60">·</span>
+                      <span className="text-[10px] opacity-60">{job.tags.filter(t => t.startsWith('semana')).join(', ')}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function EquipoPanel({ agentes, usuario }) {
-  // Siempre usamos TODOS_LOS_AGENTES (7 Compis)
-  const todosLosAgentes = TODOS_LOS_AGENTES
+  const [expandedAgente, setExpandedAgente] = useState(null)
+  const [jobsActivos, setJobsActivos] = useState({})
+  const [loadingJobs, setLoadingJobs] = useState(false)
+  const [token, setToken] = useState(() => localStorage.getItem('mycompi_token'))
+
+  useEffect(() => {
+    const sync = () => setToken(localStorage.getItem('mycompi_token'))
+    window.addEventListener('mycompi_auth_change', sync)
+    return () => window.removeEventListener('mycompi_auth_change', sync)
+  }, [])
+
+  // Jerarquía completa
+  const jerarquia = [
+    { id: 'ceo', nombre: usuario?.nombre || 'Tú', rol: 'CEO / Titular', emoji: '👑', color: 'from-[#FFD054] to-[#f59e0b]', hijos: true, nivel: 'ceo' },
+    { id: 'paco', nombre: 'Paco', rol: 'Orquestador', emoji: '🎯', color: 'from-[#2D3261] to-[#4a5090]', hijos: true, nivel: 'orquestador' },
+    ...TODOS_LOS_AGENTES.map(a => ({ ...a, hijos: false, nivel: 'agente' })),
+  ]
+
+  const loadJobs = async (agenteId) => {
+    if (!token || jobsActivos[agenteId]) return
+    setLoadingJobs(true)
+    try {
+      const res = await fetchConAuth(`/api/trabajos?estado=TODO&estado=IN_PROGRESS&agente_id=${agenteId}&limit=5`)
+      if (res.ok) {
+        const data = await res.json()
+        setJobsActivos(prev => ({ ...prev, [agenteId]: data.trabajos || data || [] }))
+      }
+    } catch {}
+    setLoadingJobs(false)
+  }
+
+  const handleClick = (agenteId) => {
+    if (expandedAgente === agenteId) {
+      setExpandedAgente(null)
+    } else {
+      setExpandedAgente(agenteId)
+      loadJobs(agenteId)
+    }
+  }
+
+  const isCeo = (id) => id === 'ceo'
+  const isPaco = (id) => id === 'paco'
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-extrabold text-brand-dark mb-2">Tu equipo de Compis</h2>
-        <p className="text-sm text-brand-secondary">7 Compis especializados trabajando 24/7 para tu negocio</p>
+        <h2 className="text-xl font-extrabold text-brand-dark mb-1">🎯 Tu equipo de Compis</h2>
+        <p className="text-sm text-brand-secondary">7 Compis especializados trabajando 24/7. Pulsa sobre cualquier miembro para ver sus tareas activas.</p>
       </div>
 
-      {/* Director / Orquestador - Paco */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
-          🎯 Director / Orquestador
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="flex items-center gap-4 bg-white border-2 border-brand-dark rounded-2xl p-4 shadow-sm">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2D3261] to-[#4a5090] flex items-center justify-center text-xl shadow-md">🎯</div>
-            <div className="flex-1">
-              <div className="text-sm font-bold text-brand-dark">Paco</div>
-              <div className="text-xs text-brand-secondary">Orquestador · Coordina el equipo</div>
-            </div>
-            <div className="px-2.5 py-1 bg-brand-dark/10 rounded-full text-[10px] font-bold text-brand-dark">DIRECTOR</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Los 6 Compis especializados */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
-          🤖 Compis especializados
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {todosLosAgentes.map(a => (
-            <div key={a.id} className="flex items-center gap-4 bg-white border-2 border-brand-pastel rounded-2xl p-4 shadow-sm hover:border-brand-yellow transition-all">
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center text-base shadow-md`}>
-                {a.emoji}
+      {/* ── CEO ── */}
+      {usuario && jerarquia.find(j => j.id === 'ceo') && (() => {
+        const ceo = jerarquia.find(j => j.id === 'ceo')
+        const expanded = expandedAgente === 'ceo'
+        return (
+          <div>
+            {/* CEO Card */}
+            <div className="flex items-center gap-4 bg-brand-yellow/10 border-2 border-brand-yellow/40 rounded-2xl p-5 mb-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FFD054] to-[#f59e0b] flex items-center justify-center text-3xl shadow-lg flex-shrink-0">
+                👑
               </div>
               <div className="flex-1">
-                <div className="text-sm font-bold text-brand-dark">{a.nombre}</div>
-                <div className="text-xs text-brand-secondary">{a.rol}</div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg font-extrabold text-brand-dark">{ceo.nombre}</span>
+                  <span className="text-[10px] font-bold bg-brand-yellow/40 text-brand-dark px-2 py-0.5 rounded-full uppercase tracking-wider">CEO / Titular</span>
+                </div>
+                <p className="text-sm text-brand-secondary leading-relaxed">
+                  руководитель. Tienes a Paco y 7 Compis trabajando para ti.
+                  {!expandedAgente && ' Pulsa sobre cualquier miembro del equipo para ver qué están haciendo.'}
+                </p>
               </div>
-              <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" title="Operativo" />
+              <button
+                onClick={() => handleClick('ceo')}
+                className="flex-shrink-0 text-xs font-semibold bg-brand-yellow/30 hover:bg-brand-yellow/50 text-brand-dark px-4 py-2 rounded-xl transition-colors"
+              >
+                {expanded ? '▲ Ocultar' : '▼ Tu info'}
+              </button>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* CEO / Titular */}
-      {usuario && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
-            👑 Tú
+            {/* Info expandida del CEO */}
+            {expanded && (
+              <div className="bg-white border-2 border-brand-yellow/30 rounded-2xl p-5 mb-4">
+                <div className="text-xs font-bold text-brand-muted uppercase tracking-widest mb-3">Tu información</div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: 'Nombre', value: usuario?.nombre || '—' },
+                    { label: 'Email', value: usuario?.email || '—' },
+                    { label: 'Miembro desde', value: usuario?.createdAt ? new Date(usuario.createdAt).toLocaleDateString('es-ES') : '—' },
+                    { label: 'Tu equipo', value: 'Paco + 7 Compis' },
+                  ].map(stat => (
+                    <div key={stat.label} className="bg-brand-cream rounded-xl px-4 py-3">
+                      <div className="text-[10px] text-brand-muted font-semibold uppercase tracking-wider">{stat.label}</div>
+                      <div className="text-sm font-bold text-brand-dark mt-0.5">{stat.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-4 bg-white border-2 border-brand-yellow rounded-2xl p-4 shadow-sm">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FFD054] to-[#f59e0b] flex items-center justify-center text-xl shadow-md">👑</div>
-            <div className="flex-1">
-              <div className="text-sm font-bold text-brand-dark">{usuario.nombre || 'Tú'}</div>
-              <div className="text-xs text-brand-secondary">CEO / Titular</div>
+        )
+      })()}
+
+      {/* ── PACO — SEO completo ── */}
+      {(() => {
+        const paco = jerarquia.find(j => j.id === 'paco')
+        const pacoJobs = jobsActivos['paco'] || []
+        const expanded = expandedAgente === 'paco'
+        return (
+          <div className="bg-gradient-to-br from-[#2D3261] to-[#4a5090] rounded-2xl p-6 text-white shadow-lg">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-4xl shadow-inner flex-shrink-0">
+                🎯
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="text-lg font-extrabold">Paco</span>
+                  <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full uppercase tracking-wider">Orquestador</span>
+                  <span className="text-[10px] bg-green-400/80 text-[#2D3261] px-2 py-0.5 rounded-full font-bold">● Activo</span>
+                </div>
+                <p className="text-sm text-white/75 leading-relaxed">
+                  Soy Paco, tu director de equipo. Coordino a todos los Compis para que tu negocio avance automáticamente.
+                  Cada mañana te cuento qué se hace y superviso que todo salga bien.
+                  {pacoJobs.length > 0 ? ` Ahora mismo tengo <strong>${pacoJobs.length} tarea${pacoJobs.length !== 1 ? 's' : ''} activas</strong>.` : ''}
+                </p>
+              </div>
             </div>
-            <div className="px-2.5 py-1 bg-brand-yellow/20 rounded-full text-[10px] font-bold text-brand-dark">TÚ</div>
+
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {[
+                { label: 'Equipo', value: '7 Compis' },
+                { label: 'Tareas activas', value: pacoJobs.length > 0 ? `${pacoJobs.length} ahora` : '—' },
+                { label: 'Coordinando', value: jerarquia.length - 2 + ' miembros' },
+              ].map(stat => (
+                <div key={stat.label} className="bg-white/10 rounded-xl px-3 py-2.5 text-center">
+                  <div className="text-xs text-white/60">{stat.label}</div>
+                  <div className="text-sm font-bold mt-0.5">{stat.value}</div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => handleClick('paco')}
+              className="w-full flex items-center justify-center gap-2 bg-white/15 hover:bg-white/25 transition-colors rounded-xl py-2.5 text-sm font-semibold"
+            >
+              {expanded ? '▲ Ocultar tareas' : '▼ Ver tareas de Paco'}
+              {loadingJobs && expanded && <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+            </button>
+
+            {expanded && (
+              <AgenteJobsPanel agente={paco} jobs={pacoJobs} onClose={() => setExpandedAgente(null)} />
+            )}
           </div>
+        )
+      })()}
+
+      {/* ── LOS 7 COMPIS ── */}
+      <div>
+        <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest mb-4">
+          🤖 Compis especializados
         </div>
-      )}
+
+        <div className="grid grid-cols-4 gap-4 mb-4">
+          {TODOS_LOS_AGENTES.map(a => {
+            const expanded = expandedAgente === a.id
+            const agenteMeta = jerarquia.find(j => j.id === a.id)
+            return (
+              <div key={a.id} className="flex flex-col items-center">
+                <JerarquiaCard
+                  agente={{ ...a, ...agenteMeta, jobsActivos: (jobsActivos[a.id] || []).length }}
+                  onClick={handleClick}
+                  expanded={expanded}
+                />
+              </div>
+            )
+          })}
+        </div>
+
+        {expandedAgente && expandedAgente !== 'ceo' && expandedAgente !== 'paco' && (
+          <AgenteJobsPanel
+            agente={jerarquia.find(j => j.id === expandedAgente)}
+            jobs={jobsActivos[expandedAgente] || []}
+            onClose={() => setExpandedAgente(null)}
+          />
+        )}
+      </div>
     </div>
   )
 }

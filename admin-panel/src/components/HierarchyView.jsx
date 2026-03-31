@@ -6,7 +6,7 @@ const JERARQUIA = {
   rol: 'CEO / Owner',
   inicial: 'AG',
   emoji: '👤',
-  color: 'from-gray-800 to-gray-900',
+  color: 'from-amber-500 to-orange-600',
   hijos: [
     {
       nombre: 'Paco',
@@ -23,14 +23,14 @@ const JERARQUIA = {
           color: 'from-pink-500 to-rose-600',
         },
         {
-          nombre: 'Enzo Herrera',
+          nombre: 'Enzo Costa',
           rol: 'Marketing',
           inicial: 'E',
           emoji: '📊',
           color: 'from-blue-500 to-indigo-600',
         },
         {
-          nombre: 'Carlos Mendoza',
+          nombre: 'Carlos Ruiz',
           rol: 'Ventas',
           inicial: 'C',
           emoji: '💼',
@@ -44,32 +44,25 @@ const JERARQUIA = {
           color: 'from-orange-500 to-amber-600',
         },
         {
-          nombre: 'Diana Palau',
+          nombre: 'Diana Fabián',
           rol: 'Data & Growth',
           inicial: 'DP',
           emoji: '📈',
           color: 'from-purple-500 to-violet-600',
         },
         {
-          nombre: 'Marcos Fernández',
+          nombre: 'Marcos Torralba',
           rol: 'Desarrollo',
           inicial: 'MF',
           emoji: '💻',
           color: 'from-cyan-500 to-teal-600',
         },
         {
-          nombre: 'Pelayo',
-          rol: 'Asistente Personal',
-          inicial: 'PL',
-          emoji: '🤖',
-          color: 'from-gray-500 to-gray-600',
-        },
-        {
-          nombre: 'Policía de Tokens',
-          rol: 'Auditoría de Gasto',
-          inicial: 'PT',
-          emoji: '🚨',
-          color: 'from-red-500 to-rose-600',
+          nombre: 'Valeria Sanz',
+          rol: 'Quality Assurance',
+          inicial: 'VS',
+          emoji: '✅',
+          color: 'from-teal-500 to-emerald-600',
         },
       ],
     },
@@ -143,8 +136,8 @@ export default function HierarchyView() {
           { color: 'bg-orange-500', label: 'Operaciones' },
           { color: 'bg-purple-500', label: 'Data & Growth' },
           { color: 'bg-cyan-500', label: 'Desarrollo' },
-          { color: 'bg-gray-500', label: 'Asistente Personal' },
-          { color: 'bg-red-500', label: 'Policía de Tokens' },
+          { color: 'bg-teal-500', label: 'Quality Assurance' },
+          { color: 'bg-indigo-500', label: 'Orquestador' },
         ].map(item => (
           <div key={item.label} className="flex items-center gap-1.5">
             <div className={`w-3 h-3 rounded-full ${item.color}`} />

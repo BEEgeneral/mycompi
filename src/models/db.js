@@ -26,13 +26,14 @@ try {
   console.log('⚠️ pg module not available, using mock');
 }
 
-pool.on('connect', () => {
-  console.log('📦 Conectado a PostgreSQL');
-});
-
-pool.on('error', (err) => {
-  console.error('Error en PostgreSQL:', err.message);
-});
+if (typeof pool.on === 'function') {
+  pool.on('connect', () => {
+    console.log('📦 Conectado a PostgreSQL');
+  });
+  pool.on('error', (err) => {
+    console.error('Error en PostgreSQL:', err.message);
+  });
+}
 
 const initDB = async () => {
   console.log('📦 Database init skipped (using mock or will init on connection)');
