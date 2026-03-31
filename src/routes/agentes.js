@@ -1,35 +1,37 @@
+/**
+ * Rutas de agentes — CRUD completo
+ * Tabla: Agente (clienteId, nombre, tipo, budgetTokensMes, tokensUsadosMes, etc.)
+ */
 const express = require('express');
 const { pool } = require('../models/db');
 const { authMiddleware } = require('./auth');
 
 const router = express.Router();
 
-// Obtener todos los agentes del cliente
+// ─── GET /api/agentes ─── Todos los agentes del cliente
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT * FROM agentes WHERE cliente_id = $1 ORDER BY created_at DESC`,
+      `SELECT * FROM "Agente" WHERE "clienteId" = $1 ORDER BY "createdAt" DESC`,
       [req.clienteId]
     );
-    res.json(result.rows);
+    res.json({ agentes: result.rows });
   } catch (err) {
     console.error('Error obteniendo agentes:', err);
     res.status(500).json({ error: 'Error interno' });
   }
 });
 
-// Obtener un agente específico
+// ─── GET /api/agentes/:id ─── Un agente específico
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT * FROM agentes WHERE id = $1 AND cliente_id = $2`,
+      `SELECT * FROM "Agente" WHERE id = $1 AND "clienteId" = $2`,
       [req.params.id, req.clienteId]
     );
-    
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Agente no encontrado' });
     }
-    
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error obteniendo agente:', err);
@@ -37,18 +39,19 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Crear un agente
+// ─── POST /api/agentes ─── Crear agente
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { nombre, tipo, core_expertise, especializacion, config } = req.body;
-    
+    const { nombre, tipo, email, personalidad, bio, habilidades, horario, config, estado } = req.body;
+    if (!nombre) return res.status(400).json({ error: 'nombre requerido' });
+
     const result = await pool.query(
-      `INSERT INTO agentes (cliente_id, nombre, tipo, core_expertise, especializacion, config) 
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO "Agente" ("clienteId", nombre, tipo, email, personalidad, bio, habilidades, horario, config, estado, "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
        RETURNING *`,
-      [req.clienteId, nombre, tipo, core_expertise, especializacion, JSON.stringify(config || {})]
+      [req.clienteId, nombre, tipo || 'SUPPORT', email || null, personalidad || null, bio || null,
+       habilidades || null, horario || null, config ? JSON.stringify(config) : '{}', estado || 'ACTIVE']
     );
-    
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error creando agente:', err);
@@ -56,28 +59,38 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// Actualizar agente
+// ─── PUT /api/agentes/:id ─── Actualizar agente
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
-    const { nombre, tipo, core_expertise, especializacion, estado, config } = req.body;
-    
+    const { nombre, tipo, email, personalidad, bio, habilidades, horario, config, estado,
+            budgetTokensMes, alertaPorcentaje, tokensUsadosMes } = req.body;
+
     const result = await pool.query(
-      `UPDATE agentes 
-       SET nombre = COALESCE($1, nombre),
-           tipo = COALESCE($2, tipo),
-           core_expertise = COALESCE($3, core_expertise),
-           especializacion = COALESCE($4, especializacion),
-           estado = COALESCE($5, estado),
-           config = COALESCE($6, config)
-       WHERE id = $7 AND cliente_id = $8
+      `UPDATE "Agente" SET
+        nombre = COALESCE($1, nombre),
+        tipo = COALESCE($2, tipo),
+        email = COALESCE($3, email),
+        personalidad = COALESCE($4, personalidad),
+        bio = COALESCE($5, bio),
+        habilidades = COALESCE($6, habilidades),
+        horario = COALESCE($7, horario),
+        config = COALESCE($8, config),
+        estado = COALESCE($9, estado),
+        "budgetTokensMes" = COALESCE($10, "budgetTokensMes"),
+        "alertaPorcentaje" = COALESCE($11, "alertaPorcentaje"),
+        "tokensUsadosMes" = COALESCE($12, "tokensUsadosMes"),
+        "updatedAt" = NOW()
+       WHERE id = $13 AND "clienteId" = $14
        RETURNING *`,
-      [nombre, tipo, core_expertise, especializacion, estado, config ? JSON.stringify(config) : null, req.params.id, req.clienteId]
+      [nombre, tipo, email, personalidad, bio, habilidades, horario,
+       config ? JSON.stringify(config) : null, estado,
+       budgetTokensMes, alertaPorcentaje, tokensUsadosMes,
+       req.params.id, req.clienteId]
     );
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Agente no encontrado' });
     }
-    
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error actualizando agente:', err);
@@ -85,112 +98,19 @@ router.put('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Eliminar agente
+// ─── DELETE /api/agentes/:id ─── Eliminar agente
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      `DELETE FROM agentes WHERE id = $1 AND cliente_id = $2 RETURNING id`,
+      `DELETE FROM "Agente" WHERE id = $1 AND "clienteId" = $2 RETURNING id`,
       [req.params.id, req.clienteId]
     );
-    
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Agente no encontrado' });
     }
-    
-    res.json({ message: 'Agente eliminado' });
+    res.json({ ok: true });
   } catch (err) {
     console.error('Error eliminando agente:', err);
-    res.status(500).json({ error: 'Error interno' });
-  }
-});
-
-// Obtener skills de un agente
-router.get('/:id/skills', authMiddleware, async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT * FROM skills WHERE agente_id = $1`,
-      [req.params.id]
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error obteniendo skills:', err);
-    res.status(500).json({ error: 'Error interno' });
-  }
-});
-
-// Crear skill para un agente
-router.post('/:id/skills', authMiddleware, async (req, res) => {
-  try {
-    // Verificar que el agente pertenece al cliente
-    const agenteCheck = await pool.query(
-      `SELECT id FROM agentes WHERE id = $1 AND cliente_id = $2`,
-      [req.params.id, req.clienteId]
-    );
-    
-    if (agenteCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Agente no encontrado' });
-    }
-    
-    const { nombre, contenido } = req.body;
-    
-    const result = await pool.query(
-      `INSERT INTO skills (agente_id, nombre, contenido) 
-       VALUES ($1, $2, $3)
-       RETURNING *`,
-      [req.params.id, nombre, contenido]
-    );
-    
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Error creando skill:', err);
-    res.status(500).json({ error: 'Error interno' });
-  }
-});
-
-// Obtenerlearnings del cliente
-router.get('/learnings', authMiddleware, async (req, res) => {
-  try {
-    const { query, tags } = req.query;
-    
-    let sql = 'SELECT * FROM learnings WHERE cliente_id = $1';
-    const params = [req.clienteId];
-    
-    if (query) {
-      sql += ` AND (titulo ILIKE $2 OR contenido ILIKE $2)`;
-      params.push(`%${query}%`);
-    }
-    
-    if (tags) {
-      const tagsArray = tags.split(',');
-      sql += ` AND tags && $${params.length + 1}`;
-      params.push(tagsArray);
-    }
-    
-    sql += ' ORDER BY created_at DESC';
-    
-    const result = await pool.query(sql, params);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error obteniendo learnings:', err);
-    res.status(500).json({ error: 'Error interno' });
-  }
-});
-
-// Crear learning
-router.post('/learnings', authMiddleware, async (req, res) => {
-  try {
-    const { titulo, contenido, tags } = req.body;
-    
-    const result = await pool.query(
-      `INSERT INTO learnings (cliente_id, titulo, contenido, tags) 
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [req.clienteId, titulo, contenido, tags || []]
-    );
-    
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Error creando learning:', err);
     res.status(500).json({ error: 'Error interno' });
   }
 });

@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-03-31T17:45:00Z",
+  "timestamp": "2026-03-31T18:15:00Z",
   "agente": "Elena",
   "tareas": ["health_check_basico"],
-  "resumen": "Heartbeat 2026-03-31T17:45Z. Sin incidencias. Proyecto sin logs activos todavía. No hay PM2 ni servicio local corriendo en este host.",
+  "resumen": "Heartbeat 2026-03-31T18:15Z. Sin incidencias. Proyecto MyCompi sin logs activos ni PM2 corriendo en este host. Sistemas de terceros (Stripe, email, CRM) no requieren check local — se validan via integraciones activas. No hay automatizaciones activas que supervisar.",
   "urgente": false,
   "systems_status": "all_green",
   "automatizaciones_creadas": 0

@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-03-31T17:33:00Z",
+  "timestamp": "2026-03-31T18:34:00Z",
   "agente": "Diana",
   "tareas": [
-    "Revisión inicial heartbeat Diana",
-    "Verificación de estado del sistema MyCompi",
-    "Detección: 8 días sin actividad en producción"
+    "Revisión heartbeat periódico Diana",
+    "Verificación de estado sistema MyCompi",
+    "Check de nuevos datos o cambios desde último heartbeat"
   ],
-  "resumen": "Heartbeat Diana activo. Sistema MyCompi lleva 8 días sin actividad real. No hay datos de métricas (Neon DB no accesible desde aquí, sin producto en producción). Sin anomalías detectadas en métricas porque no hay datos que analizar. Growth opportunities documentadas en strategy-proposals.md.",
+  "resumen": "Heartbeat Diana activo. Sistema MyCompi sigue dormant (sin actividad en producción). Sin cambios desde último heartbeat. No hay acceso a Neon DB - métricas no disponibles. Sin anomalías detectadas. Strategy proposals actualizadas con proposal de churn prediction para Carlos.",
   "urgente": false,
   "metrics_highlight": {
     "mrr": "sin datos",
     "churn": "sin datos",
     "new_users": 0,
-    "status": "SISTEMA DORMIDO - 8 días sin actividad"
+    "status": "SISTEMA DORMIDO"
   },
   "insights": [
-    "No hay acceso a Neon DB desde este contexto - métricas de producto no disponibles",
-    "MyCompi no está deployado en producción - sin datos reales de usage",
-    "No hay anomalías que detectar sin datos de referencia",
-    "Strategy proposals de Carlos y otros agentes están actualizadas y disponibles"
+    "Sin cambios en el estado del sistema desde último heartbeat",
+    "Producto sigue sin estar en producción - Diana no puede hacer análisis real",
+    "MyCompi necesita deploy en producción para que Diana trabaje con datos reales",
+    "Proposal de churn prediction listo para revisión de Carlos"
   ],
-  "nota_sistema": "El producto necesita estar en producción para que Diana pueda hacer su trabajo real de data analytics. Sin datos de Neon, no hay métricas que revisar, retener ni analizar."
+  "nota_sistema": "Es 02:34 AM hora local - madrugada. Sin actividad esperada fuera de horario."
 }

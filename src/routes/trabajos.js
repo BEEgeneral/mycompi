@@ -42,6 +42,28 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+// ─── GET /api/trabajos/pending-approval ─── Jobs pendientes de approval
+router.get('/pending-approval', authMiddleware, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT t.*, a.nombre as agente_nombre, a.tipo as agente_tipo
+       FROM "Trabajo" t
+       LEFT JOIN "Agente" a ON t."agenteId" = a.id
+       WHERE t."clienteId" = $1
+         AND t.requiereAprobacion = true
+         AND t."aprobadoAt" IS NULL
+         AND t.estado NOT IN ('COMPLETED', 'FAILED', 'BLOCKED')
+       ORDER BY t.prioridad = 'CRITICA' DESC, t."createdAt" ASC
+       LIMIT 50`,
+      [req.clienteId]
+    );
+    res.json({ trabajos: result.rows, total: result.rows.length });
+  } catch (err) {
+    console.error('Error pending-approval:', err);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 // Obtener un trabajo específico
 router.get('/:id', authMiddleware, async (req, res) => {
   try {

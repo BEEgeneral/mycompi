@@ -1,29 +1,28 @@
 {
-  "timestamp": "2026-04-01T01:34:00Z",
+  "timestamp": "2026-03-31T18:35:11Z",
   "agente": "Marcos",
   "tareas": [
-    "Health check landing + app (sin acceso externo directo)",
-    "Revisión SEO: meta tags OK, FAQPage schema OK, sitemap pendiente",
-    "Revisión CI/CD: dist no construida, git working tree clean",
-    "Research semanal: 7 proposals de web dev trends 2026 en strategy-proposals.md",
-    "Revisión deuda técnica: smoke tests pendientes, edge CDN pendiente"
+    "Health check sitio — mycompi.onrender.com ✓ (HTTP 200)",
+    "Health check dominio — mycompi.com ✓ (HTTP 200)",
+    "Verificación SSL — vigente (onrender.com)",
+    "Revisión sitemap.xml — error: devuelve HTML en vez de XML (sigue pendiente)",
+    "Revisión .gitignore — dist/ en ignore, build output no está en repo (sin cambios)",
+    "Git status — limpio en landing/ (sin cambios pendientes)",
+    "Research semanal — ya en strategy-proposals.md (7 proposals docs)"
   ],
-  "resumen": "Heartbeat 01:34 AM — Landing en producción (mycompi.onrender.com). Meta tags SEO correctos, FAQPage schema markup implementado. SSL vigente (Render gestiona). Sitemap.xml no existe — crear. Build dist no está en repo (falta commit del build). Sin acceso para hacer curl directo al health endpoint desde este entorno. Propuestas de research 2026 ya documentadas en strategy-proposals.md (Marcos). Tareas pendientes: smoke tests Playwright, Cloudflare CDN proxy, auditoría PageSpeed.",
+  "resumen": "Heartbeat 02:35 AM — Ambos endpoints responding 200. SSL vigente. sitemap.xml sigue devolviendo HTML en lugar de XML (el servidor no tiene un sitemap real, solo es served como fallback). Build dist sigue en .gitignore. Sin cambios en landing/. Sitio estable, sin incidencias.",
   "urgente": false,
-  "site_status": "unknown",
+  "site_status": "up",
   "errors_detected": 0,
   "deploys_pendientes": 1,
   "issues_encontrados": [
-    "sitemap.xml no existe en landing ni en repo — crear",
-    "Build output (dist/) no está en el repo — considerar añadir al .gitignore o commitear",
-    "FRONTEND_URL en .env apunta a mycompi.com pero landing está en mycompi.onrender.com — verificar canonical",
-    "Sin acceso directo para hacer health check externo (curl bloqueado)",
-    "Smoke tests no implementados aún (proposal de Valeria + Marcos)"
+    "sitemap.xml: el servidor devuelve 200 con contenido HTML en vez de un XML real — necesita implementación server-side",
+    "dist/ en .gitignore — build output no está en repo (comportamiento esperado pero impede CI desde repo limpio)"
   ],
   "tareas_pendientes": [
-    "Crear sitemap.xml dinámico para la landing",
-    "Evaluar Cloudflare CDN proxy como quick win (30min, free)",
-    "Auditar Core Web Vitals con PageSpeed Insights",
+    "Implementar sitemap.xml real en el servidor (Render) — mapear rutas válidas",
+    "Evaluar Cloudflare CDN proxy como quick win (30min, free tier)",
+    "Auditar Core Web Vitals con PageSpeed Insights (sin acceso directo aún)",
     "Implementar smoke tests Playwright en CI (coordinar con Valeria)",
     "Reconciliar FRONTEND_URL: mycompi.com vs mycompi.onrender.com"
   ]
