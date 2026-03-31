@@ -72,6 +72,8 @@ function Sidebar({ tab, onTabChange, agentes, onLogout }) {
     { id: 'chat', emoji: '🎯', label: 'Chat con Paco' },
     { id: 'equipo', emoji: '🤖', label: 'Mi equipo' },
     { id: 'actividad', emoji: '📊', label: 'Actividad' },
+    { id: 'costes', emoji: '💰', label: 'Costes' },
+    { id: 'audit', emoji: '📜', label: 'Registro' },
     { id: 'documentos', emoji: '📄', label: 'Mis documentos' },
     { id: 'decisiones', emoji: '📋', label: 'Decisiones' },
     { id: 'cuenta', emoji: '⚙️', label: 'Mi cuenta' },
@@ -1108,6 +1110,308 @@ function CuentaPanel({ usuario, plan, token, onLogout }) {
 }
 
 // ─────────────────────────────────────────
+// COSTES PANEL — Budget agentes + token usage (FASE 2)
+// ─────────────────────────────────────────
+function CostesPanel({ token }) {
+  const [loading, setLoading] = useState(true)
+  const [uso, setUso] = useState([])
+  const [agentes, setAgentes] = useState([])
+  const [presupuesto, setPresupuesto] = useState({})
+  const [tabVer, setTabVer] = useState('resumen')
+
+  useEffect(() => {
+    if (!token) return
+    fetchConAuth('/api/agentes')
+      .then(r => r.json())
+      .then(d => {
+        const ags = Array.isArray(d) ? d : (d.agentes || [])
+        setAgentes(ags)
+        // Calcular totales
+        const total = ags.reduce((sum, a) => {
+          const used = a.tokensUsadosMes || 0
+          const budget = a.budgetTokensMes || 1000000
+          return { used: sum.used + used, budget: sum.budget + budget }
+        }, { used: 0, budget: 0 })
+        setPresupuesto(total)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [token])
+
+  // Obtener usage real desde audit/tokens
+  useEffect(() => {
+    if (!token) return
+    fetchConAuth('/api/audit/tokens')
+      .then(r => r.json())
+      .then(d => { if (d.usage) setUso(d.usage) })
+      .catch(() => {})
+  }, [token])
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-40">
+      <div className="text-[#b0a898]">Cargando costes...</div>
+    </div>
+  )
+
+  const pct = presupuesto.budget > 0
+    ? Math.round((presupuesto.used / presupuesto.budget * 100))
+    : 0
+
+  const pctColor = pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-orange-400' : 'bg-green-400'
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h2 className="text-xl font-extrabold text-brand-dark mb-1">💰 Costes del equipo</h2>
+        <p className="text-sm text-brand-secondary">Presupuesto mensual de tokens por agente y uso acumulado</p>
+      </div>
+
+      {/* Barra global */}
+      <div className="bg-white border-2 border-brand-pastel rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm font-bold text-brand-dark">Uso total tokens este mes</span>
+          <span className="text-sm font-bold" style={{ color: pct > 90 ? '#dc2626' : pct > 70 ? '#d97706' : '#16a34a' }}>
+            {pct}% usado
+          </span>
+        </div>
+        <div className="w-full bg-brand-pastel rounded-full h-3 overflow-hidden">
+          <div className={`${pctColor} h-full rounded-full transition-all duration-500`} style={{ width: Math.min(pct, 100) + '%' }} />
+        </div>
+        <div className="flex justify-between mt-2 text-xs text-brand-muted">
+          <span>{(presupuesto.used / 1000).toFixed(0)}k tokens usados</span>
+          <span>{(presupuesto.budget / 1000000).toFixed(0)}M presupuesto</span>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2">
+        {['resumen', 'detalle'].map(t => (
+          <button key={t}
+            onClick={() => setTabVer(t)}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+              tabVer === t ? 'bg-brand-dark text-white' : 'bg-brand-pastel/50 text-brand-secondary hover:bg-brand-pastel'}`}
+          >
+            {t === 'resumen' ? '📊 Por agente' : '📋 Detalle completo'}
+          </button>
+        ))}
+      </div>
+
+      {/* Por agente */}
+      {tabVer === 'resumen' && (
+        <div className="space-y-2">
+          {agentes.map(ag => {
+            const agUso = uso.find(u => u.agenteId === ag.id)
+            const used = ag.tokensUsadosMes || 0
+            const budget = ag.budgetTokensMes || 1000000
+            const pctAg = budget > 0 ? Math.round(used / budget * 100) : 0
+            const alertPct = ag.alertaPorcentaje || 80
+            const isAlert = pctAg >= alertPct
+            const agColor = isAlert ? 'bg-red-50 border-red-200'
+              : pctAg > 70 ? 'bg-orange-50 border-orange-100'
+              : 'bg-white border-brand-pastel'
+            const barColor = isAlert ? 'bg-red-500'
+              : pctAg > 70 ? 'bg-orange-400'
+              : 'bg-green-500'
+            return (
+              <div key={ag.id} className={`flex items-center gap-4 p-4 rounded-xl border-2 ${agColor}`}>
+                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${ag.color || 'from-gray-400 to-gray-500'} flex items-center justify-center text-base flex-shrink-0`}>
+                  {ag.emoji || '🤖'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-brand-dark">{ag.nombre}</div>
+                  <div className="text-xs text-brand-secondary">{ag.rol || ag.tipo}</div>
+                  <div className="mt-1.5 w-full bg-brand-pastel/50 rounded-full h-1.5 overflow-hidden">
+                    <div className={`${barColor} h-full rounded-full`} style={{ width: pctAg + '%' }} />
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-sm font-bold" style={{ color: isAlert ? '#dc2626' : '#333' }}>
+                    {pctAg}%
+                  </div>
+                  <div className="text-xs text-brand-muted">
+                    {(used / 1000).toFixed(0)}k / {(budget / 1000).toFixed(0)}k
+                  </div>
+                  {isAlert && <div className="text-xs font-bold text-red-500 mt-0.5">⚠️ Alerta</div>}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Detalle */}
+      {tabVer === 'detalle' && (
+        <div className="bg-white border border-brand-pastel rounded-2xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-brand-pastel bg-brand-cream">
+                <th className="text-left px-4 py-3 text-xs font-bold text-brand-muted">Agente</th>
+                <th className="text-right px-4 py-3 text-xs font-bold text-brand-muted">Usado / Budget</th>
+                <th className="text-right px-4 py-3 text-xs font-bold text-brand-muted">%</th>
+                <th className="text-right px-4 py-3 text-xs font-bold text-brand-muted">Alerta</th>
+              </tr>
+            </thead>
+            <tbody>
+              {agentes.map((ag, i) => {
+                const used = ag.tokensUsadosMes || 0
+                const budget = ag.budgetTokensMes || 1000000
+                const pct = budget > 0 ? Math.round(used / budget * 100) : 0
+                const alertPct = ag.alertaPorcentaje || 80
+                const isAlert = pct >= alertPct
+                return (
+                  <tr key={ag.id} className={`border-b border-brand-pastel/40 ${isAlert ? 'bg-red-50/50' : i % 2 === 0 ? 'bg-white' : 'bg-brand-cream/30'}`}>
+                    <td className="px-4 py-3 font-medium text-brand-dark">{ag.nombre}</td>
+                    <td className="px-4 py-3 text-right font-mono text-xs">
+                      {(used / 1000).toFixed(0)}k / {(budget / 1000).toFixed(0)}k
+                    </td>
+                    <td className={`px-4 py-3 text-right font-bold ${isAlert ? 'text-red-500' : pct > 70 ? 'text-orange-500' : 'text-green-600'}`}>
+                      {pct}%
+                    </td>
+                    <td className="px-4 py-3 text-right text-xs">
+                      {isAlert ? <span className="text-red-500 font-bold">⚠️ {pct >= 100 ? 'SIN PRESUPUESTO' : 'Alerta ' + alertPct + '%'} </span> : <span className="text-brand-muted">Normal</span>}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Nota */}
+      <div className="text-xs text-brand-muted bg-brand-cream/50 rounded-xl p-3">
+        💡 Los presupuestos se reinician el día 1 de cada mes automáticamente. Contacta con soporte para ajustar budgets.
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// AUDIT PANEL — Timeline de acciones (FASE 2)
+// ─────────────────────────────────────────
+function AuditPanel({ token }) {
+  const [logs, setLogs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [filtro, setFiltro] = useState('all')
+
+  useEffect(() => {
+    if (!token) return
+    const path = filtro === 'all' ? '/api/audit?limit=50' : `/api/audit?accion=${filtro}&limit=50`
+    fetchConAuth(path)
+      .then(r => r.json())
+      .then(d => { if (d.logs) setLogs(d.logs) })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [token, filtro])
+
+  const ACCIONES = {
+    all: { label: 'Todas', emoji: '📋' },
+    JOB_CREADO: { label: 'Tareas creadas', emoji: '🆕' },
+    JOB_APROBADO: { label: 'Aprobaciones', emoji: '✅' },
+    JOB_RECHAZADO: { label: 'Rechazadas', emoji: '❌' },
+    TOKEN_ALERTA_80: { label: 'Alertas budget', emoji: '⚠️' },
+    COMPLETADO: { label: 'Completadas', emoji: '🎉' },
+    FAILED: { label: 'Errores', emoji: '🚨' },
+  }
+
+  const accionLabel = (acc) => ACCIONES[acc]?.emoji + ' ' + ACCIONES[acc]?.label || '📌 ' + acc
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-40">
+      <div className="text-[#b0a898]">Cargando historial...</div>
+    </div>
+  )
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-extrabold text-brand-dark">📜 Registro de actividad</h2>
+          <p className="text-sm text-brand-secondary mt-0.5">Todas las acciones de tus agentes — sin edits, solo lectura</p>
+        </div>
+        <div className="px-3 py-1.5 bg-brand-cream rounded-full text-xs text-brand-muted font-medium">
+          {logs.length} entradas
+        </div>
+      </div>
+
+      {/* Filtros */}
+      <div className="flex gap-2 flex-wrap">
+        {Object.entries(ACCIONES).map(([key, val]) => (
+          <button key={key}
+            onClick={() => setFiltro(key)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+              filtro === key
+                ? 'bg-brand-dark text-white'
+                : 'bg-brand-pastel/50 text-brand-secondary hover:bg-brand-pastel'
+            }`}
+          >
+            {val.emoji} {val.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Timeline */}
+      {logs.length === 0 ? (
+        <div className="text-center py-16 border-2 border-dashed border-brand-pastel rounded-2xl">
+          <div className="text-4xl mb-3">📭</div>
+          <div className="text-brand-dark font-bold">Sin actividad registrada</div>
+          <div className="text-brand-muted text-sm mt-1">Las acciones de tus Compis aparecerán aquí</div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {logs.map((log, i) => (
+            <div key={log.id || i}
+              className="flex gap-3 p-4 bg-white border border-brand-pastel/40 rounded-xl hover:border-brand-dark/30 transition-colors">
+              {/* Emoji según acción */}
+              <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-brand-cream flex items-center justify-center text-base">
+                {log.accion === 'JOB_APROBADO' ? '✅'
+                  : log.accion === 'JOB_RECHAZADO' ? '❌'
+                  : log.accion === 'JOB_CREADO' ? '🆕'
+                  : log.accion === 'TOKEN_ALERTA_80' ? '⚠️'
+                  : log.accion === 'COMPLETADO' ? '🎉'
+                  : '📌'}
+              </div>
+
+              {/* Contenido */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm text-brand-dark leading-snug">
+                      {log.accion === 'JOB_APROBADO' && '✅ Trabajo aprobado'}
+                      {log.accion === 'JOB_RECHAZADO' && '❌ Trabajo rechazado'}
+                      {log.accion === 'JOB_CREADO' && '🆕 Nueva tarea creada'}
+                      {log.accion === 'TOKEN_ALERTA_80' && '⚠️ Alerta de presupuesto'}
+                      {log.accion === 'COMPLETADO' && '🎉 Tarea completada'}
+                      {!['JOB_APROBADO', 'JOB_RECHAZADO', 'JOB_CREADO', 'TOKEN_ALERTA_80', 'COMPLETADO'].includes(log.accion)
+                        && log.accion}
+                    </div>
+                    {log.detalle && typeof log.detalle === 'object' && (
+                      <div className="text-xs text-brand-secondary mt-0.5">
+                        {log.detalle.trabajo && <span>📋 {log.detalle.trabajo}</span>}
+                        {log.detalle.costeTokens && <span> · 💰 {log.detalle.costeTokens} tokens</span>}
+                        {log.detalle.aprobadoPor && <span> · Por {log.detalle.aprobadoPor}</span>}
+                      </div>
+                    )}
+                  </div>
+                  {/* Hora */}
+                  <div className="flex-shrink-0 text-xs text-brand-muted text-right">
+                    {log.createdAt
+                      ? new Date(log.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                      : '—'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
 // DASHBOARD PRINCIPAL
 // ─────────────────────────────────────────
 export default function Dashboard() {
@@ -1185,6 +1489,16 @@ export default function Dashboard() {
               {tab === 'actividad' && (
                 <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm">
                   <ActividadPanel />
+                </div>
+              )}
+              {tab === 'costes' && (
+                <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm overflow-y-auto">
+                  <CostesPanel token={token} />
+                </div>
+              )}
+              {tab === 'audit' && (
+                <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm overflow-y-auto">
+                  <AuditPanel token={token} />
                 </div>
               )}
               {tab === 'documentos' && (

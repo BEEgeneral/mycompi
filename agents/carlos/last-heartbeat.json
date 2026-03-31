@@ -1,13 +1,14 @@
 {
-  "timestamp": "2026-04-01T01:05:00Z",
+  "timestamp": "2026-04-01T01:31:00Z",
   "agente": "Carlos",
   "tareas": [
-    "Revisión pipeline de ventas (sin datos - sin cambios)",
+    "Revisión pipeline de ventas (sin cambios - sin datos CRM)",
     "Seguimientos pendientes (ninguno)",
     "Lead enrichment (sin leads nuevos)",
-    "Engagement analysis (sin datos - sistema sin actividad)"
+    "Engagement analysis (sin datos)",
+    "Research semanal (ya ejecutado 2026-03-31 - vigente)"
   ],
-  "resumen": "Heartbeat de madrugada - sistema MyCompi sigue sin actividad real. Pipeline vacío (0 hot, 0 warm, 0 cold). Sin leads nuevos ni seguimientos pendientes. Última research semanal ejecutada ayer (2026-03-31). Sin cambios en el estado del pipeline. Proposals 5-11 siguen vigentes en strategy-proposals.md. Sistema necesita deploy en producción para que Carlos tenga trabajo real de outbound.",
+  "resumen": "Heartbeat 01:31 AM — Sistema MyCompi sigue sin actividad real. Pipeline vacío (0 hot, 0 warm, 0 cold). Sin leads nuevos ni seguimientos pendientes. Research semanal ya ejecutada ayer (2026-03-31). Proposals 5-11 vigentes en strategy-proposals.md. Sistema necesita deploy en producción para que Carlos tenga trabajo real.",
   "urgente": false,
   "pipeline": {
     "hot": 0,

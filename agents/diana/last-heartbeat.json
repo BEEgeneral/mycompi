@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-03-31T17:33:00Z",
+  "agente": "Diana",
+  "tareas": [
+    "Revisión inicial heartbeat Diana",
+    "Verificación de estado del sistema MyCompi",
+    "Detección: 8 días sin actividad en producción"
+  ],
+  "resumen": "Heartbeat Diana activo. Sistema MyCompi lleva 8 días sin actividad real. No hay datos de métricas (Neon DB no accesible desde aquí, sin producto en producción). Sin anomalías detectadas en métricas porque no hay datos que analizar. Growth opportunities documentadas en strategy-proposals.md.",
+  "urgente": false,
+  "metrics_highlight": {
+    "mrr": "sin datos",
+    "churn": "sin datos",
+    "new_users": 0,
+    "status": "SISTEMA DORMIDO - 8 días sin actividad"
+  },
+  "insights": [
+    "No hay acceso a Neon DB desde este contexto - métricas de producto no disponibles",
+    "MyCompi no está deployado en producción - sin datos reales de usage",
+    "No hay anomalías que detectar sin datos de referencia",
+    "Strategy proposals de Carlos y otros agentes están actualizadas y disponibles"
+  ],
+  "nota_sistema": "El producto necesita estar en producción para que Diana pueda hacer su trabajo real de data analytics. Sin datos de Neon, no hay métricas que revisar, retener ni analizar."
+}
