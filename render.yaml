@@ -26,3 +26,5 @@ envVars:
     sync: false
   - key: STRIPE_WEBHOOK_SECRET
     sync: false
+  - key: MINIMAX_API_KEY
+    sync: false
