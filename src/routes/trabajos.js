@@ -7,31 +7,35 @@ const router = express.Router();
 // Obtener todos los trabajos del cliente
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const { estado, agente_id, limit = 50 } = req.query;
+    // Soportar múltiples estados: ?estado=TODO&estado=IN_PROGRESS
+    const estados = req.query.estado
+      ? (Array.isArray(req.query.estado) ? req.query.estado : [req.query.estado])
+      : [];
+    const { agente_id, limit = 50 } = req.query;
     
     let query = `
       SELECT t.*, a.nombre as agente_nombre, a.tipo as agente_tipo
-      FROM trabajos t
-      LEFT JOIN agentes a ON t.agente_id = a.id
-      WHERE t.cliente_id = $1
+      FROM "Trabajo" t
+      LEFT JOIN "Agente" a ON t."agenteId" = a.id
+      WHERE t."clienteId" = $1
     `;
     const params = [req.clienteId];
     
-    if (estado) {
-      query += ` AND t.estado = $${params.length + 1}`;
-      params.push(estado);
+    if (estados.length > 0) {
+      query += ` AND t.estado = ANY($${params.length + 1})`;
+      params.push(estados);
     }
     
     if (agente_id) {
-      query += ` AND t.agente_id = $${params.length + 1}`;
+      query += ` AND t."agenteId" = $${params.length + 1}`;
       params.push(agente_id);
     }
     
-    query += ` ORDER BY t.created_at DESC LIMIT $${params.length + 1}`;
+    query += ` ORDER BY t."createdAt" DESC LIMIT $${params.length + 1}`;
     params.push(parseInt(limit));
     
     const result = await pool.query(query, params);
-    res.json(result.rows);
+    res.json({ trabajos: result.rows, total: result.rows.length });
   } catch (err) {
     console.error('Error obteniendo trabajos:', err);
     res.status(500).json({ error: 'Error interno' });
@@ -43,9 +47,9 @@ router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT t.*, a.nombre as agente_nombre, a.tipo as agente_tipo
-       FROM trabajos t
-       LEFT JOIN agentes a ON t.agente_id = a.id
-       WHERE t.id = $1 AND t.cliente_id = $2`,
+       FROM "Trabajo" t
+       LEFT JOIN "Agente" a ON t."agenteId" = a.id
+       WHERE t.id = $1 AND t."clienteId" = $2`,
       [req.params.id, req.clienteId]
     );
     
@@ -66,10 +70,10 @@ router.post('/', authMiddleware, async (req, res) => {
     const { titulo, descripcion, agente_id, prioridad } = req.body;
     
     const result = await pool.query(
-      `INSERT INTO trabajos (cliente_id, agente_id, titulo, descripcion, prioridad, estado) 
-       VALUES ($1, $2, $3, $4, $5, 'pendiente')
+      `INSERT INTO "Trabajo" ("clienteId", "agenteId", titulo, descripcion, prioridad, estado, "createdAt", "updatedAt") 
+       VALUES ($1, $2, $3, $4, $5, 'TODO', NOW(), NOW())
        RETURNING *`,
-      [req.clienteId, agente_id || null, titulo, descripcion, prioridad || 'media']
+      [req.clienteId, agente_id || null, titulo, descripcion, prioridad || 'MEDIA']
     );
     
     res.json(result.rows[0]);
@@ -122,8 +126,8 @@ router.put('/:id', authMiddleware, async (req, res) => {
     params.push(req.clienteId);
     
     const result = await pool.query(
-      `UPDATE trabajo SET ${updateFields.join(', ')} 
-       WHERE id = $${paramCount++} AND cliente_id = $${paramCount}
+      `UPDATE "Trabajo" SET ${updateFields.join(', ')} 
+       WHERE id = $${paramCount++} AND "clienteId" = $${paramCount}
        RETURNING *`,
       params
     );
@@ -143,7 +147,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      `DELETE FROM trabajos WHERE id = $1 AND cliente_id = $2 RETURNING id`,
+      `DELETE FROM "Trabajo" WHERE id = $1 AND "clienteId" = $2 RETURNING id`,
       [req.params.id, req.clienteId]
     );
     
@@ -165,14 +169,14 @@ router.get('/stats', authMiddleware, async (req, res) => {
     
     // Total trabajos
     const totalResult = await pool.query(
-      `SELECT COUNT(*) as total FROM trabajos WHERE cliente_id = $1`,
+      `SELECT COUNT(*) as total FROM "Trabajo" WHERE "clienteId" = $1`,
       [req.clienteId]
     );
     stats.total = parseInt(totalResult.rows[0].total);
     
     // Por estado
     const estadoResult = await pool.query(
-      `SELECT estado, COUNT(*) as count FROM trabajos WHERE cliente_id = $1 GROUP BY estado`,
+      `SELECT estado, COUNT(*) as count FROM "Trabajo" WHERE "clienteId" = $1 GROUP BY estado`,
       [req.clienteId]
     );
     stats.por_estado = estadoResult.rows.reduce((acc, row) => {
@@ -182,14 +186,14 @@ router.get('/stats', authMiddleware, async (req, res) => {
     
     // Promedio de score
     const scoreResult = await pool.query(
-      `SELECT AVG(score) as promedio FROM trabajos WHERE cliente_id = $1 AND score IS NOT NULL`,
+      `SELECT AVG(score) as promedio FROM "Trabajo" WHERE "clienteId" = $1 AND score IS NOT NULL`,
       [req.clienteId]
     );
     stats.promedio_score = scoreResult.rows[0].promedio ? parseFloat(scoreResult.rows[0].promedio).toFixed(1) : null;
     
     // Trabajos recientes
     const recientesResult = await pool.query(
-      `SELECT * FROM trabajos WHERE cliente_id = $1 ORDER BY created_at DESC LIMIT 5`,
+      `SELECT * FROM "Trabajo" WHERE "clienteId" = $1 ORDER BY "createdAt" DESC LIMIT 5`,
       [req.clienteId]
     );
     stats.recientes = recientesResult.rows;
