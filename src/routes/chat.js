@@ -465,6 +465,63 @@ router.post('/', authMiddleware, async (req, res) => {
     console.warn('Error obteniendo historial:', err.message);
   }
 
+  // ─── ONBOARDING — mensaje especial para primera bienvenida ───
+  if (mensaje.trim() === '__MYCOMPI_ONBOARDING__') {
+    const clienteData = await prisma.cliente.findUnique({
+      where: { id: clienteId },
+      select: { nombre: true, empresa: true, plan: true, createdAt: true }
+    });
+
+    const onboardingPrompt = `Eres Paco, el orquestador de MyCompi. Un nuevo cliente acaba de entrar a su dashboard por primera vez.
+
+**Cliente:** ${clienteData?.nombre || 'Cliente'} ${clienteData?.empresa ? `(${clienteData.empresa})` : ''}
+**Plan:** ${clienteData?.plan || 'BASICO'}
+
+Tu trabajo ahora es enviarle UN SOLO mensaje de bienvenida que:
+1. Le salude de forma cálida y cercana
+2. Le explique brevemente qué puede hacer (3-4 cosas concretas que Pacocoordina)
+3. Le proponga un primer paso concreto (ej: "Dime en qué trabaja tu empresa y te presento al equipo")
+4. Sea corto — máximo 4-5 líneas
+5. Tono informal, directo,emoji, sin ser corporativo
+
+Responde SOLO con el mensaje a enviar. No pongas nombre del cliente en el mensaje.
+
+Respuesta:`;
+
+    let respuestaOnboarding = '';
+    try {
+      const stream = callMiniMaxStream(onboardingPrompt);
+      for await (const chunk of stream) {
+        respuestaOnboarding += chunk;
+      }
+    } catch (err) {
+      respuestaOnboarding = `¡Hola! 👋 Soy Paco, tu orquestador en MyCompi.\n\nTu equipo de Compis está listo para trabajar. Dime en qué trabaja tu empresa y te presento al equipo. 🚀`;
+    }
+
+    // Guardar interacción
+    try {
+      await prisma.interaccionChat.create({
+        data: {
+          clienteId,
+          agenteId: 'paco',
+          tipoPeticion: 'CONSULTAR_INFO',
+          mensajeOriginal: '[Onboarding automático]',
+          respuestaAgente: respuestaOnboarding,
+          estadoChat: 'COMPLETED',
+          resultadoExitoso: true,
+        }
+      });
+    } catch (e) { console.error('Error guardando onboarding:', e.message); }
+
+    return res.json({
+      ok: true,
+      interaccionId: null,
+      respuesta: respuestaOnboarding,
+      agenteId: 'paco',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   // Construir prompt
   const prompt = await buildPacoPrompt(mensaje.trim(), clienteId, historial);
 

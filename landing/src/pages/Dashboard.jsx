@@ -148,15 +148,58 @@ function ChatPanel() {
 
   const agenteInfo = { id: 'paco', nombre: 'Paco', emoji: '🎯', color: 'from-[#2D3261] to-[#4a5090]', rol: 'Orquestador' }
 
-  // Cargar historial al montar
+  // Cargar historial y detectar si es primera vez
   useEffect(() => {
     if (!token) return
     fetchConAuth('/api/chat?limit=50')
       .then(r => r.json())
       .then(d => {
-        if (d.historial) setMensajes(d.historial)
-        setStatusOnline(true)
-        setErrorMsg(null)
+        if (d.historial && d.historial.length > 0) {
+          // Ya hay historial — mostrarlo
+          setMensajes(d.historial)
+          setStatusOnline(true)
+          setErrorMsg(null)
+        } else {
+          // Primera vez — Pacole da la bienvenida con onboarding
+          setStatusOnline(true)
+          setEnviando(true)
+          fetchConAuth('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mensaje: '__MYCOMPI_ONBOARDING__' }),
+          })
+            .then(r => r.json())
+            .then(d => {
+              if (d.ok && d.respuesta) {
+                setMensajes([{
+                  id: `agent-${d.interaccionId}`,
+                  role: 'assistant',
+                  content: d.respuesta,
+                  timestamp: d.timestamp || new Date().toISOString(),
+                  agenteId: 'paco',
+                }])
+              } else {
+                // Fallback si el endpoint no reconoce el onboarding marker
+                setMensajes([{
+                  id: 'welcome-fallback',
+                  role: 'assistant',
+                  content: '¡Hola! 👋 Soy Paco, tu orquestador en MyCompi.\n\nTu equipo de Compis está listo para trabajar. ¿En qué te puedo ayudar hoy?',
+                  timestamp: new Date().toISOString(),
+                  agenteId: 'paco',
+                }])
+              }
+            })
+            .catch(() => {
+              setMensajes([{
+                id: 'welcome-fallback',
+                role: 'assistant',
+                content: '¡Hola! 👋 Soy Paco, tu orquestador en MyCompi.\n\nTu equipo de Compis está listo para trabajar. ¿En qué te puedo ayudar hoy?',
+                timestamp: new Date().toISOString(),
+                agenteId: 'paco',
+              }])
+            })
+            .finally(() => setEnviando(false))
+        }
       })
       .catch(() => {
         setStatusOnline(false)
