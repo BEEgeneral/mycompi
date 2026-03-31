@@ -106,18 +106,29 @@ Paco muestra los docs al cliente para revisión:
 
 ### FASE 6 — ACTIVAR PLAN 30 DÍAS
 
-Una vez los docs validados, Paco ejecuta:
+Una vez los docs validados con el cliente, Paco activa el plan 30 días. Hay DOS formas de hacerlo:
 
+**Opción automática (recomendada):**
+Cuando el cliente confirma que los documentos están bien, Paco envía el mensaje especial:
+```
+__SEED_PLAN_30__
+```
+Esto llama automáticamente al endpoint que crea las 42+ tareas en la BD del cliente.
+
+**Opción manual (por API):**
 ```
 POST /api/clientes/<CLIENTE_ID>/seed-plan-30dias
+Header: x-agent-key: <AGENT_API_KEY>
 ```
 
-Esto crea las tareas del plan 30 días en la BD del cliente:
-- Semana 1: Setup + Investigación + MVP
+El endpoint está en `https://mycompi.onrender.com/api/clientes/<CLIENTE_ID>/seed-plan-30dias`
+
+**Esto crea:**
+- Semana 1: Setup + Investigación + MVP (tareas Diana, Marcos, Enzo, Carlos, Elena, Laura, Valeria)
 - Semana 2: Outreach + Contenido + Research
 - Semana 3: Equipo completo + Feedback
 - Semana 4: Growth + Optimización
-- Tareas recurrentes diarias/semanales
+- Tareas recurrentes diarias/semanales para cada agente
 
 **Paco avisa al cliente:**
 > *"Perfecto. He activado tu plan de 30 días. Tu equipo está al día — cada mañana te cuento qué se hace y cada agente trabaja en su área. Si quieres priorizar algo, me dices."*

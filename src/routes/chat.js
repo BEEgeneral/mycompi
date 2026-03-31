@@ -465,6 +465,45 @@ router.post('/', authMiddleware, async (req, res) => {
     console.warn('Error obteniendo historial:', err.message);
   }
 
+  // ─── SEED PLAN 30 DÍAS — mensaje especial para activar el plan ───
+  if (mensaje.trim() === '__SEED_PLAN_30__') {
+    try {
+      const { seed } = require('../scripts/seed-plan-30dias');
+      await seed(clienteId);
+
+      // Guardar en memoria/agente para tracking
+      try {
+        await prisma.interaccionChat.create({
+          data: {
+            clienteId,
+            agenteId: 'paco',
+            tipoPeticion: 'MODIFICAR_SOLICITUD',
+            mensajeOriginal: '[Seed plan 30 días activado]',
+            respuestaAgente: 'Plan de 30 días activado correctamente',
+            estadoChat: 'COMPLETED',
+            resultadoExitoso: true,
+          }
+        });
+      } catch (e) { /* no critical */ }
+
+      return res.json({
+        ok: true,
+        interaccionId: null,
+        respuesta: '✅ Plan de 30 días activado. Los Compis ya tienen sus tareas.',
+        agenteId: 'paco',
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('Error seed plan 30:', err);
+      return res.json({
+        ok: false,
+        respuesta: '⚠️ No pude activar el plan. Avisa a un administrador.',
+        agenteId: 'paco',
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+
   // ─── ONBOARDING — mensaje especial para primera bienvenida ───
   if (mensaje.trim() === '__MYCOMPI_ONBOARDING__') {
     const clienteData = await prisma.cliente.findUnique({
