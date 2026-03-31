@@ -229,21 +229,6 @@ function AgenteAvatar({ agente }) {
   )
 }
 
-function TypingIndicator() {
-  return (
-    <div className="flex gap-3">
-      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm">🎯</div>
-      <div className="bg-[#1e1e2e] border border-[#2a2a3a] rounded-2xl rounded-tl-sm px-4 py-3">
-        <div className="flex gap-1">
-          <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" />
-          <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:.15s]" />
-          <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:.3s]" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ─────────────────────────────────────────
 // Chat principal
 // ─────────────────────────────────────────
@@ -332,7 +317,7 @@ export default function App() {
   }
 
   // ─────────────────────────────────────────
-  // Enviar mensaje
+  // Enviar mensaje (SSE streaming)
   // ─────────────────────────────────────────
   const enviar = async (e) => {
     e?.preventDefault()
@@ -343,56 +328,143 @@ export default function App() {
     setError('')
     setCargando(true)
 
+    // Crear entrada temporal para el usuario
+    const tempUserId = `user-${Date.now()}`
+    const tempAgentId = `agent-${tempUserId}`
+
     setHistorial(prev => [
       ...prev,
       {
-        id: `user-${Date.now()}`,
+        id: tempUserId,
         role: 'user',
         content: texto,
         timestamp: new Date(),
+      },
+      {
+        id: tempAgentId,
+        role: 'assistant',
+        content: '',
+        timestamp: new Date(),
+        agenteId: 'paco',
+        streaming: true,
       }
     ])
 
+    let interaccionId = null
+
     try {
-      const res = await fetchWithAuth(`${API_URL}/api/chat`, {
+      const token = getAccessToken()
+      if (!token) {
+        throw new Error('NO_TOKEN')
+      }
+
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ mensaje: texto }),
       })
 
-      const data = await res.json()
-
-      if (!res.ok) {
-        if (res.status === 401) {
-          setError('Sesión expirada. Recarga la página para volver a entrar.')
-        } else {
-          setError(data.error || 'Error al procesar mensaje')
-        }
-        // Quitar el mensaje de usuario si falló
-        setHistorial(prev => prev.slice(0, -1))
+      if (response.status === 401) {
+        setError('Sesión expirada. Recarga la página.')
+        setHistorial(prev => prev.slice(0, -2))
         setCargando(false)
         return
       }
 
-      if (data.respuesta) {
-        setHistorial(prev => [
-          ...prev,
-          {
-            id: `agent-${data.interaccionId || Date.now()}`,
-            role: 'assistant',
-            content: data.respuesta,
-            timestamp: new Date(data.timestamp),
-            agenteId: 'paco',
-          }
-        ])
+      if (!response.ok) {
+        const data = await response.json()
+        setError(data.error || 'Error al procesar mensaje')
+        setHistorial(prev => prev.slice(0, -2))
+        setCargando(false)
+        return
       }
+
+      // SSE streaming
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      // Actualizar el mensaje del agente con los chunks
+      const updateAgentMessage = (newContent, extra = {}) => {
+        setHistorial(prev => prev.map(msg => {
+          if (msg.id === tempAgentId) {
+            return { ...msg, content: msg.content + newContent, ...extra }
+          }
+          return msg
+        }))
+      }
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          const dataStr = line.slice(6)
+          if (!dataStr.trim()) continue
+
+          try {
+            const data = JSON.parse(dataStr)
+
+            switch (data.type) {
+              case 'start':
+                interaccionId = data.interaccionId
+                break
+              case 'chunk':
+                updateAgentMessage(data.content || '')
+                // Auto-scroll durante streaming
+                setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 0)
+                break
+              case 'info':
+                updateAgentMessage(`\n${data.content}\n`)
+                break
+              case 'tool_result':
+                const icon = data.ok ? '✅' : '❌'
+                updateAgentMessage(`\n${icon} ${data.content}\n`)
+                break
+              case 'end':
+                //Streaming terminado — actualizar con ID real
+                setHistorial(prev => prev.map(msg => {
+                  if (msg.id === tempAgentId) {
+                    return {
+                      ...msg,
+                      id: `agent-${interaccionId || tempAgentId}`,
+                      streaming: false
+                    }
+                  }
+                  return msg
+                }))
+                break
+            }
+          } catch (parseErr) {
+            // Skip malformed JSON
+          }
+        }
+      }
+
+      // Asegurar que el streaming terminó
+      setHistorial(prev => prev.map(msg => {
+        if (msg.id === tempAgentId && msg.streaming) {
+          return { ...msg, id: `agent-${interaccionId || tempAgentId}`, streaming: false }
+        }
+        return msg
+      }))
+
     } catch (err) {
-      if (err.message === 'SESSION_EXPIRED') {
+      if (err.message === 'SESSION_EXPIRED' || err.message === 'NO_TOKEN') {
         setError('Sesión expirada. Recarga la página para volver a entrar.')
       } else {
         setError('No se pudo conectar con el servidor')
       }
-      setHistorial(prev => prev.slice(0, -1))
+      // Quitar mensajes temporales
+      setHistorial(prev => prev.filter(m => m.id !== tempUserId && m.id !== tempAgentId))
     } finally {
       setCargando(false)
     }
@@ -477,24 +549,7 @@ export default function App() {
 
         {historial.map((msg, i) => {
           const agenteMsg = msg.agenteId ? AGENTES.find(a => a.id === msg.agenteId) : AGENTES[0]
-          const isLastUser = i === historial.length - 1 && cargando
-
-          if (isLastUser) {
-            return (
-              <div key={msg.id || i}>
-                <div className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                    msg.role === 'user'
-                      ? 'bg-indigo-600 text-white rounded-tr-sm'
-                      : 'bg-[#1e1e2e] border border-[#2a2a3a] text-gray-300 rounded-tl-sm'
-                  }`}>
-                    {msg.content}
-                  </div>
-                </div>
-                <TypingIndicator />
-              </div>
-            )
-          }
+          const isStreaming = msg.streaming
 
           return (
             <div key={msg.id || i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -502,9 +557,14 @@ export default function App() {
               <div className={`max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'bg-indigo-600 text-white rounded-tr-sm'
+                  : isStreaming
+                  ? 'bg-[#1e1e2e] border border-[#2a2a3a] text-gray-300 rounded-tl-sm'
                   : 'bg-[#1e1e2e] border border-[#2a2a3a] text-gray-300 rounded-tl-sm'
               }`}>
                 {msg.content}
+                {isStreaming && (
+                  <span className="inline-block ml-1 w-1.5 h-4 bg-indigo-400 rounded animate-pulse" />
+                )}
               </div>
             </div>
           )
