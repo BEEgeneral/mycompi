@@ -43,6 +43,8 @@ if (process.env.DATABASE_URL) {
 const clientesRoutes = require('./routes/clientes');
 const agentesRoutes = require('./routes/agentes');
 const trabajosRoutes = require('./routes/trabajos');
+const approvalsRoutes = require('./routes/approvals');
+const auditRoutes = require('./routes/audit');
 const pagosRoutes = require('./routes/pagos');
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
@@ -61,6 +63,8 @@ const { AGENTS } = require('./services/agentLoader');
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/agentes', agentesRoutes);
 app.use('/api/trabajos', trabajosRoutes);
+app.use('/api/trabajos', approvalsRoutes);
+app.use('/api/audit', auditRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use('/api/auth', authRoutes.router);
 app.use('/api/chat', chatRoutes);

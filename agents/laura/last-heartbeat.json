@@ -1,18 +1,8 @@
 {
-  "timestamp": "2026-03-31T16:20:00Z",
+  "timestamp": "2026-03-31T17:20:00Z",
   "agente": "Laura",
-  "tareas": [
-    "Revisión bandeja de entrada — sin emails nuevos",
-    "Revisión tickets de soporte — sin tickets pendientes",
-    "Revisión chat — sin mensajes pendientes",
-    "Coordinación con compañeros (Elena, Carlos)"
-  ],
-  "resumen": "Sin actividad de soporte en este ciclo. Elena reporta server OK, PM2 activo, DB Neon conectada; Carlos sin pipeline activo. Sin incidencias críticas ni casos urgentes detectados. Todo en calma.",
+  "tareas": [],
+  "resumen": "Heartbeat realizado. No hay bandeja de entrada, tickets ni mensajes pendientes visibles en el sistema. Agente activo y listo.",
   "urgente": false,
-  "sentiment": "neutral",
-  "notes": {
-    "bandeja_entrada": "vacía",
-    "tickets": "sin pendientes",
-    "chat": "sin mensajes nuevos"
-  }
+  "sentiment": "neutral"
 }
