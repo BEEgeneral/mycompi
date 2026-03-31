@@ -78,8 +78,8 @@ router.get('/tokens', authMiddleware, async (req, res) => {
     const result = await pool.query(query, params);
     res.json({ usage: result.rows });
   } catch (err) {
-    console.error('Error tokens:', err);
-    res.status(500).json({ error: 'Error interno' });
+    console.error('Error tokens:', err.message, '| code:', err.code, '| pos:', err.position);
+    res.status(500).json({ error: 'Error interno: ' + err.message.substring(0, 80) });
   }
 });
 
