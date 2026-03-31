@@ -45,6 +45,26 @@ export default function Register() {
       localStorage.setItem('mycompi_token', data.tokens.accessToken)
       localStorage.setItem('mycompi_refresh_token', data.tokens.refreshToken)
       localStorage.setItem('mycompi_usuario', JSON.stringify(data.usuario))
+
+      // Redirigir a Stripe Checkout
+      try {
+        const checkoutRes = await fetch('/api/stripe/create-checkout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${data.tokens.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ plan: form.plan }),
+        })
+        const checkoutData = await checkoutRes.json()
+        if (checkoutData.url) {
+          window.location.href = checkoutData.url
+          return
+        }
+      } catch (e) {
+        console.error('Checkout error:', e)
+      }
+      // Si falla checkout, ir al dashboard igualmente
       navigate('/dashboard')
     } catch (err) {
       setError('No se pudo conectar al servidor')
