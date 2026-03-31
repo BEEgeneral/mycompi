@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import PendingApprovals from '../components/PendingApprovals'
 
 // ─────────────────────────────────────────
 // FETCH CON AUTO-REFRESH DE TOKEN
@@ -74,6 +75,7 @@ function Sidebar({ tab, onTabChange, agentes, onLogout }) {
     { id: 'actividad', emoji: '📊', label: 'Actividad' },
     { id: 'costes', emoji: '💰', label: 'Costes' },
     { id: 'audit', emoji: '📜', label: 'Registro' },
+    { id: 'pending', emoji: '⚠️', label: 'Aprobaciones' },
     { id: 'documentos', emoji: '📄', label: 'Mis documentos' },
     { id: 'decisiones', emoji: '📋', label: 'Decisiones' },
     { id: 'cuenta', emoji: '⚙️', label: 'Mi cuenta' },
@@ -1500,6 +1502,11 @@ export default function Dashboard() {
               {tab === 'audit' && (
                 <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm overflow-y-auto">
                   <AuditPanel token={token} />
+                </div>
+              )}
+              {tab === 'pending' && (
+                <div className="bg-white rounded-2xl border border-[#e8e0d5] p-8 h-full shadow-sm overflow-y-auto">
+                  <PendingApprovals />
                 </div>
               )}
               {tab === 'documentos' && (

@@ -1,91 +1,91 @@
 /**
- * Budget Alert Cron
- * Se ejecuta cada hora: comprueba si algún agente ha superado
- * el umbral de alerta (alertaPorcentaje) de su budgetTokensMes.
+ * Budget Alerts Cron — se ejecuta cada hora
  *
- * Solo alerta una vez por período de billing (hasta el siguiente reset).
- * Usa la tabla AuditLog para evitar duplicados: si ya existe un
- * TOKEN_ALERTA_80 para ese agente en este billing period, no re-alerta.
+ * Para cada agente activo, verifica si tokensUsadosMes >= budgetTokensMes * (alertaPorcentaje/100)
+ * Si cumple y no se notificó hoy, crea Notificacion + AuditLog
  */
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
-const { pool } = require('../src/models/db');
+const { Pool } = require('pg');
 
-const BILLING_PERIOD_MS = 30 * 24 * 60 * 60 * 1000; // mes natural
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+  max: 5,
+  idleTimeoutMillis: 15000,
+});
+
+const AGENT_API_KEY = process.env.AGENT_API_KEY || '';
 
 async function main() {
-  // Agentes activos con budget configurado
+  constahora = new Date().toISOString();
+  console.log(`[${ahora}] Budget alerts check starting...`);
+
+  // Obtener todos los agentes con budget configurado
   const agentes = await pool.query(`
-    SELECT id, "clienteId", nombre, "budgetTokensMes",
-           "tokensUsadosMes", "alertaPorcentaje", "ultimoResetTokens"
+    SELECT id, "clienteId", nombre, "budgetTokensMes", "alertaPorcentaje",
+           "tokensUsadosMes", "ultimoResetTokens"
     FROM "Agente"
-    WHERE activo = true
+    WHERE estado = 'ACTIVO'
       AND "budgetTokensMes" IS NOT NULL
       AND "budgetTokensMes" > 0
   `);
 
-  let alertsSent = 0;
-
+  let notificados = 0;
   for (const ag of agentes.rows) {
-    const budget = parseInt(ag.budgetTokensMes) || 1_000_000;
-    const used = parseInt(ag.tokensUsadosMes) || 0;
-    const alertPct = parseInt(ag.alertaPorcentaje) || 80;
-    const threshold = Math.round(budget * alertPct / 100);
+    const budget = parseInt(ag.budgetTokensMes) || 0;
+    const usado = parseInt(ag.tokensUsadosMes) || 0;
+    const umbral = Math.round(budget * ((ag.alertaPorcentaje || 80) / 100));
 
-    if (used < threshold) continue; // dentro del umbral
+    if (usado < umbral) continue;
 
-    // ¿Ya alertamos en este billing period?
-    const lastAlert = await pool.query(`
-      SELECT id FROM "AuditLog"
+    // ¿Ya se notificó hoy?
+    const ya = await pool.query(`
+      SELECT id FROM "Notificacion"
       WHERE "agenteId" = $1
-        AND accion = $2
-        AND "createdAt" > NOW() - INTERVAL '30 days'
-      ORDER BY "createdAt" DESC
-      LIMIT 1
-    `, [ag.id, 'TOKEN_ALERTA_80']);
+        AND tipo = 'WARNING'
+        AND "createdAt" > NOW() - INTERVAL '24 hours'
+        AND contenido LIKE '%presupuesto%'
+    `, [ag.id]);
 
-    if (lastAlert.rows.length > 0) {
-      console.log(`SKIP ${ag.nombre}: ya alertado este período`);
+    if (ya.rows.length > 0) {
+      console.log(`  ${ag.nombre}: ya alertado hace <24h, skip`);
       continue;
     }
 
-    const pct = Math.round(used / budget * 100);
-    const detalle = {
-      agente: ag.nombre,
-      usado: used,
-      budget,
-      umbral: alertPct,
-      porcentaje: pct,
-    };
+    // Calcular coste estimado (aprox 0.01€ por 100k tokens)
+    const costeEstimado = (usado / 100000 * 0.01).toFixed(4);
+    const pct = budget > 0 ? Math.round(usado / budget * 100) : 0;
+    const mensaje = `⚠️ ${ag.nombre} ha usado ${pct}% del presupuesto mensual (${(usado/1000).toFixed(0)}k/${(budget/1000).toFixed(0)}k tokens). Est. ~€${costeEstimado}`;
 
-    // Log en AuditLog
-    await pool.query(`
-      INSERT INTO "AuditLog" (id, "clienteId", "agenteId", accion, "recursoTipo", detalle, "createdAt")
-      VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW())
-    `, [ag.clienteId, ag.id, 'TOKEN_ALERTA_80', 'Agente', JSON.stringify(detalle)]);
-
-    // Notificación al cliente
-    const titulo = pct >= 100
-      ? `🚨 ${ag.nombre}: Presupuesto agotado`
-      : `⚠️ ${ag.nombre}: ${pct}% del budget consumido`;
-
-    const contenido = pct >= 100
-      ? `${ag.nombre} ha alcanzado el 100% de su presupuesto mensual (${(used/1000).toFixed(0)}k / ${(budget/1000).toFixed(0)}k tokens). Contacta con soporte para ampliarlo.`
-      : `${ag.nombre} ha superado el umbral del ${alertPct}% de su budget (${pct}% usado, ${(used/1000).toFixed(0)}k / ${(budget/1000).toFixed(0)}k tokens).`;
-
+    // Crear notificación
     await pool.query(`
       INSERT INTO "Notificacion" (id, "clienteId", "agenteId", tipo, titulo, contenido, "createdAt")
-      VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW())
-    `, [ag.clienteId, ag.id, 'WARNING', titulo, contenido]);
+      VALUES (gen_random_uuid(), $1, $2, 'WARNING', $3, $4, NOW())
+    `, [ag.clienteId, ag.id, `⚠️ Alerta presupuesto: ${ag.nombre}`, mensaje]);
 
-    console.log(`ALERT: ${ag.nombre} - ${pct}% usado (umbral ${alertPct}%)`);
-    alertsSent++;
+    // Audit log
+    await pool.query(`
+      INSERT INTO "AuditLog" (id, "clienteId", "agenteId", accion, "recursoTipo", "recursoId", detalle, "createdAt")
+      VALUES (gen_random_uuid(), $1, $2, $3, 'Agente', $4, $5, NOW())
+    `, [ag.clienteId, ag.id, 'TOKEN_ALERTA_80', ag.id, JSON.stringify({
+      agente: ag.nombre,
+      tokensUsados: usado,
+      budgetTokens: budget,
+      porcentaje: pct,
+      umbralPorcentaje: ag.alertaPorcentaje || 80,
+    })]);
+
+    console.log(`  ✅ Alertado: ${ag.nombre} (${pct}% usado)`);
+    notificados++;
   }
 
-  console.log(`Budget alerts: ${alertsSent} notificaciones enviadas`);
+  console.log(`Listo. ${notificados} alertas enviadas.`);
   await pool.end();
+  process.exit(0);
 }
 
-main().catch(err => {
-  console.error('Error budget-alerts:', err);
+main().catch(async (e) => {
+  console.error('Error budget alerts:', e.message);
+  await pool.end();
   process.exit(1);
 });
