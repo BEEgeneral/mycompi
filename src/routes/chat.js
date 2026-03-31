@@ -486,50 +486,25 @@ router.post('/', authMiddleware, async (req, res) => {
     console.error('Error creando interaccion:', err.message);
   }
 
-  // ─── SSE STREAMING ───
-  // IMPORTANTE: usar un formato diferente para evitar conflicto con proxies
-  // que añadan "data:" como prefijo a respuestas HTTP
-  res.writeHead(200, {
-    'Content-Type': 'text/plain',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'X-Accel-Buffering': 'no',
-    'Transfer-Encoding': 'identity',
-  });
-
-  const encoder = new TextEncoder();
-
-  const send = (obj) => {
-    const line = `流通${JSON.stringify(obj)}\n`;
-    res.write(line);
-  };
-
-  send({ type: 'start', interaccionId });
-
+  // ─── LLAMADA A MINIMAX (respuesta simple JSON) ───
   let respuestaCompleta = '';
 
   try {
+    // Llamada streaming interna para obtener respuesta
     const stream = callMiniMaxStream(prompt);
-
     for await (const chunk of stream) {
-      if (chunk) {
-        respuestaCompleta += chunk;
-        send({ type: 'chunk', content: chunk });
-      }
+      respuestaCompleta += chunk;
     }
   } catch (err) {
     console.error('[Chat] Error en stream:', err.message);
-    const fallback = getFallbackResponse(mensaje.trim());
-    respuestaCompleta = fallback;
-    send({ type: 'chunk', content: fallback });
+    respuestaCompleta = getFallbackResponse(mensaje.trim());
   }
 
   // Detectar y ejecutar tools
   const toolCalls = extractToolCalls(respuestaCompleta);
+  const toolResults = [];
 
   if (toolCalls.length > 0) {
-    send({ type: 'info', content: '🔧 Ejecutando acciones solicitadas...' });
-
     const contextoTool = {
       plan,
       clienteId,
@@ -539,25 +514,22 @@ router.post('/', authMiddleware, async (req, res) => {
       twitterToken: null,
     };
 
-    const toolResults = await ejecutarToolCalls(toolCalls, contextoTool);
-
-    for (const result of toolResults) {
-      if (result.ok) {
-        let msg = `✅ ${result.tool} completado`;
-        if (result.resultado?.tareaId) msg += ` → "${result.resultado.titulo}"`;
-        if (result.resultado?.messageId) msg += ` (email ID: ${result.resultado.messageId})`;
-        if (result.resultado?.tareas) msg += ` → ${result.resultado.total} tarea(s) encontrada(s)`;
-        send({ type: 'tool_result', content: msg, tool: result.tool, ok: true });
-      } else {
-        send({ type: 'tool_result', content: `❌ ${result.tool}: ${result.error}`, tool: result.tool, ok: false });
-      }
+    for (const result of await ejecutarToolCalls(toolCalls, contextoTool)) {
+      toolResults.push(result);
     }
   }
 
-  send({ type: 'end', interaccionId });
-  res.end();
+  // ─── RESPONDER AL CLIENTE ───
+  res.json({
+    ok: true,
+    interaccionId,
+    respuesta: respuestaCompleta,
+    agenteId: 'paco',
+    timestamp: new Date().toISOString(),
+    toolsEjecutadas: toolResults.map(r => ({ tool: r.tool, ok: r.ok })),
+  });
 
-  // ─── GUARDAR EN BD (post-streaming) ───
+  // ─── GUARDAR EN BD (post-response) ───
   try {
     await prisma.interaccionChat.update({
       where: { id: interaccionId },

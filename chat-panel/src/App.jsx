@@ -317,7 +317,7 @@ export default function App() {
   }
 
   // ─────────────────────────────────────────
-  // Enviar mensaje (SSE streaming)
+  // Enviar mensaje (respuesta JSON simple)
   // ─────────────────────────────────────────
   const enviar = async (e) => {
     e?.preventDefault()
@@ -328,10 +328,9 @@ export default function App() {
     setError('')
     setCargando(true)
 
-    // Crear entrada temporal para el usuario
     const tempUserId = `user-${Date.now()}`
-    const tempAgentId = `agent-${tempUserId}`
 
+    // Agregar mensaje del usuario inmediatamente
     setHistorial(prev => [
       ...prev,
       {
@@ -339,18 +338,8 @@ export default function App() {
         role: 'user',
         content: texto,
         timestamp: new Date(),
-      },
-      {
-        id: tempAgentId,
-        role: 'assistant',
-        content: '',
-        timestamp: new Date(),
-        agenteId: 'paco',
-        streaming: true,
       }
     ])
-
-    let interaccionId = null
 
     try {
       const token = getAccessToken()
@@ -369,86 +358,45 @@ export default function App() {
 
       if (response.status === 401) {
         setError('Sesión expirada. Recarga la página.')
-        setHistorial(prev => prev.slice(0, -2))
+        setHistorial(prev => prev.filter(m => m.id !== tempUserId))
         setCargando(false)
         return
       }
+
+      const data = await response.json()
 
       if (!response.ok) {
-        const data = await response.json()
         setError(data.error || 'Error al procesar mensaje')
-        setHistorial(prev => prev.slice(0, -2))
+        setHistorial(prev => prev.filter(m => m.id !== tempUserId))
         setCargando(false)
         return
       }
 
-      // SSE streaming — formato:流通{json}\n
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
+      // Agregar respuesta de Paco
+      setHistorial(prev => [
+        ...prev,
+        {
+          id: `agent-${data.interaccionId || Date.now()}`,
+          role: 'assistant',
+          content: data.respuesta || '¡Hola! ¿En qué puedo ayudarte?',
+          timestamp: new Date(data.timestamp || Date.now()),
+          agenteId: 'paco',
+        }
+      ])
 
-      const updateAgentMessage = (newContent, extra = {}) => {
-        setHistorial(prev => prev.map(msg => {
-          if (msg.id === tempAgentId) {
-            return { ...msg, content: msg.content + newContent, ...extra }
-          }
-          return msg
-        }))
-      }
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
-
-        for (const line of lines) {
-          const trimmed = line.trim()
-          if (!trimmed.startsWith('流通')) continue
-          const dataStr = trimmed.slice(1) // Remove流通
-          if (!dataStr.trim()) continue
-
-          try {
-            const data = JSON.parse(dataStr)
-
-            switch (data.type) {
-              case 'start':
-                interaccionId = data.interaccionId
-                break
-              case 'chunk':
-                updateAgentMessage(data.content || '')
-                setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 0)
-                break
-              case 'info':
-                updateAgentMessage(`\n${data.content}\n`)
-                break
-              case 'tool_result':
-                updateAgentMessage(`\n${data.ok ? '✅' : '❌'} ${data.content}\n`)
-                break
-              case 'end':
-                setHistorial(prev => prev.map(msg => {
-                  if (msg.id === tempAgentId) {
-                    return { ...msg, id: `agent-${interaccionId || tempAgentId}`, streaming: false }
-                  }
-                  return msg
-                }))
-                break
-            }
-          } catch (parseErr) {
-            // Skip malformed JSON
-          }
+      // Mostrar notificación de tools si se ejecutaron
+      if (data.toolsEjecutadas?.length > 0) {
+        const toolsInfo = data.toolsEjecutadas
+          .filter(t => t.ok)
+          .map(t => `✅ ${t.tool}`)
+          .join(', ')
+        if (toolsInfo) {
+          // Small toast-like indicator (optional UX)
+          setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
         }
       }
 
-      // Asegurar que el streaming terminó
-      setHistorial(prev => prev.map(msg => {
-        if (msg.id === tempAgentId && msg.streaming) {
-          return { ...msg, id: `agent-${interaccionId || tempAgentId}`, streaming: false }
-        }
-        return msg
-      }))
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
 
     } catch (err) {
       if (err.message === 'SESSION_EXPIRED' || err.message === 'NO_TOKEN') {
@@ -456,8 +404,7 @@ export default function App() {
       } else {
         setError('No se pudo conectar con el servidor')
       }
-      // Quitar mensajes temporales
-      setHistorial(prev => prev.filter(m => m.id !== tempUserId && m.id !== tempAgentId))
+      setHistorial(prev => prev.filter(m => m.id !== tempUserId))
     } finally {
       setCargando(false)
     }
@@ -542,7 +489,6 @@ export default function App() {
 
         {historial.map((msg, i) => {
           const agenteMsg = msg.agenteId ? AGENTES.find(a => a.id === msg.agenteId) : AGENTES[0]
-          const isStreaming = msg.streaming
 
           return (
             <div key={msg.id || i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -550,14 +496,9 @@ export default function App() {
               <div className={`max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'bg-indigo-600 text-white rounded-tr-sm'
-                  : isStreaming
-                  ? 'bg-[#1e1e2e] border border-[#2a2a3a] text-gray-300 rounded-tl-sm'
                   : 'bg-[#1e1e2e] border border-[#2a2a3a] text-gray-300 rounded-tl-sm'
               }`}>
                 {msg.content}
-                {isStreaming && (
-                  <span className="inline-block ml-1 w-1.5 h-4 bg-indigo-400 rounded animate-pulse" />
-                )}
               </div>
             </div>
           )
