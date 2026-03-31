@@ -382,12 +382,11 @@ export default function App() {
         return
       }
 
-      // SSE streaming
+      // SSE streaming — formato:流通{json}\n
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let buffer = ''
 
-      // Actualizar el mensaje del agente con los chunks
       const updateAgentMessage = (newContent, extra = {}) => {
         setHistorial(prev => prev.map(msg => {
           if (msg.id === tempAgentId) {
@@ -406,8 +405,9 @@ export default function App() {
         buffer = lines.pop() || ''
 
         for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          const dataStr = line.slice(6)
+          const trimmed = line.trim()
+          if (!trimmed.startsWith('流通')) continue
+          const dataStr = trimmed.slice(1) // Remove流通
           if (!dataStr.trim()) continue
 
           try {
@@ -419,25 +419,18 @@ export default function App() {
                 break
               case 'chunk':
                 updateAgentMessage(data.content || '')
-                // Auto-scroll durante streaming
                 setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 0)
                 break
               case 'info':
                 updateAgentMessage(`\n${data.content}\n`)
                 break
               case 'tool_result':
-                const icon = data.ok ? '✅' : '❌'
-                updateAgentMessage(`\n${icon} ${data.content}\n`)
+                updateAgentMessage(`\n${data.ok ? '✅' : '❌'} ${data.content}\n`)
                 break
               case 'end':
-                //Streaming terminado — actualizar con ID real
                 setHistorial(prev => prev.map(msg => {
                   if (msg.id === tempAgentId) {
-                    return {
-                      ...msg,
-                      id: `agent-${interaccionId || tempAgentId}`,
-                      streaming: false
-                    }
+                    return { ...msg, id: `agent-${interaccionId || tempAgentId}`, streaming: false }
                   }
                   return msg
                 }))

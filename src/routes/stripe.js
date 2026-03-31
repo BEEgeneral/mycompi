@@ -397,7 +397,7 @@ async function enviarEmailPagoFallido(email, nombre) {
 router.get('/subscription', authMiddleware, async (req, res) => {
   try {
     const cliente = await prisma.cliente.findUnique({
-      where: { email: req.usuario.email }
+      where: { id: req.clienteId }
     });
     if (!cliente?.stripeCustomerId) {
       return res.json({ subscription: null });
@@ -433,7 +433,7 @@ router.get('/subscription', authMiddleware, async (req, res) => {
 router.post('/cancel', authMiddleware, async (req, res) => {
   try {
     const cliente = await prisma.cliente.findUnique({
-      where: { email: req.usuario.email }
+      where: { id: req.clienteId }
     });
     if (!cliente?.stripeCustomerId) {
       return res.status(400).json({ error: 'No hay suscripción activa' });
@@ -462,7 +462,7 @@ router.post('/cancel', authMiddleware, async (req, res) => {
 router.post('/portal', authMiddleware, async (req, res) => {
   try {
     const cliente = await prisma.cliente.findUnique({
-      where: { email: req.usuario.email }
+      where: { id: req.clienteId }
     });
     if (!cliente?.stripeCustomerId) {
       return res.status(400).json({ error: 'No hay cuenta de Stripe' });

@@ -1,25 +1,24 @@
 /**
  * chat.js — Chat de Paco via OpenClaw con contexto completo + SSE streaming
  *
- * POST /api/chat          → Enviar mensaje (inicia SSE stream)
- * GET  /api/chat/history  → Historial de mensajes
- * GET  /api/chat/:id     → Estado de una interacción
+ * POST /api/chat          → Enviar mensaje (SSE stream)
+ * GET  /api/chat/history → Historial
+ * GET  /api/chat/:id     → Estado de interacción
  *
  * Cambios vs versión anterior:
  * - Usa OpenClaw como brain (no MiniMax directo)
- * - Inyecta contexto completo del cliente (empresa, plan, docs, tareas)
- * - Acceso a tools reales (registrar_tarea, send_email, etc.)
- * - SSE streaming para respuesta en tiempo real
+ * - Contexto completo del cliente (empresa, plan, docs, tareas)
+ * - Herramientas disponibles según plan
+ * - Extracción y ejecución de tool calls detectadas en respuesta
+ * - SSE streaming con parser robusto para chunks fragmentados
  */
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('./auth');
 const prisma = require('../lib/db');
-const { buildContext, logInteraction } = require('../services/agentLoader');
+const { logInteraction } = require('../services/agentLoader');
 const { getToolsDisponibles, ejecutarTool } = require('../services/toolRegistry');
 const { Resend } = require('resend');
-const path = require('path');
-const fs = require('fs');
 
 const RESEND = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -28,18 +27,18 @@ const RESEND = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 // ─────────────────────────────────────────
 const OPENCLAW_URL = process.env.OPENCLAW_URL || 'http://127.0.0.1:18789';
 const OPENCLAW_TOKEN = process.env.OPENCLAW_TOKEN || process.env.OPENCLAW_GATEWAY_TOKEN || '';
-const PACO_TIMEOUT_MS = 60000; // 60 segundos max para Paco
+const PACO_TIMEOUT_MS = 60000;
 
 // ─────────────────────────────────────────
-// Contexto del sistema — Paco como orquestador
+// System prompt — Paco orquestador
 // ─────────────────────────────────────────
-const PACO_CORE = `Eres **Paco**, el orquestador de MyCompi — una plataforma SaaS que ofrece equipos de agentes IA especializados (called "Compis") para PYMES españolas.
+const PACO_CORE = `Eres **Paco**, el orquestador de MyCompi — una plataforma SaaS que ofrece equipos de agentes IA especializados (llamados "Compis") para PYMES españolas.
 
 TU IDENTIDAD:
 - Primer punto de contacto con el cliente
 - Coordinas y diriges al equipo de agentes especializados
 - Sabes TODO sobre el equipo y puedes explicar qué hace cada agente
-- Si el cliente pide algo concreto, coordinas con el agente adecuado o lo resuelves tú mismo
+- Si el cliente pide algo concreto, lo resuelves o coordinas con el agente adecuado
 
 EQUIPO DE AGENTES DISPONIBLES:
 - 💬 Laura Montes — Atención al Cliente (soporte 24/7, FAQ, resolver dudas)
@@ -60,70 +59,63 @@ TU ESTILO:
 - Usa emojis de forma natural
 - Responde en español de España
 - SIEMPRE propón siguiente paso concreto y accionable
-- No seas genérico — si el cliente pregunta algo, dale información específica
+- No seas genérico — da información específica
 - Cuando puedas HACER algo (crear tarea, enviar email), hazlo usando las tools disponibles
 
 REGLAS CLAVE:
 - Si el cliente pide algo específico ("un informe de ventas", "crear una campaña"), CONFIRMA que lo haces y usa la tool apropiada
 - Si no puedes hacer algo ahora, sé honesto y explica cuándo / cómo se resolverá
 - Usa las tools para registrar tareas, consultar datos, enviar emails cuando tenga sentido
-- NUNCA inventes datos que no tienes — si no sabes algo, dilo`;
+- NUNCA inventes datos que no tienes — si no sabes algo, dilo
 
-const PACO_MEMORY_REMINDER = `Esta información te ayuda a conocer mejor al cliente. Úsala para dar respuestas más personalizadas y relevantes.`;
+HERRAMIENTAS DISPONIBLES (plan BASICO y superior):
+- registrar_tarea: Crea una tarea para el equipo. Args: titulo (string), descripcion (string, opcional), prioridad (BAJA|MEDIA|ALTA|CRITICA), agenteId (string, opcional)
+- obtener_tareas: Lista tareas del cliente. Args: estado (TODO|IN_PROGRESS|COMPLETED, opcional), limite (numero, opcional)
+- actualizar_tarea: Cambia estado/prioridad de una tarea. Args: tareaId (string, requerido), estado (opcional), prioridad (opcional)
+
+HERRAMIENTAS PLAN EQUIPO:
+- send_email: Envía un email. Args: para (string), asunto (string), html (string, opcional), texto (string, opcional)
+- send_email_batch: Envía email a múltiples destinatarios. Args: para (array de strings), asunto (string), html (string)
+
+HERRAMIENTAS PLAN DIRECCION:
+- scrape_web: Obtiene contenido de una URL. Args: url (string), pregunta (string, opcional)
+- buscar_en_web: Busca en Google. Args: consulta (string), numResultados (numero, opcional)
+- publicar_tweet: Publica un tweet. Args: texto (string, max 280 chars)`;
 
 // ─────────────────────────────────────────
 // Construir contexto completo del cliente
 // ─────────────────────────────────────────
 async function buildClienteContext(clienteId) {
-  // Cargar cliente + documentos + tareas recientes
-  const cliente = await prisma.cliente.findUnique({
-    where: { id: clienteId },
-    include: {
-      agentes: {
-        where: { activo: true },
-        select: { id: true, nombre: true, tipo: true }
+  try {
+    const cliente = await prisma.cliente.findUnique({
+      where: { id: clienteId },
+      include: {
+        agentes: {
+          where: { activo: true },
+          select: { id: true, nombre: true, tipo: true }
+        }
       }
-    }
-  });
+    });
 
-  if (!cliente) return { cliente: null, docs: [], tareas: [], context: '' };
+    if (!cliente) return { cliente: null, context: '' };
 
-  // Documentos relevantes
-  const docs = await prisma.documento.findMany({
-    where: { clienteId },
-    orderBy: { updatedAt: 'desc' },
-    take: 10
-  });
+    const docs = await prisma.documento.findMany({
+      where: { clienteId },
+      orderBy: { updatedAt: 'desc' },
+      take: 5
+    });
 
-  // Tareas recientes (últimas 5)
-  const tareas = await prisma.trabajo.findMany({
-    where: { clienteId },
-    orderBy: { createdAt: 'desc' },
-    take: 5,
-    select: {
-      id: true,
-      titulo: true,
-      estado: true,
-      prioridad: true,
-      createdAt: true,
-      agente: { select: { nombre: true } }
-    }
-  });
+    const tareasPendientes = await prisma.trabajo.count({
+      where: { clienteId, estado: { in: ['TODO', 'IN_PROGRESS'] } }
+    });
 
-  // Tareas pendientes
-  const tareasPendientes = await prisma.trabajo.count({
-    where: { clienteId, estado: { in: ['TODO', 'IN_PROGRESS'] } }
-  });
+    const agentesActivos = cliente.agentes.map(a => a.nombre).join(', ') || 'Ninguno todavía';
 
-  // Notificaciones no leídas
-  const notificacionesNoLeidas = await prisma.notificacion.count({
-    where: { clienteId, leida: false }
-  });
+    const docsText = docs.length > 0
+      ? `\n**DOCUMENTOS:**\n${docs.map(d => `- [${d.tipo}] ${d.titulo}: ${d.contenido.slice(0, 150)}`).join('\n')}`
+      : '\n**DOCUMENTOS:** Sin documentos aún';
 
-  // Agents activos para este cliente
-  const agentesActivos = cliente.agentes.map(a => a.nombre).join(', ') || 'Ninguno todavía';
-
-  const context = `
+    const context = `
 **INFO DEL CLIENTE:**
 - Nombre: ${cliente.nombre}
 - Empresa: ${cliente.empresa || 'No especificada'}
@@ -132,32 +124,26 @@ async function buildClienteContext(clienteId) {
 ${cliente.webUrl ? `- Web: ${cliente.webUrl}` : ''}
 
 **EQUIPO ASIGNADO:** ${agentesActivos}
+**TAREAS PENDIENTES:** ${tareasPendientes}
+${docsText}`;
 
-${docs.length > 0 ? `**DOCUMENTOS DEL CLIENTE:**
-${docs.map(d => `- [${d.tipo}] ${d.titulo}: ${d.contenido.slice(0, 200)}${d.contenido.length > 200 ? '...' : ''}`).join('\n')}` : '**DOCUMENTOS:** Sin documentos aún'}
-
-${tareas.length > 0 ? `**TAREAS RECIENTES:**
-${tareas.map(t => `- ${t.estado === 'COMPLETED' ? '✅' : t.estado === 'IN_PROGRESS' ? '🔄' : '📋'} [${t.estado}] ${t.titulo} (${t.agente?.nombre || 'sin agente'})`).join('\n')}` : '**TAREAS:** Sin tareas aún'}
-
-**RESUMEN:** ${tareasPendientes} tarea(s) pendiente(s) · ${notificacionesNoLeidas} notificación(es) sin leer`;
-
-  return { cliente, docs, tareas, context, agentesActivos };
+    return { cliente, context };
+  } catch (err) {
+    console.error('Error buildClienteContext:', err.message);
+    return { cliente: null, context: '' };
+  }
 }
 
 // ─────────────────────────────────────────
-// Construir prompt completo para Paco
+// Construir prompt para Paco
 // ─────────────────────────────────────────
 async function buildPacoPrompt(mensaje, clienteId, historial = []) {
   const { context } = await buildClienteContext(clienteId);
 
   if (!context) {
-    return {
-      prompt: `${PACO_CORE}\n\n[ERROR: Cliente no encontrado]`,
-      tools: []
-    };
+    return `${PACO_CORE}\n\n[ERROR: Cliente no encontrado]`;
   }
 
-  // Construir historial conversacional (últimos 10 mensajes)
   const historialTexto = historial.length > 0
     ? `\n\n**CONVERSACIÓN RECIENTE:**\n${historial.map(m => {
       const rol = m.role === 'user' ? 'Cliente' : 'Paco';
@@ -165,137 +151,98 @@ async function buildPacoPrompt(mensaje, clienteId, historial = []) {
     }).join('\n')}`
     : '\n\n(Primera interacción — sin historial previo)';
 
-  // Tools disponibles para este cliente (el plan se determina desde el contexto)
-  const planMatch = context.match(/Plan: (\w+)/);
-  const plan = planMatch ? planMatch[1] : 'BASICO';
-  const tools = getToolsDisponibles(plan);
-
-  const fullPrompt = `${PACO_CORE}
+  return `${PACO_CORE}
 
 ---
 
 ## CONTEXTO DEL CLIENTE ACTUAL
 ${context}
 
-${PACO_MEMORY_REMINDER}
 ${historialTexto}
 
 ---
 
 **Cliente ahora:** ${mensaje}
 
-Responde como Paco. Si puedes usar una tool para resolver la petición del cliente, hazlo inline (no menciones que vas a usarla, simplemente inclúyela en tu respuesta como un bloque JSON que diga {"tool": "nombre", "params": {...}}).`;
+Responde como Paco. Si puedes usar una tool para resolver la petición, incluye en tu respuesta (NO fuera de ella) un bloque JSON:
+\`\`\`json
+{"tool": "nombre_tool", "params": {...}}
+\`\`\`
 
-  return { prompt: fullPrompt, tools };
+Pero solo si es algo concreto que el cliente pide. Para preguntas normales, responde directamente sin tool.`;
 }
 
 // ─────────────────────────────────────────
-// Llamar a OpenClaw con streaming
+// Parser SSE robusto — acumula líneas completas
 // ─────────────────────────────────────────
-async function* callOpenClawStream(prompt, clienteNombre, tools = []) {
+class SSEParser {
+  constructor() {
+    this.buffer = '';
+    this.eventType = 'message';
+  }
+
+  // Recibe un chunk y devuelve array de mensajes SSE completos procesables
+  parseChunk(chunk) {
+    this.buffer += chunk;
+    const events = [];
+    let lines = this.buffer.split('\n');
+
+    // La última línea puede estar incompleta si el chunk no terminó en \n
+    this.buffer = lines.pop() || '';
+
+    for (const raw of lines) {
+      // Una línea SSE puede ser:
+      //   event: type
+      //   data: payload
+      //   (línea vacía = fin de evento en teoría, pero usamos \n como separador)
+      const line = raw.trim();
+      if (!line) continue;
+
+      if (line.startsWith('event:')) {
+        this.eventType = line.slice(6).trim();
+      } else if (line.startsWith('data:')) {
+        const data = line.slice(5).trim();
+        if (data) {
+          events.push({ type: this.eventType, data });
+        }
+      }
+      // Ignorar otros tipos de línea (id:, retry:, etc.)
+    }
+
+    return events;
+  }
+
+  flush() {
+    // Procesar lo que quede en el buffer como última línea
+    if (this.buffer.trim()) {
+      const line = this.buffer.trim();
+      if (line.startsWith('data:')) {
+        const data = line.slice(5).trim();
+        if (data) return [{ type: this.eventType, data }];
+      }
+    }
+    return [];
+  }
+}
+
+// ─────────────────────────────────────────
+// Llamar a OpenClaw con streaming SSE robusto
+// ─────────────────────────────────────────
+async function* callOpenClawStream(prompt) {
   if (!OPENCLAW_TOKEN) {
-    yield '⚠️ Sistema no configurado: OpenClaw token no disponible. Respondo con lo que sé.\n\n';
+    yield '⚠️ Sistema no configurado: OpenClaw token no disponible.\n\n';
     return;
   }
 
-  const messages = [
-    { role: 'system', content: prompt },
-    { role: 'user', content: prompt.split('**Cliente ahora:** ').pop() }
-  ];
-
-  // Reconstruir prompt como system + user
   const systemPart = prompt.split('**Cliente ahora:')[0];
-  const userPart = prompt.split('**Cliente ahora:').pop();
-
-  const apiMessages = [
-    { role: 'system', content: systemPart },
-    { role: 'user', content: `**Cliente ahora:** ${userPart}` }
-  ];
-
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), PACO_TIMEOUT_MS);
-
-    const response = await fetch(`${OPENCLAW_URL}/v1/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENCLAW_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'minimax/MiniMax-M2.7',
-        messages: apiMessages,
-        max_tokens: 1500,
-        temperature: 0.7,
-        stream: true
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      yield `❌ Error de OpenClaw (${response.status}): ${errorText.slice(0, 200)}\n`;
-      return;
-    }
-
-    // Streaming SSE
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6);
-          if (data === '[DONE]') {
-            return;
-          }
-          try {
-            const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              yield content;
-            }
-          } catch (e) {
-            // Skip non-JSON SSE lines
-          }
-        }
-      }
-    }
-
-  } catch (err) {
-    if (err.name === 'AbortError') {
-      yield '⏱️ Timeout (60s) esperando respuesta de OpenClaw.\n';
-    } else {
-      yield `❌ Error conectando con OpenClaw: ${err.message}\n`;
-    }
-  }
-}
-
-// ─────────────────────────────────────────
-// Llamada NO-streaming a OpenClaw (fallback)
-// ─────────────────────────────────────────
-async function callOpenClawSync(prompt, clienteNombre) {
-  if (!OPENCLAW_TOKEN) {
-    return getFallbackResponse(prompt);
-  }
-
-  const systemPart = prompt.split('**Cliente ahora:')[0];
-  const userPart = `**Cliente ahora:** ${prompt.split('**Cliente ahora:**').pop()}`;
+  const userContent = '**Cliente ahora:** ' + (prompt.split('**Cliente ahora:**').pop() || '');
 
   const messages = [
-    { role: 'system', content: systemPart },
-    { role: 'user', content: userPart }
+    { role: 'system', content: systemPart.trim() },
+    { role: 'user', content: userContent }
   ];
+
+  let sseErrorSent = false;
 
   try {
     const controller = new AbortController();
@@ -311,7 +258,8 @@ async function callOpenClawSync(prompt, clienteNombre) {
         model: 'minimax/MiniMax-M2.7',
         messages,
         max_tokens: 1500,
-        temperature: 0.7
+        temperature: 0.7,
+        stream: true
       }),
       signal: controller.signal
     });
@@ -320,24 +268,77 @@ async function callOpenClawSync(prompt, clienteNombre) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`OpenClaw ${response.status}: ${errorText.slice(0, 200)}`);
+      if (!sseErrorSent) {
+        yield `❌ Error de OpenClaw (${response.status}): ${errorText.slice(0, 200)}`;
+        sseErrorSent = true;
+      }
+      return;
     }
 
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-    if (!content) throw new Error('Respuesta vacía de OpenClaw');
-    return content;
+    // Parser SSE robusto
+    const parser = new SSEParser();
+    const decoder = new TextDecoder();
+    const reader = response.body.getReader();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        // Flush any remaining data in buffer
+        for (const event of parser.flush()) {
+          if (event.type === 'message' && event.data) {
+            if (event.data === '[DONE]') return;
+            try {
+              const parsed = JSON.parse(event.data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) yield content;
+            } catch {
+              // Non-JSON SSE data — ignore
+            }
+          }
+        }
+        break;
+      }
+
+      const chunk = decoder.decode(value, { stream: true });
+      const events = parser.parseChunk(chunk);
+
+      for (const event of events) {
+        if (event.type === 'message' && event.data) {
+          if (event.data === '[DONE]') {
+            // Flush buffer before returning
+            for (const e of parser.flush()) {
+              if (e.type === 'message' && e.data && e.data !== '[DONE]') {
+                try {
+                  const parsed = JSON.parse(e.data);
+                  const content = parsed.choices?.[0]?.delta?.content;
+                  if (content) yield content;
+                } catch { /* ignore */ }
+              }
+            }
+            return;
+          }
+          try {
+            const parsed = JSON.parse(event.data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) yield content;
+          } catch {
+            // Non-JSON SSE data — skip silently
+          }
+        }
+      }
+    }
 
   } catch (err) {
     if (err.name === 'AbortError') {
-      return '⏱️ Timeout esperando respuesta. Por favor, intenta de nuevo.';
+      yield '⏱️ Timeout (60s) esperando respuesta de OpenClaw.\n';
+    } else {
+      yield `❌ Error conectando con OpenClaw: ${err.message}\n`;
     }
-    throw err;
   }
 }
 
 // ─────────────────────────────────────────
-// Fallback inteligente si OpenClaw no está
+// Fallback si OpenClaw no está disponible
 // ─────────────────────────────────────────
 function getFallbackResponse(mensaje) {
   const msg = mensaje.toLowerCase();
@@ -350,12 +351,12 @@ function getFallbackResponse(mensaje) {
     return `¡Hola! 👋 Soy Paco, tu orquestador en MyCompi.\n\nPuedo ayudarte con:\n\n📊 **Marketing** — Enzo crea campañas y contenido\n💼 **Ventas** — Carlos gestiona leads\n💬 **Atención al cliente** — Laura responde dudas\n⚙️ **Operaciones** — Elena automatiza procesos\n💻 **Desarrollo** — Marcos construye tu web\n\n¿Qué necesitas?`;
   }
 
-  if (msg.includes('tarea') || msg.includes('crear') || msg.includes('hacer')) {
-    return `¡Genial! Puedo crear una tarea para tu equipo.\n\nSolo dime:\n1. ¿Qué necesitas que hagamos?\n2. ¿Qué agente debería encargarse?\n3. ¿Prioridad alta, media o baja?\n\nLo registro y el equipo lo ejecuta.`;
+  if (msg.includes('tarea') || (msg.includes('crear') && msg.includes('tarea'))) {
+    return `¡Genial! Puedo crear una tarea para tu equipo.\n\nSolo dime:\n1. ¿Qué necesitas?\n2. ¿Qué agente debería encargarse?\n3. ¿Prioridad alta, media o baja?\n\nLo registro y el equipo lo ejecuta.`;
   }
 
   if (msg.includes('lead') || msg.includes('cliente') || msg.includes('venta')) {
-    return `Para ventas y gestión de clientes, Carlos es el agente ideal. Él puede:\n\n📋 Seguimiento de leads\n🤝 Cualificación automática\n📧 Secuencias de email\n💰 Cierre de operaciones\n\n¿Quieres que le pase tu consulta o que crees una tarea para él?`;
+    return `Para ventas y gestión de clientes, Carlos es el agente ideal. Él puede:\n\n📋 Seguimiento de leads\n🤝 Cualificación automática\n📧 Secuencias de email\n💰 Cierre de operaciones\n\n¿Quieres que le pase tu consulta o crees una tarea para él?`;
   }
 
   if (msg.includes('web') || msg.includes('página') || msg.includes('e-commerce')) {
@@ -370,42 +371,57 @@ function getFallbackResponse(mensaje) {
 }
 
 // ─────────────────────────────────────────
-// Extraer tool calls del texto de respuesta
+// Extraer tool calls de la respuesta del modelo
 // ─────────────────────────────────────────
 function extractToolCalls(texto) {
   const toolCalls = [];
-  const jsonRegex = /```json\s*\{[\s\S]*?\}\s*```|```\{[\s\S]*?\}```|\{"tool":\s*"([^"]+)"[^}]*\}/g;
-  let match;
+  const seen = new Set();
 
-  while ((match = jsonRegex.exec(texto)) !== null) {
+  // Buscar bloques JSON en la respuesta
+  const jsonBlocks = texto.match(/```json\s*\{[\s\S]*?\}\s*```/gi) || [];
+
+  for (const block of jsonBlocks) {
+    const jsonStr = block.replace(/```json\s*/i, '').replace(/```\s*$/i, '').trim();
     try {
-      let jsonStr = match[0];
-      // Remove code fences if present
-      jsonStr = jsonStr.replace(/```json\s*/i, '').replace(/```\s*/g, '').trim();
       const parsed = JSON.parse(jsonStr);
-      if (parsed.tool || parsed.action) {
+      if (parsed.tool && !seen.has(parsed.tool)) {
+        seen.add(parsed.tool);
         toolCalls.push(parsed);
       }
-    } catch (e) {
-      // Try to extract raw JSON
-      const rawMatch = match[0].match(/"(tool|action)"\s*:\s*"([^"]+)"/);
-      if (rawMatch) {
-        toolCalls.push({ tool: rawMatch[2], params: {} });
+    } catch {
+      // Try to extract tool name
+      const m = jsonStr.match(/"tool"\s*:\s*"([^"]+)"/);
+      if (m && !seen.has(m[1])) {
+        seen.add(m[1]);
+        toolCalls.push({ tool: m[1], params: {} });
       }
     }
+  }
+
+  // Also search for inline JSON: {"tool": "name", ...}
+  const inlineMatches = texto.matchAll(/\{[^{}]*"tool"\s*:\s*"([^"]+)"[^{}]*\}/g);
+  for (const m of inlineMatches) {
+    const jsonStr = m[0];
+    try {
+      const parsed = JSON.parse(jsonStr);
+      if (parsed.tool && !seen.has(parsed.tool)) {
+        seen.add(parsed.tool);
+        toolCalls.push(parsed);
+      }
+    } catch { /* ignore */ }
   }
 
   return toolCalls;
 }
 
 // ─────────────────────────────────────────
-// Ejecutar tools detectadas en la respuesta
+// Ejecutar tool calls detectados
 // ─────────────────────────────────────────
 async function ejecutarToolCalls(toolCalls, contexto) {
   const resultados = [];
 
   for (const call of toolCalls) {
-    const toolId = call.tool || call.action;
+    const toolId = call.tool;
     if (!toolId) continue;
 
     try {
@@ -454,10 +470,7 @@ router.post('/', authMiddleware, async (req, res) => {
       where: { clienteId },
       orderBy: { createdAt: 'desc' },
       take: 10,
-      select: {
-        mensajeOriginal: true,
-        respuestaAgente: true
-      }
+      select: { mensajeOriginal: true, respuestaAgente: true }
     });
     historial = interacciones.reverse().flatMap(m => [
       { role: 'user', content: m.mensajeOriginal },
@@ -467,10 +480,10 @@ router.post('/', authMiddleware, async (req, res) => {
     console.warn('Error obteniendo historial:', err.message);
   }
 
-  // Construir prompt con contexto completo
-  const { prompt } = await buildPacoPrompt(mensaje.trim(), clienteId, historial);
+  // Construir prompt
+  const prompt = await buildPacoPrompt(mensaje.trim(), clienteId, historial);
 
-  // Crear interaccion en BD (estado PENDING)
+  // Crear interaccion en BD
   let interaccionId = null;
   try {
     const interaccion = await prisma.interaccionChat.create({
@@ -488,43 +501,49 @@ router.post('/', authMiddleware, async (req, res) => {
     console.error('Error creando interaccion:', err.message);
   }
 
-  // ─── STREAMING SSE ───
+  // ─── SSE STREAMING ───
+  // IMPORTANTE: usar un formato diferente para evitar conflicto con proxies
+  // que añadan "data:" como prefijo a respuestas HTTP
   res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
+    'Content-Type': 'text/plain',
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive',
-    'X-Accel-Buffering': 'no', // Disable nginx buffering
+    'X-Accel-Buffering': 'no',
+    'Transfer-Encoding': 'identity',
   });
 
-  // Enviar evento inicial
-  res.write(`data: ${JSON.stringify({ type: 'start', interaccionId })}\n\n`);
+  const encoder = new TextEncoder();
+
+  const send = (obj) => {
+    const line = `流通${JSON.stringify(obj)}\n`;
+    res.write(line);
+  };
+
+  send({ type: 'start', interaccionId });
 
   let respuestaCompleta = '';
-  const toolCallsDetectadas = [];
 
-  // Streaming del modelo
   try {
-    const stream = callOpenClawStream(prompt, clienteNombre);
+    const stream = callOpenClawStream(prompt);
 
     for await (const chunk of stream) {
       if (chunk) {
         respuestaCompleta += chunk;
-        // Enviar chunk al cliente
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content: chunk })}\n\n`);
+        send({ type: 'chunk', content: chunk });
       }
     }
   } catch (err) {
     console.error('[Chat] Error en stream:', err.message);
-    respuestaCompleta = getFallbackResponse(mensaje.trim());
-    res.write(`data: ${JSON.stringify({ type: 'chunk', content: respuestaCompleta })}\n\n`);
+    const fallback = getFallbackResponse(mensaje.trim());
+    respuestaCompleta = fallback;
+    send({ type: 'chunk', content: fallback });
   }
 
   // Detectar y ejecutar tools
   const toolCalls = extractToolCalls(respuestaCompleta);
-  let toolResults = [];
 
   if (toolCalls.length > 0) {
-    res.write(`data: ${JSON.stringify({ type: 'info', content: '🔧 Ejecutando acciones solicitadas...' })}\n\n`);
+    send({ type: 'info', content: '🔧 Ejecutando acciones solicitadas...' });
 
     const contextoTool = {
       plan,
@@ -535,23 +554,22 @@ router.post('/', authMiddleware, async (req, res) => {
       twitterToken: null,
     };
 
-    toolResults = await ejecutarToolCalls(toolCalls, contextoTool);
+    const toolResults = await ejecutarToolCalls(toolCalls, contextoTool);
 
-    // Informar resultados
     for (const result of toolResults) {
       if (result.ok) {
         let msg = `✅ ${result.tool} completado`;
-        if (result.resultado?.tareaId) msg += ` (tarea: ${result.resultado.titulo})`;
+        if (result.resultado?.tareaId) msg += ` → "${result.resultado.titulo}"`;
         if (result.resultado?.messageId) msg += ` (email ID: ${result.resultado.messageId})`;
-        res.write(`data: ${JSON.stringify({ type: 'tool_result', content: msg, tool: result.tool, ok: true })}\n\n`);
+        if (result.resultado?.tareas) msg += ` → ${result.resultado.total} tarea(s) encontrada(s)`;
+        send({ type: 'tool_result', content: msg, tool: result.tool, ok: true });
       } else {
-        res.write(`data: ${JSON.stringify({ type: 'tool_result', content: `❌ ${result.tool}: ${result.error}`, tool: result.tool, ok: false })}\n\n`);
+        send({ type: 'tool_result', content: `❌ ${result.tool}: ${result.error}`, tool: result.tool, ok: false });
       }
     }
   }
 
-  // Final
-  res.write(`data: ${JSON.stringify({ type: 'end', interaccionId })}\n\n`);
+  send({ type: 'end', interaccionId });
   res.end();
 
   // ─── GUARDAR EN BD (post-streaming) ───
@@ -573,13 +591,13 @@ router.post('/', authMiddleware, async (req, res) => {
     logInteraction('paco', clienteId, {
       mensaje: mensaje.trim(),
       respuesta: respuestaCompleta,
-      toolsEjecutadas: toolResults.map(t => t.tool),
+      toolsEjecutadas: toolCalls.map(t => t.tool),
     });
   } catch (err) {
     console.warn('Error en logInteraction:', err.message);
   }
 
-  console.log(`[Chat] Interaccion ${interaccionId} completada — ${respuestaCompleta.length} chars`);
+  console.log(`[Chat] Interaccion ${interaccionId} completada — ${respuestaCompleta.length} chars, ${toolCalls.length} tools`);
 });
 
 // ─────────────────────────────────────────
@@ -630,23 +648,21 @@ router.get('/history', authMiddleware, async (req, res) => {
   }
 });
 
-// Alias — GET /api/chat sin path = historial
+// Alias — GET /api/chat → historial
 router.get('/', authMiddleware, async (req, res) => {
   req.url = '/history';
   router.handle(req, res);
 });
 
 // ─────────────────────────────────────────
-// GET /api/chat/:id — Estado de mensaje
+// GET /api/chat/:id — Estado
 // ─────────────────────────────────────────
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const interaccion = await prisma.interaccionChat.findUnique({
       where: { id: req.params.id, clienteId: req.clienteId },
     });
-    if (!interaccion) {
-      return res.status(404).json({ error: 'No encontrado' });
-    }
+    if (!interaccion) return res.status(404).json({ error: 'No encontrado' });
     res.json(interaccion);
   } catch (err) {
     res.status(500).json({ error: 'Error interno' });
@@ -654,7 +670,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 // ─────────────────────────────────────────
-// POST /api/chat/:id/acepta|rechaza — Feedback
+// POST /api/chat/:id/acepta|rechaza
 // ─────────────────────────────────────────
 router.post('/:id/acepta', authMiddleware, async (req, res) => {
   try {
