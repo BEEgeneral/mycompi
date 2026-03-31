@@ -1186,15 +1186,17 @@ function CostesPanel({ token }) {
 
       {/* Tabs */}
       <div className="flex gap-2">
-        {['resumen', 'detalle'].map(t => (
-          <button key={t}
-            onClick={() => setTabVer(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
-              tabVer === t ? 'bg-brand-dark text-white' : 'bg-brand-pastel/50 text-brand-secondary hover:bg-brand-pastel'}`}
-          >
-            {t === 'resumen' ? '📊 Por agente' : '📋 Detalle completo'}
-          </button>
-        ))}
+        {['resumen', 'detalle'].map(t => {
+          const tabCls = tabVer === t ? 'bg-brand-dark text-white' : 'bg-brand-pastel/50 text-brand-secondary hover:bg-brand-pastel'
+          return (
+            <button key={t}
+              onClick={() => setTabVer(t)}
+              className={'px-4 py-2 rounded-xl text-sm font-semibold ' + tabCls}
+            >
+              {t === 'resumen' ? '📊 Por agente' : '📋 Detalle completo'}
+            </button>
+          )
+        })}
       </div>
 
       {/* Por agente */}
@@ -1338,18 +1340,17 @@ function AuditPanel({ token }) {
 
       {/* Filtros */}
       <div className="flex gap-2 flex-wrap">
-        {Object.entries(ACCIONES).map(([key, val]) => (
-          <button key={key}
-            onClick={() => setFiltro(key)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-              filtro === key
-                ? 'bg-brand-dark text-white'
-                : 'bg-brand-pastel/50 text-brand-secondary hover:bg-brand-pastel'
-            }`}
-          >
-            {val.emoji} {val.label}
-          </button>
-        ))}
+        {Object.entries(ACCIONES).map(([key, val]) => {
+          const filterCls = filtro === key ? 'bg-brand-dark text-white' : 'bg-brand-pastel/50 text-brand-secondary hover:bg-brand-pastel'
+          return (
+            <button key={key}
+              onClick={() => setFiltro(key)}
+              className={'px-3 py-1.5 rounded-full text-xs font-semibold ' + filterCls}
+            >
+              {val.emoji} {val.label}
+            </button>
+          )
+        })}
       </div>
 
       {/* Timeline */}
