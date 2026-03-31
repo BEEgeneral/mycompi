@@ -1,9 +1,0 @@
-{
-  "timestamp": "2026-03-31T18:45:00Z",
-  "agente": "Elena",
-  "tareas": ["health_check_basico"],
-  "resumen": "Heartbeat 2026-03-31T18:45Z. Sin incidencias. Sin procesos PM2 activos, sin logs de errores, sin automatizaciones corriendo en este host. Todo tranquilo.",
-  "urgente": false,
-  "systems_status": "all_green",
-  "automatizaciones_creadas": 0
-}

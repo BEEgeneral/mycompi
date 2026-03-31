@@ -1,8 +1,0 @@
-{
-  "timestamp": "2026-03-31T18:40:00Z",
-  "agente": "Laura",
-  "tareas": ["Verificación de cuenta de email mycompi en himalaya", "Revisión de bandeja de entrada", "Revisión de tickets de soporte", "Revisión de mensajes de chat", "Revisión de archivos shared/memory"],
-  "resumen": "Heartbeat de rutina. No hay cuenta mycompi configurada en himalaya. Sin emails nuevos, tickets pendientes o mensajes de chat que requieran respuesta. Revisados archivos shared/memory — todo OK.",
-  "urgente": false,
-  "sentiment": "neutral"
-}

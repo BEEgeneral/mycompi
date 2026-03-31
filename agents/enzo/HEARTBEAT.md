@@ -1,11 +1,22 @@
 # HEARTBEAT — Enzo Herrera · Marketing · MyCompi
 
 **Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
+**Agente ID:** `cmnct809d0003r9tkbdzelzv3`
 
 ## Tu ritmo
-Despiertas cada **25 minutos** mientras estés activo. (Optimizado: antes 30min)
+Despiertas cada **30 minutos** mientras estés activo.
 
 ## Qué hacer en cada heartbeat
+
+### 0. Leer tu cola de trabajos (BD MyCompi)
+**PRIMERO esto.** Ejecuta:
+```
+node /data/.openclaw/workspace/mycompi/scripts/agent-queue-reader.js cmnct809d0003r9tkbdzelzv3
+```
+Esto te dice qué trabajos tienes pendientes, cuáles están esperando aprobación del cliente, y cuáles puedes ejecutar ahora.
+- Si tienes `🔒 PENDIENTES DE APROBACIÓN`: **no los toques** hasta que el cliente los apruebe.
+- Si tienes `📌 TRABAJOS DISPONIBLES`: toma el primero (prioridad CRITICA > ALTA > MEDIA > BAJA) y ejecútalo.
+- Si dice `✅ Cola vacía`: pasa a revisar métricas y campañas.
 
 ### 1. Revisar Métricas de Campañas
 - ¿Hay nuevas métricas de campañas activas (aperturas, clics, conversiones)?

@@ -1,9 +1,20 @@
 # HEARTBEAT — Laura Montes · Atención al Cliente · MyCompi
 
 **Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
+**Agente ID:** `cmnct7zvf0001r9tkvm0p3dbw`
 
 ## Tu ritmo
-Despiertas cada **15 minutos** mientras estés activo. (Optimizado: antes 20min)
+Despiertas cada **20 minutos** mientras estés activo.
+
+### 0. Leer tu cola de trabajos (BD MyCompi)
+**PRIMERO esto.** Ejecuta:
+```
+node /data/.openclaw/workspace/mycompi/scripts/agent-queue-reader.js cmnct7zvf0001r9tkvm0p3dbw
+```
+Esto te dice qué trabajos tienes pendientes, cuáles están esperando aprobación del cliente, y cuáles puedes ejecutar ahora.
+- Si tienes `🔒 PENDIENTES DE APROBACIÓN`: **no los toques** hasta que el cliente los apruebe.
+- Si tienes `📌 TRABAJOS DISPONIBLES`: toma el primero de la lista y ejecútalo.
+- Si dice `✅ Cola vacía`: pasa a revisar bandeja de entrada y emails.
 
 ### 1. Revisar Bandeja de Entrada
 - ¿Hay emails nuevos en la bandeja de entrada del cliente?

@@ -17,7 +17,7 @@ const pool = new Pool({
 const AGENT_API_KEY = process.env.AGENT_API_KEY || '';
 
 async function main() {
-  constahora = new Date().toISOString();
+  const ahora = new Date().toISOString();
   console.log(`[${ahora}] Budget alerts check starting...`);
 
   // Obtener todos los agentes con budget configurado

@@ -1,11 +1,22 @@
 # HEARTBEAT — Elena Ortega · Operaciones · MyCompi
 
 **Tu cliente real: MyCompi / BeeNoCode (CIF B60604238)**
+**Agente ID:** `cmnct80rm0007r9tkodlpaghf`
 
 ## Tu ritmo
-Despiertas cada **25 minutos** mientras estés activo. (Optimizado: antes 30min)
+Despiertas cada **30 minutos** mientras estés activo.
 
 ## Qué hacer en cada heartbeat
+
+### 0. Leer tu cola de trabajos (BD MyCompi)
+**PRIMERO esto.** Ejecuta:
+```
+node /data/.openclaw/workspace/mycompi/scripts/agent-queue-reader.js cmnct80rm0007r9tkodlpaghf
+```
+Esto te dice qué trabajos tienes pendientes, cuáles están esperando aprobación del cliente, y cuáles puedes ejecutar ahora.
+- Si tienes `🔒 PENDIENTES DE APROBACIÓN`: **no los toques** hasta que el cliente los apruebe.
+- Si tienes `📌 TRABAJOS DISPONIBLES`: toma el primero (CRITICA > ALTA > MEDIA > BAJA) y ejecútalo.
+- Si dice `✅ Cola vacía`: pasa a revisar procesos y automatización.
 
 ### 1. Revisar Procesos y Automatizaciones
 - ¿Hay incidencias en los procesos automatizados del cliente?
