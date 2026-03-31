@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-03-31T16:16:00Z",
+  "agente": "Valeria",
+  "tareas": [
+    "Revisión sprint backlog — sin tareas activas",
+    "Revisión heartbeats de otros agentes — sin work pendiente de revisión",
+    "Sistemas OK — sin blockers detectados"
+  ],
+  "deliverables_revisados": 0,
+  "status": "NO_WORK_PENDING",
+  "resumen": "Sprint backlog vacío. Sin trabajos pendientes de revisión en cola. Heartbeats de Carlos (sin pipeline activo) y Elena (sistemas OK sin incidencias) no requieren acción de QA. Sin blockers abiertos.",
+  "blockers": 0,
+  "notas": {
+    "sprint_backlog": "vacío — sin tareas activas",
+    "cola_entregas": "vacía",
+    "ultima_revision": null,
+    "siguiente_accion": "esperar nuevos deliverables de agentes"
+  }
+}

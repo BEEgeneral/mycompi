@@ -3,10 +3,9 @@
  * Crea las tareas del plan 30 días para un cliente.
  * Lo llama Paco automáticamente al terminar el onboarding.
  */
+const { pool } = require('../models/db');
+const { seed } = require('../../scripts/seed-plan-30dias');
 const express = require('express');
-const { pool } = require('../src/models/db');
-const { seed } = require('../scripts/seed-plan-30dias');
-
 const router = express.Router();
 
 router.post('/:id/seed-plan-30dias', async (req, res) => {
@@ -15,7 +14,7 @@ router.post('/:id/seed-plan-30dias', async (req, res) => {
 
     // Verificar que el cliente existe
     const cliente = await pool.query(
-      `SELECT id, nombre FROM clientes WHERE id = $1`,
+      `SELECT id, nombre FROM "Cliente" WHERE id = $1`,
       [id]
     );
     if (cliente.rows.length === 0) {
@@ -26,7 +25,7 @@ router.post('/:id/seed-plan-30dias', async (req, res) => {
 
     // Verificar que no tenga ya trabajos del plan (evitar duplicados)
     const existing = await pool.query(
-      `SELECT COUNT(*) FROM trabajos WHERE cliente_id = $1 AND titulo LIKE '🔍%' OR titulo LIKE '📋%' LIMIT 1`,
+      `SELECT COUNT(*) FROM "Trabajo" WHERE "clienteId" = $1 AND (titulo LIKE '🔍%' OR titulo LIKE '📋%') LIMIT 1`,
       [id]
     );
 

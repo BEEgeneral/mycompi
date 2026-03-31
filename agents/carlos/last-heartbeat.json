@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-03-31T16:05:48Z",
+  "timestamp": "2026-03-31T16:31:00Z",
   "agente": "Carlos",
   "tareas": [
     "Revisión pipeline — sin actividad (0 hot, 0 warm, 0 cold)",
     "Sin leads nuevos que qualificar",
-    "Sin seguimientos pendientes — producto inactivo",
-    "Research semanal completado (2026-03-31)"
+    "Sin seguimientos pendientes — producto sin cambios",
+    "Research semanal: mismo día que anterior (2026-03-31), skip"
   ],
-  "resumen": "Sistema MyCompi sin actividad real. Sin pipeline ni datos de ventas. 9° día consecutivas sin outreach posible. Research semanal B2B outbound 2026 ya completado. Proposals 8-11 ya en strategy-proposals.md.",
+  "resumen": "Sistema MyCompi sin actividad real. Sin pipeline ni datos de ventas. 10° día consecutivo sin outreach posible. Producto inactivo según último registro. Sin cambios en el estado.",
   "urgente": false,
   "pipeline": {"hot": 0, "warm": 0, "cold": 0},
   "conversion_actual": "N/A — sin datos de ventas"

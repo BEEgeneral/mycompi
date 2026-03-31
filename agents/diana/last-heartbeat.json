@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-03-31T16:33:00Z",
+  "agente": "Diana",
+  "tareas": [
+    "Revisión de métricas de cliente (sin datos disponibles)",
+    "Verificación de dashboards y reports",
+    "Verificación de anomalías de churn/retention",
+    "Research semanal (no aplica esta noche - próximo: semana del 2026-04-07)"
+  ],
+  "resumen": "Heartbeat Diana 2026-03-31 16:33 UTC. Sistema MyCompi sin actividad real en producción desde hace 8+ días. No hay datos de métricas (MRR, churn, new users) dado que el producto no está deployado. Proposal activo: Churn prediction model (Proposal 1, Diana, semana 2026-03-31). Sin anomalías detectadas.",
+  "urgente": false,
+  "metrics_highlight": {
+    "mrr": "no_data",
+    "churn": "no_data",
+    "new_users": "no_data",
+    "status": "Sistema sin actividad real - producto no deployado en producción"
+  },
+  "insights": [
+    "Sin métricas disponibles - producto no activo en producción",
+    "8 días consecutivos sin actividad real según daily standup",
+    "Proposal churn prediction sigue vigente - requiere implementación cuando haya datos",
+    "Research semanal no toca esta noche (último research: semana 2026-03-31)"
+  ]
+}
