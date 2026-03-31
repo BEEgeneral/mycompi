@@ -28,7 +28,7 @@ router.post('/:id/aprobar', authMiddleware, async (req, res) => {
 
     // Verificar que el trabajo existe y es del cliente
     const job = await pool.query(
-      `SELECT * FROM "Trabajo" WHERE id = $1 AND clienteid = $2`,
+      `SELECT * FROM "Trabajo" WHERE id = $1 AND "clienteId" = $2`,
       [id, req.clienteId]
     );
     if (job.rows.length === 0) {
@@ -59,7 +59,7 @@ router.post('/:id/aprobar', authMiddleware, async (req, res) => {
 
     // Notificar al cliente
     await pool.query(
-      `INSERT INTO "Notificacion" (id, clienteid, agenteid, tipo, titulo, contenido, createdat)
+      `INSERT INTO "Notificacion" (id, "clienteId", "agenteId", tipo, titulo, contenido, "createdAt")
        VALUES (gen_random_uuid(), $1, $2, 'INFO', $3, $4, NOW())`,
       [req.clienteId, trabajo.agenteId,
         `✅ Trabajo aprobado: ${trabajo.titulo.substring(0, 50)}`,
@@ -80,7 +80,7 @@ router.post('/:id/rechazar', authMiddleware, async (req, res) => {
     const { nota } = req.body || {};
 
     const job = await pool.query(
-      `SELECT * FROM "Trabajo" WHERE id = $1 AND clienteid = $2`,
+      `SELECT * FROM "Trabajo" WHERE id = $1 AND "clienteId" = $2`,
       [id, req.clienteId]
     );
     if (job.rows.length === 0) {
@@ -117,7 +117,7 @@ router.get('/:id/approvals', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const job = await pool.query(
-      `SELECT * FROM "Trabajo" WHERE id = $1 AND clienteid = $2`,
+      `SELECT * FROM "Trabajo" WHERE id = $1 AND "clienteId" = $2`,
       [id, req.clienteId]
     );
     if (job.rows.length === 0) {

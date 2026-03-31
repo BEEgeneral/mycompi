@@ -50,7 +50,7 @@ router.get('/pending-approval', authMiddleware, async (req, res) => {
        FROM "Trabajo" t
        LEFT JOIN "Agente" a ON t."agenteId" = a.id
        WHERE t."clienteId" = $1
-         AND t.requiereAprobacion = true
+         AND t."requiereAprobacion" = true
          AND t."aprobadoAt" IS NULL
          AND t.estado NOT IN ('COMPLETED', 'FAILED', 'BLOCKED')
        ORDER BY t.prioridad = 'CRITICA' DESC, t."createdAt" ASC

@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-03-31T18:31:00Z",
+  "timestamp": "2026-03-31T18:55:00Z",
   "agente": "Carlos",
   "tareas": [
     "Revisión pipeline de ventas (sin cambios - sin datos CRM)",
     "Seguimientos pendientes (ninguno)",
     "Lead enrichment (sin leads nuevos)",
     "Engagement analysis (sin datos)",
-    "Research semanal (ya ejecutado 2026-03-31 - vigente)"
+    "Research semanal (vigente del 2026-03-31 - próximo 2026-04-07)"
   ],
-  "resumen": "Heartbeat 18:31 UTC / 02:31 MYT — Sistema MyCompi sigue inactivo. Pipeline vacío (0 hot, 0 warm, 0 cold). Sin leads nuevos ni seguimientos pendientes. Research semanal vigente del 2026-03-31. Sistema necesita datos CRM o integración real para que Carlos tenga trabajo.",
+  "resumen": "Heartbeat 18:55 UTC / 02:55 MYT — Sistema MyCompi sigue inactivo. Pipeline vacío (0 hot, 0 warm, 0 cold). Sin leads nuevos ni seguimientos. Research semanal vigente del 2026-03-31. Sin cambios desde último heartbeat. Sistema necesita datos CRM para operar.",
   "urgente": false,
   "pipeline": {
     "hot": 0,
