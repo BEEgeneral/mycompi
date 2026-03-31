@@ -1,16 +1,12 @@
 /**
- * chat.js — Chat de Paco via OpenClaw con contexto completo + SSE streaming
+ * chat.js — Chat de Paco con contexto completo + SSE streaming
  *
  * POST /api/chat          → Enviar mensaje (SSE stream)
  * GET  /api/chat/history → Historial
  * GET  /api/chat/:id     → Estado de interacción
  *
- * Cambios vs versión anterior:
- * - Usa OpenClaw como brain (no MiniMax directo)
- * - Contexto completo del cliente (empresa, plan, docs, tareas)
- * - Herramientas disponibles según plan
- * - Extracción y ejecución de tool calls detectadas en respuesta
- * - SSE streaming con parser robusto para chunks fragmentados
+ * Usa MiniMax API directamente para respuestas rápidas.
+ * Mantiene contexto completo del cliente + tools disponibles.
  */
 const express = require('express');
 const router = express.Router();
@@ -23,10 +19,11 @@ const { Resend } = require('resend');
 const RESEND = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // ─────────────────────────────────────────
-// Configuración OpenClaw
+// Configuración MiniMax (llamada directa)
 // ─────────────────────────────────────────
-const OPENCLAW_URL = process.env.OPENCLAW_URL || 'http://127.0.0.1:18789';
-const OPENCLAW_TOKEN = process.env.OPENCLAW_TOKEN || process.env.OPENCLAW_GATEWAY_TOKEN || '';
+const MINIMAX_API_KEY = process.env.MINIMAX_API_KEY || '';
+const MINIMAX_BASE_URL = 'https://api.minimax.io/v1';
+const MINIMAX_MODEL = 'MiniMax-M2.7';
 const PACO_TIMEOUT_MS = 60000;
 
 // ─────────────────────────────────────────
@@ -226,11 +223,11 @@ class SSEParser {
 }
 
 // ─────────────────────────────────────────
-// Llamar a OpenClaw con streaming SSE robusto
+// Llamar a MiniMax con streaming SSE
 // ─────────────────────────────────────────
-async function* callOpenClawStream(prompt) {
-  if (!OPENCLAW_TOKEN) {
-    yield '⚠️ Sistema no configurado: OpenClaw token no disponible.\n\n';
+async function* callMiniMaxStream(prompt) {
+  if (!MINIMAX_API_KEY) {
+    yield '⚠️ Sistema no configurado: MINIMAX_API_KEY no disponible.\n\n';
     return;
   }
 
@@ -242,20 +239,18 @@ async function* callOpenClawStream(prompt) {
     { role: 'user', content: userContent }
   ];
 
-  let sseErrorSent = false;
-
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), PACO_TIMEOUT_MS);
 
-    const response = await fetch(`${OPENCLAW_URL}/v1/chat/completions`, {
+    const response = await fetch(`${MINIMAX_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENCLAW_TOKEN}`,
+        'Authorization': `Bearer ${MINIMAX_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'minimax/MiniMax-M2.7',
+        model: MINIMAX_MODEL,
         messages,
         max_tokens: 1500,
         temperature: 0.7,
@@ -268,10 +263,7 @@ async function* callOpenClawStream(prompt) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      if (!sseErrorSent) {
-        yield `❌ Error de OpenClaw (${response.status}): ${errorText.slice(0, 200)}`;
-        sseErrorSent = true;
-      }
+      yield `❌ Error de MiniMax (${response.status}): ${errorText.slice(0, 200)}\n`;
       return;
     }
 
@@ -283,17 +275,13 @@ async function* callOpenClawStream(prompt) {
     while (true) {
       const { done, value } = await reader.read();
       if (done) {
-        // Flush any remaining data in buffer
         for (const event of parser.flush()) {
-          if (event.type === 'message' && event.data) {
-            if (event.data === '[DONE]') return;
+          if (event.type === 'message' && event.data && event.data !== '[DONE]') {
             try {
               const parsed = JSON.parse(event.data);
               const content = parsed.choices?.[0]?.delta?.content;
               if (content) yield content;
-            } catch {
-              // Non-JSON SSE data — ignore
-            }
+            } catch { /* ignore */ }
           }
         }
         break;
@@ -305,7 +293,6 @@ async function* callOpenClawStream(prompt) {
       for (const event of events) {
         if (event.type === 'message' && event.data) {
           if (event.data === '[DONE]') {
-            // Flush buffer before returning
             for (const e of parser.flush()) {
               if (e.type === 'message' && e.data && e.data !== '[DONE]') {
                 try {
@@ -321,18 +308,16 @@ async function* callOpenClawStream(prompt) {
             const parsed = JSON.parse(event.data);
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) yield content;
-          } catch {
-            // Non-JSON SSE data — skip silently
-          }
+          } catch { /* ignore */ }
         }
       }
     }
 
   } catch (err) {
     if (err.name === 'AbortError') {
-      yield '⏱️ Timeout (60s) esperando respuesta de OpenClaw.\n';
+      yield '⏱️ Timeout (60s) esperando respuesta de MiniMax.\n';
     } else {
-      yield `❌ Error conectando con OpenClaw: ${err.message}\n`;
+      yield `❌ Error conectando con MiniMax: ${err.message}\n`;
     }
   }
 }
@@ -524,7 +509,7 @@ router.post('/', authMiddleware, async (req, res) => {
   let respuestaCompleta = '';
 
   try {
-    const stream = callOpenClawStream(prompt);
+    const stream = callMiniMaxStream(prompt);
 
     for await (const chunk of stream) {
       if (chunk) {
