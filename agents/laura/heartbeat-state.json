@@ -1,8 +1,9 @@
 {
   "lastChecks": {
-    "inbox": 1743448800,
-    "tickets": 1743448800,
-    "chat": 1743448800
+    "inbox": null,
+    "tickets": null,
+    "chat": null
   },
-  "lastHeartbeat": "2026-03-31T16:40:00Z"
+  "lastHeartbeat": "2026-03-31T18:40:00Z",
+  "notes": "No hay cuenta de email mycompi configurada en himalaya. No hay acceso directo a tickets o chat en este heartbeat. Verificados archivos shared/memory."
 }

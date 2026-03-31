@@ -13,7 +13,7 @@ const router = express.Router();
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { limit = 100, offset = 0, accion, agenteId } = req.query;
-    let query = `SELECT * FROM "AuditLog" WHERE "clienteId" = $1`;
+    let query = `SELECT * FROM "AuditLog" WHERE clienteid = $1`;
     const params = [req.clienteId];
 
     if (accion) {
@@ -22,11 +22,11 @@ router.get('/', authMiddleware, async (req, res) => {
     }
     if (agenteId) {
       params.push(agenteId);
-      query += ` AND "agenteId" = $${params.length}`;
+      query += ` AND agenteid = $${params.length}`;
     }
 
     params.push(parseInt(limit), parseInt(offset));
-    query += ` ORDER BY "createdAt" DESC LIMIT $${params.length - 1} OFFSET $${params.length}`;
+    query += ` ORDER BY createdat DESC LIMIT $${params.length - 1} OFFSET $${params.length}`;
 
     const result = await pool.query(query, params);
     res.json({ logs: result.rows, total: result.rows.length });
@@ -42,8 +42,8 @@ router.get('/agente/:agenteId', authMiddleware, async (req, res) => {
     const { limit = 50 } = req.query;
     const result = await pool.query(
       `SELECT * FROM "AuditLog"
-       WHERE "clienteId" = $1 AND "agenteId" = $2
-       ORDER BY "createdAt" DESC LIMIT $3`,
+       WHERE clienteid = $1 AND agenteid = $2
+       ORDER BY createdat DESC LIMIT $3`,
       [req.clienteId, req.params.agenteId, parseInt(limit)]
     );
     res.json({ logs: result.rows });
@@ -58,22 +58,22 @@ router.get('/tokens', authMiddleware, async (req, res) => {
     const { agenteId } = req.query;
     let query = `
       SELECT
-        "agenteId",
+        agenteid,
         COUNT(*) as acciones,
-        SUM("tokensUsados") as total_tokens,
-        SUM("costeEuros") as total_eur,
-        MAX("createdAt") as ultimo_uso
+        SUM("tokensusados") as total_tokens,
+        SUM("costeeuros") as total_eur,
+        MAX(createdat) as ultimo_uso
       FROM "TokenUsage"
-      WHERE "clienteId" = $1
+      WHERE clienteid = $1
     `;
     const params = [req.clienteId];
 
     if (agenteId) {
       params.push(agenteId);
-      query += ` AND "agenteId" = $${params.length}`;
+      query += ` AND agenteid = $${params.length}`;
     }
 
-    query += ` GROUP BY "agenteId" ORDER BY total_tokens DESC NULLS LAST`;
+    query += ` GROUP BY agenteid ORDER BY total_tokens DESC NULLS LAST`;
 
     const result = await pool.query(query, params);
     res.json({ usage: result.rows });
@@ -95,7 +95,7 @@ router.post('/log', async (req, res) => {
     }
 
     await pool.query(
-      `INSERT INTO "AuditLog" (id, "clienteId", "agenteId", accion, "recursoTipo", "recursoId", detalle, "costeTokens", "createdAt")
+      `INSERT INTO "AuditLog" (id, clienteid, agenteid, accion, recursotipo, recursoid, detalle, costetokens, createdat)
        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, NOW())`,
       [clienteId, agenteId || null, accion, recursoTipo || 'General', recursoId || null,
         detalle ? JSON.stringify(detalle) : null, costeTokens || 0]

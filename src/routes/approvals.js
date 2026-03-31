@@ -28,7 +28,7 @@ router.post('/:id/aprobar', authMiddleware, async (req, res) => {
 
     // Verificar que el trabajo existe y es del cliente
     const job = await pool.query(
-      `SELECT * FROM "Trabajo" WHERE id = $1 AND "clienteId" = $2`,
+      `SELECT * FROM "Trabajo" WHERE id = $1 AND clienteid = $2`,
       [id, req.clienteId]
     );
     if (job.rows.length === 0) {
@@ -51,7 +51,7 @@ router.post('/:id/aprobar', authMiddleware, async (req, res) => {
 
     // Audit log
     await pool.query(
-      `INSERT INTO "AuditLog" (id, "clienteId", "agenteId", accion, "recursoTipo", "recursoId", detalle, "createdAt")
+      `INSERT INTO "AuditLog" (id, clienteid, agenteid, accion, recursotipo, recursoid, detalle, createdat)
        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW())`,
       [req.clienteId, trabajo.agenteId, AUDIT_ACTIONS.APPROVE, 'Trabajo', id,
         JSON.stringify({ trabajo: trabajo.titulo, aprobadoPor: req.usuarioId, nota })]
@@ -59,7 +59,7 @@ router.post('/:id/aprobar', authMiddleware, async (req, res) => {
 
     // Notificar al cliente
     await pool.query(
-      `INSERT INTO "Notificacion" (id, "clienteId", "agenteId", tipo, titulo, contenido, "createdAt")
+      `INSERT INTO "Notificacion" (id, clienteid, agenteid, tipo, titulo, contenido, createdat)
        VALUES (gen_random_uuid(), $1, $2, 'INFO', $3, $4, NOW())`,
       [req.clienteId, trabajo.agenteId,
         `✅ Trabajo aprobado: ${trabajo.titulo.substring(0, 50)}`,
@@ -80,7 +80,7 @@ router.post('/:id/rechazar', authMiddleware, async (req, res) => {
     const { nota } = req.body || {};
 
     const job = await pool.query(
-      `SELECT * FROM "Trabajo" WHERE id = $1 AND "clienteId" = $2`,
+      `SELECT * FROM "Trabajo" WHERE id = $1 AND clienteid = $2`,
       [id, req.clienteId]
     );
     if (job.rows.length === 0) {
@@ -99,7 +99,7 @@ router.post('/:id/rechazar', authMiddleware, async (req, res) => {
     );
 
     await pool.query(
-      `INSERT INTO "AuditLog" (id, "clienteId", "agenteId", accion, "recursoTipo", "recursoId", detalle, "createdAt")
+      `INSERT INTO "AuditLog" (id, clienteid, agenteid, accion, recursotipo, recursoid, detalle, createdat)
        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW())`,
       [req.clienteId, trabajo.agenteId, AUDIT_ACTIONS.REJECT, 'Trabajo', id,
         JSON.stringify({ trabajo: trabajo.titulo, razon: nota })]
@@ -117,7 +117,7 @@ router.get('/:id/approvals', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const job = await pool.query(
-      `SELECT * FROM "Trabajo" WHERE id = $1 AND "clienteId" = $2`,
+      `SELECT * FROM "Trabajo" WHERE id = $1 AND clienteid = $2`,
       [id, req.clienteId]
     );
     if (job.rows.length === 0) {
