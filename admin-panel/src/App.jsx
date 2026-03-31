@@ -3,6 +3,7 @@ import HierarchyView from './components/HierarchyView'
 import DecisionesTab from './components/tabs/DecisionesTab'
 import ActividadTab from './components/tabs/ActividadTab'
 import ColaTab from './components/tabs/ColaTab'
+import ChatTab from './components/tabs/ChatTab'
 
 const API = ''
 
@@ -486,6 +487,7 @@ export default function App() {
       <div className="bg-white border-b border-gray-200 px-6 py-2 flex gap-1">
         {[
           { id: 'dashboard', label: 'Dashboard' },
+          { id: 'chat', label: '💬 Chat' },
           { id: 'jerarquia', label: 'Jerarquía' },
           { id: 'cola', label: '📋 Cola' },
           { id: 'actividad', label: 'Actividad' },
@@ -504,6 +506,10 @@ export default function App() {
 
       {/* Content */}
       <div className="max-w-[1200px] mx-auto px-6 py-6">
+
+        {vista === 'chat' && (
+          <ChatTab />
+        )}
 
         {vista === 'dashboard' && (
           <>
