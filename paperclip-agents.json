@@ -1,0 +1,14 @@
+{
+  "companyId": "94b69daf-47c3-4d77-8928-dcc2eb03f38d",
+  "paperclipUrl": "http://127.0.0.1:57458",
+  "agents": [
+    {"name":"Paco","id":"aad92bc5-a6e4-450f-ab8a-4a2106ea1aaa","role":"ceo"},
+    {"name":"Laura","id":"3cbb5ba9-648a-4a50-bb91-6ca13df049b5","role":"general"},
+    {"name":"Enzo","id":"4d9608e6-df8c-4d51-8f1c-9b6f11074f7f","role":"cmo"},
+    {"name":"Carlos","id":"6816bc84-8f5c-4fce-8cf4-e31f5644cd5e","role":"general"},
+    {"name":"Elena","id":"e792d7d9-750f-44e5-ac4c-4b6c3e99b2dc","role":"devops"},
+    {"name":"Diana","id":"fe33644a-db3b-4614-96bb-3be9b559da93","role":"researcher"},
+    {"name":"Marcos","id":"8a688cce-bfbf-449a-82bf-5e390ff0ec2b","role":"engineer"},
+    {"name":"Valeria","id":"4be95749-5ab6-4874-b415-0a262d363ffc","role":"qa"}
+  ]
+}
