@@ -508,12 +508,12 @@ router.post('/', authMiddleware, async (req, res) => {
   if (mensaje.trim() === '__MYCOMPI_ONBOARDING__') {
     const clienteData = await prisma.cliente.findUnique({
       where: { id: clienteId },
-      select: { nombre: true, empresa: true, plan: true, createdAt: true }
+      select: { nombre: true, plan: true, createdAt: true }
     });
 
     const onboardingPrompt = `Eres Paco, el orquestador de MyCompi. Un nuevo cliente acaba de entrar a su dashboard por primera vez.
 
-**Cliente:** ${clienteData?.nombre || 'Cliente'} ${clienteData?.empresa ? `(${clienteData.empresa})` : ''}
+**Cliente:** ${clienteData?.nombre || 'Cliente'}
 **Plan:** ${clienteData?.plan || 'BASICO'}
 
 Tu trabajo ahora es enviarle UN SOLO mensaje de bienvenida que:
