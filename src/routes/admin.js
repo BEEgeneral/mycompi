@@ -387,6 +387,71 @@ router.put('/agentes/:id/archivos/:file', ownerOnly, (req, res) => {
   fs.writeFileSync(filePath, contenido, 'utf8');
   res.json({ ok: true, archivo: file });
 });
+// ─────────────────────────────────────────
+// MÉTRICAS BUSINESS (para BusinessMetricsTab)
+// GET /api/admin/metrics/business
+// ─────────────────────────────────────────
+router.get('/metrics/business', ownerOnly, async (req, res) => {
+  try {
+    const prisma = require('../lib/db');
+    const now = new Date();
+    const inicioMes = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [
+      clientes,
+      agentes,
+      trabajos,
+      pagos,
+      notificaciones,
+    ] = await Promise.all([
+      prisma.cliente.findMany({ where: { activo: true } }),
+      prisma.agente.findMany(),
+      prisma.trabajo.findMany({
+        where: { createdAt: { gte: inicioMes } },
+        include: { agente: { select: { id: true, nombre: true, especialidad: true } } }
+      }),
+      prisma.pago.findMany({
+        where: { fechaPago: { gte: inicioMes }, estado: 'completed' }
+      }),
+      prisma.notificacion.findMany({
+        where: { createdAt: { gte: new Date(now - 7 * 24 * 60 * 60 * 1000) } }
+      }),
+    ]);
+
+    const mrr = pagos.reduce((sum, p) => sum + (p.monto / 100), 0);
+    const clientesActivos = clientes.length;
+    const agentesActivos = agentes.filter(a => a.activoHeartbeat).length;
+
+    const trabajosCompletados = trabajos.filter(t => t.estado === 'COMPLETADO').length;
+    const trabajosPendientes = trabajos.filter(t => t.estado === 'PENDIENTE' || t.estado === 'EN_PROGRESO').length;
+
+    const funnel = {
+      registros: clientes.length,
+      emailVerificado: clientes.filter(c => c.email).length,
+      primerAcceso: clientesActivos,
+      primerMensaje: trabajos.length,
+      retenido: trabajosCompletados > 0 ? Math.round((trabajosCompletados / clientesActivos) * 100) : 0,
+    };
+
+    res.json({
+      ok: true,
+      mrr: Math.round(mrr * 100) / 100,
+      clientesActivos,
+      agentesActivos,
+      trabajos: {
+        total: trabajos.length,
+        completados: trabajosCompletados,
+        pendientes: trabajosPendientes,
+      },
+      funnel,
+      notificaciones7d: notificaciones.length,
+    });
+  } catch (err) {
+    console.error('Error /metrics/business:', err);
+    res.status(500).json({ error: 'Error interno', detail: err.message });
+  }
+});
+
 router.get('/metrics/dashboard', ownerOnly, (req, res) => {
   try {
     const tokenController = require('../services/tokenController');

@@ -31,6 +31,7 @@ model Cliente {
   interacciones InteraccionChat[]
   emails        Email[]
   notificaciones Notificacion[]
+  onboardingSequence OnboardingSequence?
 }
 
 // ============================================
@@ -74,6 +75,12 @@ model Agente {
   horario     Json?    // { "inicio": "10:00", "fin": "19:00", "tz": "Europe/Madrid" }
   memory      Json?    // memoria largo plazo
   activo      Boolean  @default(true)
+  activoHeartbeat  Boolean @default(true)
+  ultimoHeartbeat  DateTime?
+  budgetTokensMes  Int      @default(1000000)
+  tokensUsadosMes  Int      @default(0)
+  ultimoResetTokens DateTime?
+  alertaPorcentaje Int      @default(80)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -94,6 +101,11 @@ model Trabajo {
   descripcion String?
   estado      EstadoTrabajo @default(TODO)
   prioridad   Prioridad @default(MEDIA)
+  parentId    String?
+  requiereAprobacion Boolean @default(false)
+  aprobadoPor String?
+  aprobadoAt  DateTime?
+  notaAprobacion String?
   tags        String[]
   inputData   Json?
   outputData  Json?
@@ -329,6 +341,22 @@ enum TipoMensaje {
   ALERTA
   REPORTE
   SOLICITUD
+}
+
+// ============================================
+// ONBOARDING SEQUENCE — Secuencia de emails post-activación
+// ============================================
+model OnboardingSequence {
+  id          String   @id @default(cuid())
+  clienteId   String   @unique
+  dia1Sent    Boolean  @default(false)
+  dia3Sent    Boolean  @default(false)
+  dia7Sent    Boolean  @default(false)
+  activo      Boolean  @default(true)
+  startedAt   DateTime @default(now())
+  lastEmailAt DateTime?
+
+  cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
 }
 
 // ============================================
