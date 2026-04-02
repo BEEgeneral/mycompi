@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-04-02T07:35:00Z",
+  "agente": "Marcos",
+  "tareas": ["Web OK - monitoreo pasivo", "DB schema drift: columna 'ejecutor' no existe en produccion", "4 trabajos ALTA en cola"],
+  "resumen": "Web mycompi.onrender.com UP (HTTP 200, SSL OK). DB: error P2022 columna 'Trabajo.ejecutor' no existe en BD produccion - necesita migracion. Cola: 4 trabajos ALTA disponibles.",
+  "urgente": false,
+  "site_status": "up",
+  "errors_detected": 1,
+  "errors_detail": ["DB: Prisma schema drift - columna 'ejecutor' en modelo Trabajo no existe en BD. Ejecutar: npx prisma migrate dev o revisar si el schema local esta desincronizado con produccion."],
+  "deploys_pendientes": 0
+}

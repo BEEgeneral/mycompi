@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-04-02T07:40:00Z",
+  "agente": "Laura",
+  "tareas": ["revisar cola de trabajos", "verificar estado de accesos"],
+  "resumen": "Sin cambios. 4 trabajos en cola, todos bloqueados por falta de acceso a bandeja de entrada/email processor (IMAP/SMTP). Última actualización de estado hace 3h20min. Sin nuevos emails ni tickets. Situación sin resolución.",
+  "urgente": false,
+  "sentiment": "neutral"
+}

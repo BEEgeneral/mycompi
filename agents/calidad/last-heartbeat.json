@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-04-02T15:17:00Z",
+  "agente": "Valeria",
+  "tareas": ["revisión cola", "verificación estado heartbeat anterior"],
+  "deliverables_revisados": 0,
+  "status": "OK_SIN_TRABAJO_PENDIENTE",
+  "resumen": "Sin deliverables nuevos en cola. No hay trabajo pendiente de revisión en este ciclo. Elena automation-followup-leads.md sigue pendiente de aprobación externa."
+}
