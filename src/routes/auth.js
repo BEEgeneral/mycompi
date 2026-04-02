@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { z } = require('zod')
 const prisma = require('../lib/db')
+const { enrollClienteOnboarding } = require('./onboarding-sequence')
 
 const router = express.Router()
 const JWT_SECRET = process.env.JWT_SECRET
@@ -33,14 +34,14 @@ function generateSlug(text) {
 }
 
 // Helper: generar tokens
-function generateTokens(usuarioId, clienteId) {
+function generateTokens(usuarioId, clienteId, email) {
   const accessToken = jwt.sign(
-    { usuarioId, clienteId },
+    { usuarioId, clienteId, email },
     JWT_SECRET,
     { expiresIn: '15m' }
   )
   const refreshToken = jwt.sign(
-    { usuarioId, clienteId },
+    { usuarioId, clienteId, email },
     JWT_REFRESH_SECRET,
     { expiresIn: '7d' }
   )
@@ -93,7 +94,7 @@ router.post('/register', async (req, res) => {
       return { cliente, usuario }
     })
 
-    const tokens = generateTokens(result.usuario.id, result.cliente.id)
+    const tokens = generateTokens(result.usuario.id, result.cliente.id, result.usuario.email)
 
     res.status(201).json({
       tokens: { ...tokens, expiresIn: 900 },
@@ -147,7 +148,7 @@ router.post('/login', async (req, res) => {
       data: updateData
     })
 
-    const tokens = generateTokens(usuario.id, usuario.clienteId)
+    const tokens = generateTokens(usuario.id, usuario.clienteId, usuario.email)
 
     res.json({
       tokens: { ...tokens, expiresIn: 900 }, // 15 min en segundos
@@ -183,7 +184,7 @@ router.post('/refresh', async (req, res) => {
     }
 
     const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET)
-    const tokens = generateTokens(decoded.usuarioId, decoded.clienteId)
+    const tokens = generateTokens(decoded.usuarioId, decoded.clienteId, decoded.email)
 
     res.json({ ...tokens, expiresIn: 900 })
   } catch (err) {
@@ -381,7 +382,13 @@ router.post('/activar', async (req, res) => {
     });
 
     // Generar tokens para login automático
-    const tokens = generateTokens(updated.id, updated.clienteId);
+    const tokens = generateTokens(updated.id, updated.clienteId, updated.email);
+
+    // Inscribir al cliente en la secuencia de onboarding (no-bloqueante)
+    enrollClienteOnboarding(updated.clienteId).catch(err => {
+      console.error('[AUTH] Error inscribiendo en onboarding:', err.message);
+    });
+
     res.json({ ok: true, tokens });
   } catch (err) {
     console.error('Error activating account:', err);

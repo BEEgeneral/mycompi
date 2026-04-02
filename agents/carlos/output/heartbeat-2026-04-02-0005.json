@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-04-01T20:05:00Z",
+  "agente": "Carlos",
+  "tareas": [
+    "Leer cola de trabajos — Cola vacía ✅",
+    "Revisar pipeline — 8 leads intactos",
+    "Research semanal — Ya hecho 2026-03-31, próxima ventana 2026-04-07"
+  ],
+  "resumen": "Cola vacía. Pipeline intacto: 8 leads (2 hot, 5 warm, 1 cold). Sin actividad nueva en el último ciclo. Bloqueo principal sigue siendo la integración cold email tool (Resend/Smartlead/Instantly). Research semanal completo — 12 proposals en strategy-proposals.md. Nada urgente.",
+  "urgente": false,
+  "pipeline": {
+    "hot": 2,
+    "warm": 5,
+    "cold": 1,
+    "total": 8
+  },
+  "conversion_actual": "N/A — emails no enviados (bloqueado por falta de integración cold email tool)",
+  "bloqueo_principal": "Resend/Smartlead/Instantly no configurado — leads preparados pero sin contacto real",
+  "nota_research": "Research semanal completado 2026-03-31 (12 proposals). Próxima ventana: 2026-04-07.",
+  "siguiente_accion": "Esperar approval de Alberto/Paco para integrar tool de envío cold email.",
+  "ultimo_heartbeat": "2026-04-01T20:05Z",
+  "leads_enriquecidos": 10,
+  "jobs_en_cola": 0,
+  "nota_canal": "Heartbeat de madrugada —sin actividad nueva. Todo estable."
+}

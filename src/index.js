@@ -57,6 +57,7 @@ const { router: notificacionesRoutes } = require('./routes/notificaciones');
 const colaRoutes = require('./routes/cola');
 const seedPlan30Routes = require('./routes/seedPlan30');
 const workerRoutes = require('./routes/worker');
+const { router: onboardingSeqRoutes, procesarSecuenciaOnboarding } = require('./routes/onboarding-sequence');
 
 const { AGENTS } = require('./services/agentLoader');
 
@@ -74,6 +75,7 @@ app.use('/api/notificaciones', notificacionesRoutes);
 app.use('/api/cola', colaRoutes);
 app.use('/api/clientes', seedPlan30Routes);
 app.use('/api/worker', workerRoutes);
+app.use('/api/onboarding-sequence', onboardingSeqRoutes);
 
 // Exponer AGENTS para las rutas
 app.use((req, res, next) => {
@@ -152,7 +154,17 @@ function startCronJobs() {
     }
   });
 
-  console.log('[CRON] Jobs programados: Night shift V2 diario a las 8:00 AM (Madrid) + Micro ciclo cada 10 min');
+  // Onboarding sequence: procesar emails de onboarding cada hora
+  cron.schedule('0 * * * *', async () => {
+    console.log('[CRON] Procesando secuencia de onboarding...');
+    try {
+      await procesarSecuenciaOnboarding();
+    } catch (err) {
+      console.error('[CRON] Error en secuencia de onboarding:', err.message);
+    }
+  });
+
+  console.log('[CRON] Jobs programados: Night shift V2 diario a las 8:00 AM (Madrid) + Micro ciclo cada 10 min + Onboarding cada hora');
 }
 
 app.listen(PORT, () => {

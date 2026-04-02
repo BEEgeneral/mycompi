@@ -1,0 +1,60 @@
+[
+  {
+    "timestamp": "2026-04-01T04:47:00Z",
+    "agente_origen": "Carlos",
+    "deliverable": "leads-identificados-2026-04-01.md",
+    "status": "APPROVED",
+    "blockers": 0,
+    "issues": [],
+    "nota_cliente": null
+  },
+  {
+    "timestamp": "2026-04-01T04:47:00Z",
+    "agente_origen": "Carlos",
+    "deliverable": "email-bienvenida.md",
+    "status": "WITH_CONDITIONS",
+    "blockers": 0,
+    "issues": [
+      "🟡 Placeholders {NOMBRE_CLIENTE}, {NOMBRE_EMPRESA}, {EMAIL_EQUIPO}, {TELEFONO_EQUIPO} sin procesar — verificar que el sistema de email remplaza estos antes de enviar",
+      "🟡 La sección HTML/renderizable está vacía — documento incomplete para uso real",
+      "🟡 No hay version final del subject line — campo Asunto tiene emoji pero no versión A/B testada",
+      "🟢 No se especifica qué pasa si el cliente no responde al follow-up de 3 días"
+    ],
+    "nota_cliente": "Email listo para integración técnica. Placeholders deben remplazarse por el sistema de email antes de enviar. El follow-up de 3 días requiere su propio email."
+  },
+  {
+    "timestamp": "2026-04-01T04:47:00Z",
+    "agente_origen": "Diana",
+    "deliverable": "competitor-analysis-2026-04-01.md",
+    "status": "APPROVED",
+    "blockers": 0,
+    "issues": [
+      "🟢 Insight clave (línea 'MyCompi no compite con Zendesk...') debería ser más visible — moverlo a un callout destacado al inicio del doc"
+    ],
+    "nota_cliente": null
+  },
+  {
+    "timestamp": "2026-04-01T02:51:00Z",
+    "agente_origen": "Diana",
+    "deliverable": "metrics-report-001-2026-04-01.md",
+    "status": "APPROVED",
+    "blockers": 0,
+    "issues": [
+      "🟢 Reporte no tiene sección de 'next steps' concreta — las recomendaciones son buenas pero no priorizadas por impacto",
+      "🟢 El insight de 'AppMyCompi nunca accedió' podría indicar cuenta huérfana — verificar si es problema de registration flow"
+    ],
+    "nota_cliente": "Reporte sólido para ser el primero. Flags apropiadamente las limitaciones de datos. JSON snapshot listo para dashboard."
+  },
+  {
+    "timestamp": "2026-04-01T02:51:00Z",
+    "agente_origen": "Diana",
+    "deliverable": "competitor-analysis-deep-2026-04-01.md",
+    "status": "APPROVED",
+    "blockers": 0,
+    "issues": [
+      "🟢 Insight clave de pricing ('MyCompi no compite con Zendesk') ya estaba en analysis anterior — documentación redundante aunque esté más desarrollada",
+      "🟢 Benchmark de pricing de competidores usa datos públicos y podría no reflejar descuentos o contratos enterprise"
+    ],
+    "nota_cliente": "Análisis competitivo completo y bien estructurado. Las recomendaciones son accionables. El insight de pricing vs. coste de empleado real es el mensaje correcto para el mercado."
+  }
+]

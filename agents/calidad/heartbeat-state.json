@@ -1,0 +1,26 @@
+{
+  "lastCheck": "2026-04-02T05:49:00Z",
+  "pendingDeliverables": [],
+  "lastReviews": [
+    {
+      "timestamp": "2026-04-01T04:47:00Z",
+      "agente": "Carlos",
+      "deliverable": "email-bienvenida.md",
+      "status": "WITH_CONDITIONS",
+      "blockers": 0
+    },
+    {
+      "timestamp": "2026-04-01T04:47:00Z",
+      "agente": "Diana",
+      "deliverable": "competitor-analysis-2026-04-01.md",
+      "status": "APPROVED",
+      "blockers": 0
+    }
+  ],
+  "activeAlerts": [
+    {"tipo": "MRR_BAJO", "nivel": "rojo", "msg": "MRR €49 — crítico"},
+    {"tipo": "ENGAGEMENT_CERO", "nivel": "amarillo", "msg": "Sin uso real de Compis"},
+    {"tipo": "SINSTRAKING", "nivel": "rojo", "msg": "No hay acquisition tracking"},
+    {"tipo": "ELENA_AUTOMATION_PENDING", "nivel": "amarillo", "msg": "automation-followup-leads.md pendiente approval externo — listo para review si se activa"}
+  ]
+}

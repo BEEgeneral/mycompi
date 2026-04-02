@@ -31,7 +31,17 @@ router.get('/config', (req, res) => {
 // Un solo plan: €49/mes — 7 agentes
 // ─────────────────────────────────────────
 router.post('/create-checkout', async (req, res) => {
-  const { email, nombre, empresa, couponCode } = req.body;
+  const { email: bodyEmail, nombre, empresa, couponCode } = req.body;
+  // Si no viene email en body, sacarlo del JWT
+  let email = bodyEmail;
+  if (!email) {
+    try {
+      const jwt = require('jsonwebtoken');
+      const token = (req.headers.authorization || '').replace('Bearer ', '');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      email = decoded.email;
+    } catch {}
+  }
   if (!email) return res.status(400).json({ error: 'Email requerido' });
 
   // Un solo plan: €49/mes

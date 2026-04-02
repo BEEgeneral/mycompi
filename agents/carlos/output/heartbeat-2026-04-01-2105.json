@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-04-01T13:05:00Z",
+  "agente": "Carlos",
+  "tareas": [
+    "Revisar cola de trabajos",
+    "Evaluar estado pipeline y leads",
+    "Research: outbound B2B trends abril 2026"
+  ],
+  "resumen": "Cola vacía — sin trabajos pendientes en base de datos. Pipeline intacto: 8 leads verificados (2 hot, 5 warm, 1 cold). 10 emails fríos preparados (estado PREPARADO, no enviados). Bloqueo principal: sin integración herramienta de envío (Resend/Smartlead/Instantly) no hay métrica de respuesta. Jobs CRITICA y MEDIA siguen esperando. Ambos jobs están blocked por la misma razón: no hay dominio configurado ni cuenta de cold email activa.",
+  "urgente": false,
+  "pipeline": {
+    "hot": 2,
+    "warm": 5,
+    "cold": 1,
+    "total": 8
+  },
+  "conversion_actual": "N/A — emails no enviados",
+  "jobs_estado": {
+    "40cc9a98-1af5-4a52-a90c-07409e47aa87": {
+      "titulo": "Escalar outreach si hay respuesta positiva",
+      "prioridad": "CRITICA",
+      "decision": "BLOQUEADO",
+      "razon": "Emails en estado PREPARADO. Sin envío real no hay reply rate que evaluar. Requiere integración Resend/Smartlead/Instantly."
+    },
+    "5970ff21-64cf-45fc-b4c9-6a0aa421f1c1": {
+      "titulo": "Outreach segunda ronda: 10 leads adicionales",
+      "prioridad": "MEDIA",
+      "decision": "BLOQUEADO",
+      "razon": "10 leads ya identificados y guardados en segunda-ronda-leads-2026-04-01.json. Pendiente envío real."
+    }
+  },
+  "bloqueo_principal": "Emails no enviados. Sin integración cold email tool, no hay métricas. Prioridad: resolver integración tool de envío con Alberto.",
+  "nota_research": "Research semanal ya hecho en semana 2026-03-31 (12 proposals completadas). Próxima ventana research: 2026-04-07. Trends B2B outbound abril 2026 monitorizados en background.",
+  "ultimo_heartbeat": "2026-04-01T11:31Z",
+  "siguiente_accion": "Esperar approval de Alberto para integrar tool de envío cold email. Mientras: leads enriquecidos y listos."
+}

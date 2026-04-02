@@ -1,9 +1,36 @@
 {
   "lastChecks": {
-    "inbox": null,
-    "tickets": null,
-    "chat": null
+    "inbox": "2026-04-02T04:20:00Z",
+    "tickets": "2026-04-02T04:20:00Z",
+    "chat": "2026-04-02T04:20:00Z"
   },
-  "lastHeartbeat": "2026-03-31T18:40:00Z",
-  "notes": "No hay cuenta de email mycompi configurada en himalaya. No hay acceso directo a tickets o chat en este heartbeat. Verificados archivos shared/memory."
+  "lastHeartbeat": "2026-04-02T04:20:00Z",
+  "notes": "Heartbeat 04:20 UTC. Misma situación que 03:44 UTC y 03:20 UTC. 4 trabajos en cola, todos bloqueados por falta de acceso a bandeja de entrada / email processor. Ningún cambio en el gap. Sin credenciales IMAP/SMTP ni integración de tickets operativa. Seguimos esperando intervención de Paco.",
+  "bloqueos": [
+    {
+      "jobId": "fe8072aa-4831-48ba-af6b-a05d7cd6ddfd",
+      "tipo": "sin_email_processor",
+      "descripcion": "Sin acceso a bandeja de entrada de soporte. Necesita credenciales IMAP/SMTP o integración tickets."
+    },
+    {
+      "jobId": "1fda9348-70e5-4272-998c-0b507ddad7a1",
+      "tipo": "sin_email_processor",
+      "descripcion": "Mismo bloqueo - necesita acceso a bandeja de entrada."
+    },
+    {
+      "jobId": "8c0d58b9-27ee-4148-a210-956a41380edc",
+      "tipo": "sin_email_processor",
+      "descripcion": "Mismo bloqueo - necesita acceso a bandeja de entrada."
+    },
+    {
+      "jobId": "3186358b-5a88-4d4d-bd95-f323f29e7747",
+      "tipo": "sin_email_processor",
+      "descripcion": "Mismo bloqueo - necesita acceso a bandeja de entrada."
+    }
+  ],
+  "urgente": false,
+  "sentiment": "neutral",
+  "gap_detected": true,
+  "gap_hours": 0.67,
+  "gap_since": "2026-04-02T03:20:00Z"
 }

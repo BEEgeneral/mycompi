@@ -207,7 +207,7 @@
 - **Esfuerzo:** medio-alto
 - **Expected Impact:** Compis conectados nativamente a herramientas externas (Stripe, Notion, Slack, BDs), sin necesidad de custom integrations por API
 - **Resumen:** MCP está emergiendo en 2026 como el "USB-C de la IA" — un protocolo universal para que agentes AI se conecten a herramientas externas. Para MyCompi, donde cada "Compi" es un agente, implementar MCP significaría que cualquier compi podría conectarse a Stripe, Notion, Slack, o cualquier herramienta con soporte MCP, sin escribir código de integración custom. Esto es especialmente relevante dado que MyCompi ya es una plataforma de agentes IA.
-- **Datos de soporte:** Docker MCP Catalog + 50+ herramientas con soporte MCP nativo en 2026. Herramientas como BrowserAct ya usan MCP para automation visual. n8n está añadiendo soporte MCP nativo. El estándar está ganando tracción rápido.
+- **Datos de suporte:** Docker MCP Catalog + 50+ herramientas con soporte MCP nativo en 2026. Herramientas como BrowserAct ya usan MCP para automation visual. n8n está añadiendo soporte MCP nativo. El estándar está ganando tracción rápido.
 - **Stack compatibility:** MCP SDK para Node.js, compatible con el stack actual (Node.js en Render). Potencialmente integrable con el agentWorker.js existente.
 - **Próximo paso:** Evaluar si el agentWorker.js actual puede extenderese con MCP bridges. Hacer un POC: un compi que acceda a Stripe via MCP para leer estado de suscripciones.
 
@@ -222,6 +222,33 @@
 - **Resumen:** No hay registro de incidencias operacional en el proyecto. Cada vez que algo falla, se resuelve "en silencio" sin documentación. Crear un `incidencias.md` compartido (o sección en memory/) donde cada incidencia quede registrada con: qué pasó, cuándo, cómo se resolvió, y cómo prevenirla. Esto es básico pero Critical para ops maduras.
 - **Stack compatibility:** 0 herramientas nuevas — solo disciplina de proceso. Archivo markdown en el repositorio compartido.
 - **Próximo paso:** Crear el archivo `/data/.openclaw/workspace/mycompi/shared/incidencias.md` con plantilla estándar. Empezar a registrar cualquier incidencia que se detecte.
+
+---
+
+### Elena — Semana 2026-04-02
+
+**Proposal 3:**
+- **Título:** n8n AI Workflow Automation + MCP native support — ops para clientes MyCompi
+- **Trend/Fuente:** n8n Blog Best AI Workflow Automation Tools (Nov 2025) + Octoparse Best MCP Servers (Abril 2026) + Hallam Agency MCP AI Automation (Feb 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo-medio
+- **Expected Impact:** Automatizaciones cliente conectadas a 50+ herramientas sin desarrollo custom, reducción time-to-market de nuevos workflows
+- **Resumen:** n8n lanzó soporte MCP nativo en 2026, convirtiéndose en el automation tool más flexible para conectar agentes IA con herramientas externas. Para MyCompi esto es relevante en dos niveles: (1) como plataforma que puede recomendar n8n a clientes que necesiten automatizar procesos internos, y (2) como integración potencial para los Compis — un compi podría orquestar workflows de n8n via MCP sin necesidad de programación. n8n tiene 400+ integraciones, tier gratuito generoso (15k execs/mes), y ya es usado por equipos ops pequeñas en España.
+- **Datos de soporte:** n8n 2026: AI workflow automation con Claude, GPT y modelos locales. MCP servers: Octoparse, Zapier, Slack, GitHub ya disponibles — sin código. Hallam: MCP está resolviendo el "AI bottleneck" de conectividad. n8n vs Zapier: 3x más flexibilidad, 1/3 del precio para equipos pequeños.
+- **Stack compatibility:** n8n (cloud o self-hosted) + MCP SDK. No requiere cambios en el stack actual de MyCompi. Los Compis podrían actuar como "orchestrators" de n8n workflows via MCP.
+- **Próximo paso:** Documentar n8n como herramienta recomendada para clientes MyCompi que necesiten automatizar procesos (especialmente ops/marketing). Incluir en el catálogo de herramientas de la propuesta de valor. Evaluar si el agentWorker.js puede exponerse como MCP server para que n8n controle Compis.
+
+---
+
+**Proposal 4:**
+- **Título:** Crear archivo de incidencias compartido — disciplina de ops
+- **Trend/Fuente:** Propia (mejora de proceso detectada en heartbeats anteriores)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo
+- **Expected Impact:** Reducción 30-50% tiempo de resolución de incidencias recurrentes, kb compartido, menos dependencia de personas clave
+- **Resumen:** Revisando los heartbeat logs y la cola de trabajos, hay múltiples referencias a incidencias detectadas y resueltas, pero no existe un registro compartido. Crear `/data/.openclaw/workspace/mycompi/shared/incidencias.md` con plantilla estándar es básico para ops maduras y permite detectar patrones (misma incidencia >3 veces = automatización potencial).
+- **Stack compatibility:** 0 herramientas nuevas. Solo crear archivo .md con la plantilla estándar.
+- **Próximo paso:** Crear el archivo con la plantilla. Empezar a registrar cualquier incidencia desde este heartbeat en adelante.
 
 ---
 
@@ -293,6 +320,52 @@
 - **Expected Impact:** Captura de featured snippets, mejora en voice search results
 - **Resumen:** La landing ya tiene sección FAQ. Añadir schema.org/FAQPage markup es trivial (1-2h) y tiene impacto directo en SEO.
 - **Technical notes:** Añadir JSON-LD en el `<head>` de la landing. Solo requiere editar el HTML build output o el componente React.
+
+---
+
+### Valeria — Semana 2026-04-02 (Research: 2026-04-02)
+
+**Proposal 5:**
+- **Título:** QA Automation Trends 2026 — Resumen actualizado (research semanal)
+- **Trend/Fuente:** Testomat.io (13 Feb 2026) + Codemify Medium (Sep 2025) + TestDevLab (24 Feb 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo (awareness)
+- **Expected Impact:** Contexto estratégico para decisiones de calidad en MyCompi. Alineación con industry standards.
+- **Resumen:** Research semanal ejecutado 2026-04-02. Hallazgos clave actualizados:
+
+  **Top QA Automation Trends 2026 — Consolidado:**
+  1. **Agentic AI Testing** — AI no solo genera tests, también ejecuta, diagnostica y prioriza. QA pasa de "ejecutar tests" a "overseeing the overseer". Herramientas: Testomat.io AI agents, Functionize, Testim.
+  2. **Self-Healing Test Scripts** — Tests se auto-adaptan a cambios en UI/APIs (locators, wait strategies). Reduce maintenance overhead drásticamente. Critical para equipos pequeños.
+  3. **Shift-Right Testing** — Testear en producción con datos reales. AI transforma telemetry de producción en test cases. Resultado: menos bugs reportados por usuarios.
+  4. **Continuous Testing en CI/CD** — Test execution hierarchy en pipeline: immediate (unit/SAST) → fast feedback (API/smoke, 5-10min) → standard (integration, 15-30min) → extended (E2E, 30-60min).
+  5. **API Testing > UI Testing** — Para microservices: API tests son más rápidos, más estables, mejor cobertura de business logic. Playwright ahora incluye API testing built-in.
+  6. **Playwright Takes the Crown** — En 2026, Playwright supera a Cypress y Selenium: más rápido, más estable, cross-browser nativamente, API testing + tracing integrado.
+  7. **Synthetic Test Data with AI** — Generar datos realistas sin datos reales de clientes. Cumplimiento GDPR sin esfuerzo manual.
+  8. **Security Testing as Continuous Priority** — SAST/DAST en CI/CD, no como fase pre-release. RASP en producción.
+
+  **DORA Metrics siguen siendo el estándar:**
+  - Deployment frequency
+  - Lead time for changes
+  - MTTR (Mean Time to Recovery)
+  - Change failure rate
+  - Bug escape rate benchmark: <15%
+
+  **Tools recomendadas para MyCompi (equipo reducido, presupuesto bajo):**
+  - **Playwright** (free, open source) → smoke tests + API testing
+  - **Sentry** (free tier: 5k errors/mes) → error tracking en prod
+  - **GitHub Actions** (free para repos públicos) → CI/CD con test execution
+  - **Accessibility testing** → Lighthouse CI o axe-core integrado en pipeline
+
+  **Quick wins para MyCompi (esfuerzo bajo, impacto alto):**
+  1. Implementar smoke tests con Playwright en GitHub Actions en cada PR (2-4h setup)
+  2. Añadir axe-core accessibility tests al pipeline (1h)
+  3. Conectar Sentry si no está ya (30min)
+  4. Definition of Done con requisito de tests para cada feature
+
+  **Insight especial — "Quality as Culture, not Department":**
+  Los mejores equipos QA en 2026 no tienen QA como departamento separado. QA está integrado: developers escriben tests, QA facilita quality gates, el equipo entero es responsable de calidad. MyCompi con 7 agentes trabajando en el mismo proyecto → esto es especialmente relevante.
+
+- **Próximo paso:** Compartir con Marcos/desarrollo para integrar smoke tests en CI actual. Añadir a quality-standards.md como requisito de Definition of Done.
 
 ---
 
@@ -451,3 +524,38 @@
 | Semana | Agente | Proposal | Status | Resultado |
 |--------|--------|----------|--------|-----------|
 | ... | ... | ... | ... | ... |
+
+### Carlos — Semana 2026-04-02
+
+**Proposal 14:**
+- **Título:** GTM Playbook 2026: 11 trends que aplican directamente a MyCompi
+- **Trend/Fuente:** Skaled — GTM Trends 2026: Top 11 GTM Strategies (22 Dic 2025) + McKinsey B2B Omnichannel Report
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo (awareness + priorización)
+- **Expected Impact:** Focus del outbound MyCompi en las tácticas con más ROI para early-stage SaaS B2B en España
+- **Resumen:** Research de GTM trends 2026 de Skaled + McKinsey. Los 11 trends consolidados. Para MyCompi (49€/mes, target PYMES 5-50 empleados, early-stage), los más relevantes son:
+
+  **TOP 3 para MyCompi ahora:**
+  1. **Omnichannel orchestration (email + LinkedIn + phone)** — single-channel outbound está muerto. 94% de B2B decision makers dicen omnichannel es igual o más efectivo que pre-pandemia. MyCompi hace solo email → necesita LinkedIn + phone añadidos.
+  2. **Persist through 5+ touches** — 44% de reps paran después de 1 touch, pero 80% de deals necesitan 5+. MyCompi actualmente sin CRM → implementar follow-up sequence con 5-6 touches bien espaciados (días 1, 3, 7, 10, 14) es el quick win más alto.
+  3. **AI-driven hyper-personalization** — 202% más conversiones con personalización adaptativa. Para MyCompi: usar AI para detectar señales (hiring, growth, pain points) y personalizar outreach en masa.
+
+  **Trends de closing:**
+  - **Micro-commitments** — en vez de pedir demo directamente, pedir pequeños síes: "¿Puedo enviarte un caso de uso para tu sector?" → menor fricción, mayor conversión.
+  - **Problem-centered discovery** — preguntar 11-14 preguntas estratégicas levanta close rates 74%. Para llamadas de discovery con leads MyCompi.
+  - **Assumptive close** — "¿Preferred start this week or next?" en vez de "¿Quieres contratar?"
+
+  **Customer expansion:**
+  - CS como revenue engine — para MyCompi: cada cliente actual es oportunidad de expansión. NPS + usage signals → expansion triggers.
+  - Account-based expansion en clientes existentes — más eficiente que new logo acquisition para early-stage.
+
+  **Datos de soporte:**
+  - McKinsey: 94% B2B buyers dicen omnichannel es tan o más efectivo
+  - 44% reps paran después de 1 touch, pero 80% deals necesitan 5+ touches
+  - AI personalization → 202% mejor conversión
+  - Micro-commitments → 30% faster sales cycles
+  - 11-14 strategic questions → 74% higher close rates
+  - Only 41% of SaaS reps hitting quota → focus en quality > activity
+  - Reps only spend 28% of time actually selling → AI/admin automation critical
+
+- **Próximo paso:** Presentar a Alberto las 3 prioritarias (omnichannel, persistence sequences, AI personalization) para decidir cuál implementar primero. CRM tool recommendation pendiente — propone HubSpot free tier o spreadsheet simple para empezar a trackear pipeline.

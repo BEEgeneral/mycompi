@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-04-01T13:40:00Z",
+  "agente": "Enzo",
+  "tareas": [
+    "Revisar metricas campanas (sin acceso a APIs)",
+    "Check contenido programado (ningun archivo encontrado)",
+    "Research competencia (sin cambios)",
+    "Leads nuevos de Carlos (8 leads verificados)"
+  ],
+  "resumen": "Sin anomalias. APIs de ads no conectadas. Carlos tiene 8 leads verificados listos para outreach. Proposals de Enzo sin implementar. Sin contenido programado documentado.",
+  "urgente": false,
+  "campanas_activas": 0,
+  "metricas_clave": {},
+  "notes": "APIs Meta/Google Ads no conectadas al sistema. Sin visibilidad de metricas en tiempo real."
+}
