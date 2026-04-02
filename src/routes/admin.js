@@ -411,7 +411,7 @@ router.get('/metrics/business', ownerOnly, async (req, res) => {
         include: { agente: { select: { id: true, nombre: true, especialidad: true } } }
       }),
       prisma.pago.findMany({
-        where: { fechaPago: { gte: inicioMes }, estado: 'completed' }
+        where: { fechaPago: { gte: inicioMes }, estado: 'COMPLETED' }
       }),
       prisma.notificacion.findMany({
         where: { createdAt: { gte: new Date(now - 7 * 24 * 60 * 60 * 1000) } }
@@ -422,8 +422,8 @@ router.get('/metrics/business', ownerOnly, async (req, res) => {
     const clientesActivos = clientes.length;
     const agentesActivos = agentes.filter(a => a.activoHeartbeat).length;
 
-    const trabajosCompletados = trabajos.filter(t => t.estado === 'COMPLETADO').length;
-    const trabajosPendientes = trabajos.filter(t => t.estado === 'PENDIENTE' || t.estado === 'EN_PROGRESO').length;
+    const trabajosCompletados = trabajos.filter(t => t.estado === 'COMPLETED').length;
+    const trabajosPendientes = trabajos.filter(t => t.estado === 'TODO' || t.estado === 'IN_PROGRESS').length;
 
     const funnel = {
       registros: clientes.length,
