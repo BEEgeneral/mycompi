@@ -1,4 +1,5 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
+import { useServiceWorker } from './hooks/useServiceWorker'
 import Navbar from './components/Navbar'
 import Hero from './sections/Hero'
 import Stats from './sections/Stats'
@@ -24,6 +25,7 @@ import Cookies from './pages/Cookies'
 import AvisoLegal from './pages/AvisoLegal'
 
 function HomePage() {
+  useServiceWorker();
   return (
     <div className="min-h-screen bg-brand-bg">
       <Navbar />

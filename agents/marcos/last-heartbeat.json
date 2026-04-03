@@ -1,11 +1,20 @@
 {
-  "timestamp": "2026-04-02T07:35:00Z",
+  "timestamp": "2026-04-03T20:37:00Z",
   "agente": "Marcos",
-  "tareas": ["Web OK - monitoreo pasivo", "DB schema drift: columna 'ejecutor' no existe en produccion", "4 trabajos ALTA en cola"],
-  "resumen": "Web mycompi.onrender.com UP (HTTP 200, SSL OK). DB: error P2022 columna 'Trabajo.ejecutor' no existe en BD produccion - necesita migracion. Cola: 4 trabajos ALTA disponibles.",
+  "tareas": [
+    "[ALTA] Implementar features solicitadas por early adopters (ID: 2d7f1390)",
+    "[ALTA] Implementar top 2 features del feedback (ID: 5a012266)"
+  ],
+  "resumen": "Web mycompi.com OK (HTTP 200, 544ms). SSL vigente. Cola con 2 trabajos ALTA disponibles sobre implementar features de feedback early adopters. Script laura_feedback.js tiene error: columna 'ejecutor' no existe en tabla Trabajo — necesita fix de schema. Informe de incidencias actualizado.",
   "urgente": false,
   "site_status": "up",
   "errors_detected": 1,
-  "errors_detail": ["DB: Prisma schema drift - columna 'ejecutor' en modelo Trabajo no existe en BD. Ejecutar: npx prisma migrate dev o revisar si el schema local esta desincronizado con produccion."],
-  "deploys_pendientes": 0
+  "errors_detail": ["laura_feedback.js: columna Trabajo.ejecutor no existe en BD Neon"],
+  "deploys_pendientes": 0,
+  "notas": [
+    "Web principal mycompi.com responde correctamente — 200 OK",
+    "SSL vigente",
+    "Script feedback tiene schema mismatch con BD — necesita revisión",
+    "2 jobs ALTA en cola sobre features feedback — requieren contexto de feedback"
+  ]
 }

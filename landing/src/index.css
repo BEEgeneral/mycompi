@@ -6,6 +6,15 @@
 
 html { scroll-behavior: smooth; }
 
+/* ─── Performance: skip rendering for off-screen content ─── */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px; /* approximate height */
+}
+
+/* ─── Preload hint for LCP image ─── */
+
+
 body {
   font-family: 'Poppins', 'Montserrat', 'Inter', system-ui, sans-serif;
   background: #FCF9F1; /* Crema — fondo general */

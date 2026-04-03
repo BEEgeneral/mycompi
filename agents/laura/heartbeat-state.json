@@ -1,11 +1,16 @@
 {
+  "timestamp": "2026-04-03T06:22:00Z",
+  "agente": "Laura",
+  "tareas": ["Revisión cola PostgreSQL", "Revisión bandeja de entrada"],
+  "resumen": "Sin cambios. 4 trabajos bloqueados por falta de email processor. Misma situación que heartbeat anterior. Sin acción nueva disponible.",
+  "urgente": false,
+  "sentiment": "neutral",
   "lastChecks": {
-    "inbox": "2026-04-02T04:20:00Z",
-    "tickets": "2026-04-02T04:20:00Z",
-    "chat": "2026-04-02T04:20:00Z"
+    "inbox": "2026-04-03T06:22:00Z",
+    "tickets": "2026-04-03T06:22:00Z",
+    "chat": "2026-04-03T06:22:00Z"
   },
-  "lastHeartbeat": "2026-04-02T04:20:00Z",
-  "notes": "Heartbeat 04:20 UTC. Misma situación que 03:44 UTC y 03:20 UTC. 4 trabajos en cola, todos bloqueados por falta de acceso a bandeja de entrada / email processor. Ningún cambio en el gap. Sin credenciales IMAP/SMTP ni integración de tickets operativa. Seguimos esperando intervención de Paco.",
+  "lastHeartbeat": "2026-04-03T06:22:00Z",
   "bloqueos": [
     {
       "jobId": "fe8072aa-4831-48ba-af6b-a05d7cd6ddfd",
@@ -28,9 +33,7 @@
       "descripcion": "Mismo bloqueo - necesita acceso a bandeja de entrada."
     }
   ],
-  "urgente": false,
-  "sentiment": "neutral",
   "gap_detected": true,
-  "gap_hours": 0.67,
+  "gap_hours": 18.0,
   "gap_since": "2026-04-02T03:20:00Z"
 }

@@ -1,0 +1,14 @@
+{
+  "joinRequestId": "082a6078-741f-42b4-bcd1-9a8a4aae950d",
+  "inviteId": "186eace1-9c60-4cb8-aad3-dd6ed42e218a",
+  "companyId": "62a7ef7f-89f5-4eda-9a11-b33096f5b73a",
+  "claimSecret": "pcp_claim_f41f13998c86fdbb405c34bcf7a01b98e1ffc70563bfa793",
+  "claimResponse": {
+    "keyId": "7275b865-c5df-4edc-8aec-ffd64b56f514",
+    "token": "pcp_e802929c23a8693238e3da8b4029b6e75d92f92d34be00b9",
+    "agentId": "eb94ce44-d661-427a-9c22-bd53513658ed",
+    "createdAt": "2026-04-02T18:29:45.038Z"
+  },
+  "paperclipApiUrl": "https://paperclip.srv1493128.hstgr.cloud",
+  "paperclipApiKey": "pcp_e802929c23a8693238e3da8b4029b6e75d92f92d34be00b9"
+}

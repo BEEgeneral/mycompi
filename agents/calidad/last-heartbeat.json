@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-04-02T15:17:00Z",
+  "timestamp": "2026-04-03T12:49:00Z",
   "agente": "Valeria",
-  "tareas": ["revisión cola", "verificación estado heartbeat anterior"],
+  "tareas": [],
   "deliverables_revisados": 0,
-  "status": "OK_SIN_TRABAJO_PENDIENTE",
-  "resumen": "Sin deliverables nuevos en cola. No hay trabajo pendiente de revisión en este ciclo. Elena automation-followup-leads.md sigue pendiente de aprobación externa."
+  "status": "OK",
+  "resumen": "Heartbeat 2026-04-03 12:49 UTC. Cola vacía, ningún deliverable pendiente de revisión. Reviews al día (último 2026-04-01). Incidencia abierta: laura_feedback.js con error de schema Prisma (PrismaClientKnownRequestError: columna 'Trabajo.ejecutor' no existe) — severidad 🟡 Media, detectada por Marcos. Sin acción requerida en QA."
 }

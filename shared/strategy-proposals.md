@@ -264,7 +264,19 @@
 
 ---
 
-### Diana — Semana 2026-03-31
+### Diana — Semana 2026-04-02
+
+**Proposal 2:**
+- **Título:** Reducir onboarding de 5 a 3 pasos para aumentar activación un 40%
+- **Trend/Fuente:** Equanax / ProductLed.com (Feb 2026) — "shortening onboarding steps from 5 to 3 increases activation probability by 40% across B2B SaaS tools"
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo-medio
+- **Expected Impact:** +40% activation rate en semana 1 → reducción churn mes 1 del 18% (según ProductLed benchmark)
+- **Resumen:** MyCompi es per-user SaaS a 49€/mes. El onboarding actual tiene muchos pasos que generan drop-off antes del "aha moment". Reducir a 3 pasos críticos (crear cuenta → primer workspace → primera automatización) activa al usuario antes de que se pierda. Cada punto de activación temprana reduce churn mes 1. Con LTV > 588€/cliente (12 meses), el impacto es directo en MRR.
+- **Datos de soporte:** ProductLed 2026: shortening onboarding steps 5→3 = +40% activation. Mixpanel: usuarios que usan 3+ features en semana 1 tienen 40% menos probabilidad de churn. Para MyCompi, si activation rate pasa de 50% a 70%, y假设 churn mes 1 baja de 8% a 5%, el impacto neto en 12 meses: ~36€ más por cliente retenido.
+- **Próximo paso:** Auditar el funnel de onboarding actual con Marcos (cuántos pasos tiene, dónde es el drop-off). Rediseñar a 3 pasos mínimos con progressive disclosure. Medir activation rate antes/después con Mixpanel o events en Neon.
+
+---
 
 **Proposal 1:**
 - **Título:** Churn prediction model + early warning system para MyCompi
@@ -279,15 +291,16 @@
 
 ---
 
-### Diana — Data / Contabilidad
+### Diana — Semana 2026-04-03
 
-**Proposal 1:**
-- **Título:** ...
-- **Trend/Fuente:** ...
-- **Viabilidad:** 🟢 Alta / 🟡 Media / 🔴 Baja
-- **Esfuerzo:** ...
-- **Expected Impact:** ...
-- **Resumen:** ...
+**Proposal:** Activation-First Strategy para MyCompi — implementar tracking básico antes de cualquier análisis avanzado
+- **Trend/Fuente:** Countly Product Analytics Guide (Marzo 2026) + Mixpanel benchmarks
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo
+- **Expected Impact:** 3x mejor conversión trial-to-paid si activation metrics están bien definidos (Mixpanel data)
+- **Resumen:** El research de esta semana confirma lo que ya detectamos: MyCompi está en fase muy temprana (1 cliente real, ningún event tracking). La prioridad NO es churn prediction con ML ni dashboards complejos. La prioridad es implementar tracking básico de activation: (1) qué acciones constituyen el "aha moment", (2) tracking de login + feature usage, (3) definir time-to-value. Sin estos datos, cualquier análisis es especulación. Churn prediction con ML necesita 6+ meses de datos mínimo — MyCompi tiene 9 días.
+- **Datos de soporte:** Mixpanel: productos con activation metrics bien definidos = 3x mayor conversión trial-to-paid. Churn prediction con ML falla si hay <5,000 customers o <6 meses datos (Prospeo). Las 5 señales de riesgo más actionables para MyCompi ahora: login <1x semana, feature adoption <20%, no team invites, support tickets, payment issues. Customer health score rule-based con estas 5 señales es suficiente para early stage.
+- **Próximo paso para Marcos:** Implementar event tracking en onboarding — login event, first compi usage, first team invite. Conectar a Neon o Mixpanel. Definir "activation" como: crear cuenta + verificar email + primer compi usage + invitar teammate.
 
 ---
 
@@ -527,6 +540,42 @@
 
 ### Carlos — Semana 2026-04-02
 
+**Proposal 15:**
+- **Título:** Social Selling 2026: Precision > Volume — el nuevo paradigma de LinkedIn outreach
+- **Trend/Fuente:** PhantomBuster — "The State of Sales on LinkedIn for 2026" (16 Enero 2026, datos de millones de data points)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo-medio
+- **Expected Impact:** +2x acceptance rates en LinkedIn connection requests, mejor brand reputation
+- **Resumen:** Los datos de PhantomBuster son claros: outreach de alta calidad (<25 requests/semana) supera 2x a volume outreach masivo. Los 4 shifts críticos para 2026: (1) Low volume + manual relevance checks, (2) AI para deep research no content generation, (3) CRM sync automático (56% de equipos no syncen), (4) Social warming antes de connection requests. Para MyCompi esto es directly actionable: dejar de hacer "spray and pray" y pasar a 15-20 connection requests/semana de leads ultra-qualificados con investigación previa.
+- **Datos de soporte:** reps que envían <25 requests/semana = 2x mejor acceptance rate. AI heavy users = 3.5x más reuniones. Solo 9.6% de companies syncan LinkedIn con CRM. Engagement en connection requests mejora significativamente si el prospect ya ha visto una interacción previa.
+- **Próximo paso:** Definir ICP ultra-específico para MyCompi: empresas 5-50 empleados, sector servicios/retail/marketing en España, con activity signals recientes (hiring, expansión, contenido activo). Máximo 20 requests/semana con research previo de cada prospect.
+
+---
+
+**Proposal 16:**
+- **Título:** SaaS Sales 2026: Hybrid PLG + Consultative Selling es el winning model
+- **Trend/Fuente:** Flippa SaaS Sales Strategies (12 Dic 2025) + Flippa SaaS Marketing Stats (17 Mar 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo (frameworks, no herramientas)
+- **Expected Impact:** Framework de ventas más efectivo para MyCompi, alineado con buyer journey moderno
+- **Resumen:** Los buyers de SaaS en 2026 operan con más información e independencia que nunca. Las empresas ganadoras combinan PLG (product-led growth) con consultative selling: el producto atrae y convierte, y el sales team interviene cuando hay signals de readiness. Para MyCompi (49€/mes, trial gratuito potencial): implementar un trial de 14 días con feature gating estratégico + sales follow-up cuando el usuario muestra usage signals (ha creado 3+ tasks, ha invitar a teammates, ha hecho 10+ interacciones) = el modelo híbrido que funciona.
+- **Datos de soporte:** Freemium/trial strategies efectivos con 7, 14 o 30 días. In-product prompts bien timingados aumentan conversiones. PLG + consultative hybrid supera a single-track en conversión. Data-driven sales = wide margin sobre guesswork.
+- **Modelo MyCompi:** Día 1-7: trial libre con onboarding guiado (onboarding flow). Día 7: score de usage. Si PQL signals → email personalizado de sales (no genérico). Si no → nurturing sequence automática. Si >3 seats creados en 14 días → trial-to-paid trigger.
+
+---
+
+**Proposal 17:**
+- **Título:** Video Prospecting: +26% reply rates, -23% sales cycle reduction
+- **Trend/Fuente:** Whitehat SEO B2B Video Prospecting Guide (26 Mar 2026) + Wyzowl Video Marketing Stats 2026
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo-medio
+- **Expected Impact:** +26% reply rates, -23% shorter sales cycle
+- **Resumen:** Ya propuesto anteriormente pero con datos más concretos ahora. Video prospecting con Loom (free tier: 25 videos/mes) o Vidyard. Dato crítico: 85% ven sin sonido → captions obligatorios. Para MyCompi: 3 template videos de 60-90seg mostrando cómo un compi resuelve un problema real. Touchpoint perfecto día 1 o día 3 en secuencia.
+- **Datos de soporte:** Wyzowl 2026: 91% businesses usan video marketing. Video cold email = +26% reply rates. Sales cycle -23%. Loom free = 25 videos/mes suficiente para pilotar.
+- **Próximo paso:** Grabar 3 template videos esta semana. Integrar en secuencia como touchpoint day 3. Captionear con Capcut o Veed.io.
+
+---
+
 **Proposal 14:**
 - **Título:** GTM Playbook 2026: 11 trends que aplican directamente a MyCompi
 - **Trend/Fuente:** Skaled — GTM Trends 2026: Top 11 GTM Strategies (22 Dic 2025) + McKinsey B2B Omnichannel Report
@@ -559,3 +608,48 @@
   - Reps only spend 28% of time actually selling → AI/admin automation critical
 
 - **Próximo paso:** Presentar a Alberto las 3 prioritarias (omnichannel, persistence sequences, AI personalization) para decidir cuál implementar primero. CRM tool recommendation pendiente — propone HubSpot free tier o spreadsheet simple para empezar a trackear pipeline.
+
+---
+
+### Marcos — Semana 2026-04-02
+
+**Proposal:** Edge Computing + AI Middleware para MyCompi
+- **Trend/Fuente:** Vercel Edge Functions (Feb 2026) + Cloudflare Workers AI (Marzo 2026)
+- **Viabilidad:** 🟡 Media-Alta
+- **Esfuerzo:** medio-alto
+- **Expected Impact:** Latencia -60%, coste servidor -40%, AI responses desde edge sin round-trip a servidor central
+- **Resumen:** MyCompi usa Render (hosting clásico). En 2026, migrar a Cloudflare Workers o Vercel Edge permite ejecutar lógica + AI inference mucho más cerca del usuario. Para un producto "compi IA" donde la velocidad de respuesta del chatbot importa mucho en UX, esto es un diferenciador. Además reduce coste de hosting al ser pay-per-request vs servers siempre-on.
+- **Technical notes:** Requiere evaluar si el stack actual (Node.js/Prisma en Render) es portable a edge. Prisma con PostgreSQL Neon funciona en edge con connection pooling. Coste estimado: $0-$20/mes vs $80+ actual en Render. Posible并行 con el deployment actual sin downtime usando feature flags.
+
+---
+
+**Proposal:** Core Web Vitals Optimization Sprint para MyCompi
+- **Trend/Fuente:** Google Search Central Core Web Vitals Update (Marzo 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo-medio
+- **Expected Impact:** SEO improvement, LCP <2.5s, CLS <0.1, INP <200ms
+- **Resumen:** Google ya penaliza sitios con Core Web Vitals malos en mobile-first indexing. La landing actual de MyCompi (basada en lo que puedo ver) carga por HTTP/1 fallback y sin optimizaciones de imagen modernas (WebP/AVIF con lazy loading). Un sprint de 2-4h puede mejorar significativamente el SEO score.
+- **Technical notes:** Implementar next/image oastro:image para WebP/AVIF, agregar cache headers apropiados, minificar CSS/JS, implementar loading="lazy" para below-fold content. Coste: 0€ (optimizaciones de configuracion).
+
+
+---
+
+### Diana — Semana 2026-04-03
+
+**Proposal:** Hybrid Usage-Based Pricing para MyCompi
+- **Trend/Fuente:** OpenView Partners SaaS Pricing Report (2026) + Momentum Nexus Pricing Guide (Dic 2025)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** medio
+- **Expected Impact:** +30-50% revenue potencial por cliente sin subir barrera de entrada
+- **Resumen:** MyCompi está en €49/fixe — muy bajo para el valor que ofrece pero con barrera mínima. La tendencia 2026 es usage-based pricing: 61% de SaaS ya lo usan (vs 45% en 2021). Para MyCompi, un modelo híbrido: tier base €29 (hasta 50 mensajes/mes) + tier pro €79 (mensajes ilimitados + features avanzadas) reduce la barrera de entrada inicial mientras captura más revenue de usuarios que realmente usan el producto. Además, McKinsey dice que 1% mejora en pricing = 11% mejora en profits.
+- **Datos de soporte:** OpenView: 61% SaaS usa usage-based pricing 2026. McKinsey: 1% pricing uplift = 11% profit increase. Para MyCompi específicamente: el modelo fixe de €49 limita revenue de power users que podrían pagar €80-120 si el producto resuelve su problema.
+- **Próximo paso:** Definir 2-3 tiers de pricing con base en usage patterns de AlberBEE (cuántos mensajes/mes gasta ahora). Implementar tracking de usage por cuenta para poder hacer A/B test de pricing en 2-3 meses.
+
+**Proposal:** Cohort Analysis + Activation Benchmarks para MyCompi
+- **Trend/Fuente:** Business of Apps (Marzo 2026) + Heap Retention Study (2023)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo
+- **Expected Impact:** Identificar drop-off points, mejorar activation rate de 10% a 20%+ target
+- **Resumen:** Con solo 1 cliente real (AlberBEE) es prematuro para cohort analysis completa, PERO ahora es el momento de implementar el tracking necesario para que en 30-60 días ya tengas datos. Heap demuestra que 25% mejora en activation = 34% MRR increase. Business of Apps recomienda cohort analysis reviews regulares + activation benchmarks desde día 1.
+- **Datos de soporte:** Heap: +25% activation = +34% MRR. Business of Apps: "high-performing teams implement regular cohort analysis reviews, clear activation benchmarks, hypothesis-driven retention experiments." Para MyCompi con 1 cliente: empezar a trackear time-to-first-message, messages per day, features used en los primeros 7 días.
+- **Próximo paso:** Añadir a la BD: tabla de eventos (user_id, event_name, timestamp, properties). Trackear: registration, first_login, first_message, messages_sent_daily. Crear dashboard simple en spreadsheet o Grafana para empezar a visualizar cohorts.

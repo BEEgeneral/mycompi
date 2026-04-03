@@ -1,12 +1,17 @@
 {
-  "lastCheck": "2026-04-02T15:17:00Z",
+  "lastCheck": "2026-04-03T12:15:00Z",
   "pendingDeliverables": [],
-  "lastReviews": [],
+  "lastReviews": [
+    "Carlos email-bienvenida 2026-04-01T04:47Z WITH_CONDITIONS",
+    "Diana competitor-analysis-deep 2026-04-01T04:47Z APPROVED",
+    "Diana metrics-report-001 2026-04-01T02:51Z APPROVED"
+  ],
   "activeAlerts": [
     {"tipo": "MRR_BAJO", "nivel": "rojo", "msg": "MRR €49 — crítico"},
     {"tipo": "ENGAGEMENT_CERO", "nivel": "amarillo", "msg": "Sin uso real de Compis"},
     {"tipo": "SINSTRAKING", "nivel": "rojo", "msg": "No hay acquisition tracking"},
-    {"tipo": "ELENA_AUTOMATION_PENDING", "nivel": "amarillo", "msg": "automation-followup-leads.md pendiente approval externo — listo para review si se activa"}
+    {"tipo": "LAURA_EMAIL_PROCESSOR", "nivel": "amarillo", "msg": "4 trabajos bloqueados — email processor no configurado"},
+    {"tipo": "CARLOS_COLD_EMAIL_BLOCKED", "nivel": "amarillo", "msg": "10 leads preparados sin envío — falta integración Resend/Smartlead/Instantly"}
   ],
-  "notas": "Sin deliverables nuevos pendientes de revisión. Elena automation-followup-leads.md requiere aprobación externa (Paco/Alberto) antes de proceder a review de calidad. No hay trabajo pendiente en cola."
+  "notas": "Heartbeat 2026-04-03 12:15 UTC. Cola vacía — ningún deliverable pendiente de revisión. Reviews al día (último 2026-04-01). Sin trabajo nuevo recibido en este ciclo. Alertas estructurales siguen activas sin resolución. Sin acción requerida."
 }

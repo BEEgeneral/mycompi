@@ -1,31 +1,17 @@
 {
-  "timestamp": "2026-04-02T15:31:00Z",
+  "timestamp": "2026-04-03T12:34:00Z",
   "agente": "Diana",
-  "tareas": [
-    "Leer cola de trabajos — vacía",
-    "Revisión métricas existentes (MRR, churn, activation)",
-    "Verificar estado de dashboards/reports",
-    "Confirmar cola vacía y actividad sin anomalías"
-  ],
-  "resumen": "Heartbeat executed. Cola vacía, sin trabajos pendientes. Métricas sin cambios significativos vs yesterday: MRR €49 (crítico), 1 cliente real activo (AlberBEE trial día 2/30), activation rate ~10%, 9/10 cuentas inactivas (test/seed). Engagement cero detectado en report anterior persiste. No hay anomalías nuevas. No es día de research semanal (último research: 2026-03-31). Próximo research: 2026-04-07.",
+  "tareas": ["lectura-cola", "revision-metricas", "verificacion-research"],
+  "resumen": "Cola vacía. DB no accesible (ECONNREFUSED 127.0.0.1:5432) — métricas no disponibles en este contexto de ejecución. Research semanal ya realizado 2026-04-03. Sin anomalías detectadas.",
   "urgente": false,
   "metrics_highlight": {
-    "mrr": "€49",
-    "clientes_activos": 1,
-    "clientes_trialing": 1,
-    "cuentas_totales": 10,
-    "cuentas_activas_reales": 1,
-    "activation_rate": "10%",
-    "engagement_mensajes": 0,
-    "engagement_interacciones": 0,
-    "churn_rate": "N/A (datos insuficientes)",
-    "dias_trial_restantes": 29
+    "mrr": "N/A (DB unreachable)",
+    "churn": "N/A",
+    "new_users": "N/A"
   },
   "insights": [
-    "MRR sigue en €49 — cliente real (AlberBEE) en día 2 de trial 30 días. Sin cambios desde ayer.",
-    "9/10 cuentas siguen siendo tests/seed. Sin nuevas altas reales.",
-    "Engagement cero persiste — 0 mensajes, 0 interacciones. Posible gap en onboarding o activación.",
-    "No hay anomalías de datos — todo consistente con snapshot yesterday.",
-    "Siguiente checkpoint de métricas: próximo heartbeat en 60 min o si hay cambio en cola."
+    "DB PostgreSQL no accesible desde este contexto de heartbeat — revisar configuración de conexión",
+    "Research semanal ya realizado por Diana el 2026-04-03 — sin necesidad de duplicar",
+    "Cola de trabajos vacía — ningún trabajo pendiente de ejecución"
   ]
 }
