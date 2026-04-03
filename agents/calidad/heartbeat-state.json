@@ -1,5 +1,5 @@
 {
-  "lastCheck": "2026-04-03T12:15:00Z",
+  "lastCheck": "2026-04-03T17:45:00Z",
   "pendingDeliverables": [],
   "lastReviews": [
     "Carlos email-bienvenida 2026-04-01T04:47Z WITH_CONDITIONS",
@@ -13,5 +13,5 @@
     {"tipo": "LAURA_EMAIL_PROCESSOR", "nivel": "amarillo", "msg": "4 trabajos bloqueados — email processor no configurado"},
     {"tipo": "CARLOS_COLD_EMAIL_BLOCKED", "nivel": "amarillo", "msg": "10 leads preparados sin envío — falta integración Resend/Smartlead/Instantly"}
   ],
-  "notas": "Heartbeat 2026-04-03 12:15 UTC. Cola vacía — ningún deliverable pendiente de revisión. Reviews al día (último 2026-04-01). Sin trabajo nuevo recibido en este ciclo. Alertas estructurales siguen activas sin resolución. Sin acción requerida."
+  "notas": "Heartbeat 2026-04-03 17:45 UTC. Cola vacía — ningún deliverable pendiente de revisión. Reviews al día (último 2026-04-01). Sin trabajo nuevo recibido en este ciclo. Alertas estructurales siguen activas sin resolución. Incidencia laura_feedback.js schema (owner: Marcos) sigue abierta. Sin acción requerida."
 }

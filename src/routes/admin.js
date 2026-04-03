@@ -408,7 +408,7 @@ router.get('/metrics/business', ownerOnly, async (req, res) => {
       prisma.agente.findMany(),
       prisma.trabajo.findMany({
         where: { createdAt: { gte: inicioMes } },
-        include: { agente: { select: { id: true, nombre: true, especialidad: true } } }
+        include: { agente: { select: { id: true, nombre: true, tipo: true } } }
       }),
       prisma.pago.findMany({
         where: { fechaPago: { gte: inicioMes }, estado: 'COMPLETED' }

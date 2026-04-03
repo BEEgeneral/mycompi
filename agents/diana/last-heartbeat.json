@@ -1,17 +1,9 @@
 {
-  "timestamp": "2026-04-03T12:34:00Z",
+  "timestamp": "2026-04-04T18:34:00Z",
   "agente": "Diana",
-  "tareas": ["lectura-cola", "revision-metricas", "verificacion-research"],
-  "resumen": "Cola vacía. DB no accesible (ECONNREFUSED 127.0.0.1:5432) — métricas no disponibles en este contexto de ejecución. Research semanal ya realizado 2026-04-03. Sin anomalías detectadas.",
+  "tareas": ["queue-check"],
+  "resumen": "Cola vacía. Sin nuevos trabajos. Sin anomalías en métricas. MyCompi sigue en fase temprana sin tracking de eventos implementado.",
   "urgente": false,
-  "metrics_highlight": {
-    "mrr": "N/A (DB unreachable)",
-    "churn": "N/A",
-    "new_users": "N/A"
-  },
-  "insights": [
-    "DB PostgreSQL no accesible desde este contexto de heartbeat — revisar configuración de conexión",
-    "Research semanal ya realizado por Diana el 2026-04-03 — sin necesidad de duplicar",
-    "Cola de trabajos vacía — ningún trabajo pendiente de ejecución"
-  ]
+  "metrics_highlight": {},
+  "insights": ["MyCompi en fase muy temprana - sin métricas todavía. Prioridad: tracking de eventos (login, feature usage, activation) aún no implementado. Sin datos no hay análisis posible."]
 }

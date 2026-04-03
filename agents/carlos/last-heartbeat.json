@@ -1,20 +1,9 @@
 {
-  "timestamp": "2026-04-03T12:59:00Z",
+  "timestamp": "2026-04-04T03:05:00Z",
   "agente": "Carlos",
-  "tareas": [
-    "Leer cola de trabajos — cola vacía",
-    "Registrar heartbeat"
-  ],
-  "resumen": "Cola vacía. ISSUE PERSISTE: 10 leads del job 5717edc9 (2026-04-01) siguen sin outreach. PAPERCLIP_API_KEY y PAPERCLIP_API_URL no configurados — enrichment bloqueado. Sin CRM activo. Sin cambios en pipeline.",
+  "tareas": ["lectura_cola"],
+  "resumen": "Cola vacía. Sin trabajos pendientes. Sin cambios en pipeline/leads. Siguiente heartbeat en 25 min.",
   "urgente": false,
-  "pipeline": {"hot": 0, "warm": 0, "cold": 0, "leads_pendientes_work": 10, "leads_sin_contacto": 10},
-  "conversion_actual": "N/A",
-  "notas": [
-    "Cola vacía — ningún trabajo pendiente en PostgreSQL",
-    "Los 10 leads del job 5717edc9 (2026-04-01) siguen sin outreach — situación sin cambios",
-    "Paperclip vars faltantes — ISSUE sin resolver",
-    "Sin CRM activo — leads no registrados en sistema",
-    "Sin cambios desde último heartbeat — mismo estado"
-  ],
-  "issue_pendiente": "PAPERCLIP_API_KEY y PAPERCLIP_API_URL no están configurados — previene enrichment y research de leads. Leads sin contacto desde hace 3+ días."
+  "pipeline": {"hot": 0, "warm": 0, "cold": 0},
+  "conversion_actual": "N/A"
 }
