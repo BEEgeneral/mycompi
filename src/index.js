@@ -20,7 +20,7 @@ app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Log de inicio
 console.log('🚀 MyCompi starting...');
@@ -110,7 +110,7 @@ app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'Not found' });
   }
-  res.sendFile('index.html', { root: 'public' });
+  res.sendFile('index.html', { root: path.join(__dirname, '../public') });
 });
 
 // Error handler
