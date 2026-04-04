@@ -15,6 +15,7 @@ import notificacionesRouter from './routes/notificaciones';
 import adminMetricsRouter from './routes/admin-metrics';
 import stripeWebhookRouter from './routes/stripe-webhook';
 import stripeConfigRouter from './routes/stripe-config';
+import debugRouter from './routes/debug';
 import chatRouter from './routes/chat';
 
 export interface Env {
@@ -50,6 +51,7 @@ app.route('/api/audit', auditRouter);
 app.route('/api/pagos', pagosRouter);
 app.route('/api/notificaciones', notificacionesRouter);
 app.route('/api/admin/metrics', adminMetricsRouter);
+app.route('/api/debug', debugRouter);
 app.route('/api/chat', chatRouter);
 
 app.notFound((c) => c.json({ error: 'Not found' }, 404));

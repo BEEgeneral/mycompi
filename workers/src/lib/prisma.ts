@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 function createPrisma(): PrismaClient {
   // En Cloudflare Workers: globalThis.env.DATABASE_URL
   // En local/dev: process.env.DATABASE_URL
-  const url = (globalThis as any).__DATABASE_URL__ || '';
+  const url = (globalThis as any).__env__?.DATABASE_URL || '';
 
   return new PrismaClient({
     datasources: { db: { url } },
