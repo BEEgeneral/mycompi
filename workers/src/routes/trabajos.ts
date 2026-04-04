@@ -7,15 +7,15 @@ import { verifyJWT } from '../lib/jwt-helper';
 
 const router = new Hono();
 
-function auth(c: any) {
-  const p = verifyJWT(c);
+async function auth(c: any) {
+  const p = await verifyJWT(c);
   if (!p) return c.json({ error: 'Unauthorized' }, 401);
   return p;
 }
 
 // GET /api/trabajos
 router.get('/', async (c) => {
-  const p = auth(c);
+  const p = await auth(c);
   if (!p || p === 401) return;
   const { estado, limite = '50' } = c.req.query();
 
@@ -35,7 +35,7 @@ router.get('/', async (c) => {
 
 // POST /api/trabajos
 router.post('/', async (c) => {
-  const p = auth(c);
+  const p = await auth(c);
   if (!p || p === 401) return;
   const body = await c.req.json();
 
@@ -47,8 +47,8 @@ router.post('/', async (c) => {
         titulo: body.titulo,
         descripcion: body.descripcion || '',
         tipo: body.tipo || 'OPERATIVO',
-        prioridad: body.prioridad || 'NORMAL',
-        estado: 'PENDIENTE',
+        prioridad: body.prioridad || 'MEDIA',
+        estado: 'TODO',
         requiereAprobacion: body.requiereAprobacion ?? false,
       },
     });
@@ -58,7 +58,7 @@ router.post('/', async (c) => {
 
 // PATCH /api/trabajos/:id
 router.patch('/:id', async (c) => {
-  const p = auth(c);
+  const p = await auth(c);
   if (!p || p === 401) return;
   const trabajoId = c.req.param('id');
   const body = await c.req.json();
@@ -75,7 +75,7 @@ router.patch('/:id', async (c) => {
 
 // POST /api/trabajos/:id/aprobar
 router.post('/:id/aprobar', async (c) => {
-  const p = auth(c);
+  const p = await auth(c);
   if (!p || p === 401) return;
   const trabajoId = c.req.param('id');
   const body = await c.req.json().catch(() => ({}));
@@ -83,7 +83,7 @@ router.post('/:id/aprobar', async (c) => {
   try {
     const updated = await prisma.trabajo.updateMany({
       where: { id: trabajoId, clienteId: p.clienteId, requiereAprobacion: true },
-      data: { estado: 'APROBADO', aprobadoPor: p.clienteId, aprobadoAt: new Date(), notaAprobacion: body.nota || null },
+      data: { estado: 'COMPLETED', aprobadoPor: p.clienteId, aprobadoAt: new Date(), notaAprobacion: body.nota || null },
     });
     if (!updated.count) return c.json({ error: 'No encontrado o no requiere aprobación' }, 404);
     return c.json({ ok: true });
@@ -92,7 +92,7 @@ router.post('/:id/aprobar', async (c) => {
 
 // POST /api/trabajos/:id/rechazar
 router.post('/:id/rechazar', async (c) => {
-  const p = auth(c);
+  const p = await auth(c);
   if (!p || p === 401) return;
   const trabajoId = c.req.param('id');
   const body = await c.req.json().catch(() => ({}));
@@ -100,7 +100,7 @@ router.post('/:id/rechazar', async (c) => {
   try {
     const updated = await prisma.trabajo.updateMany({
       where: { id: trabajoId, clienteId: p.clienteId, requiereAprobacion: true },
-      data: { estado: 'RECHAZADO', notaAprobacion: body.nota || null },
+      data: { estado: 'BLOCKED', notaAprobacion: body.nota || null },
     });
     if (!updated.count) return c.json({ error: 'No encontrado' }, 404);
     return c.json({ ok: true });

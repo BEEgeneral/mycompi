@@ -5,14 +5,14 @@ import { verifyJWT } from '../lib/jwt-helper';
 
 const router = new Hono();
 
-function auth(c: any) {
-  const p = verifyJWT(c);
+async function auth(c: any) {
+  const p = await verifyJWT(c);
   if (!p) return c.json({ error: 'Unauthorized' }, 401);
   return p;
 }
 
 router.get('/', async (c) => {
-  const p = auth(c);
+  const p = await auth(c);
   if (!p || p === 401) return;
   const { limit = '100', offset = '0', accion, agenteId } = c.req.query();
 
@@ -21,8 +21,9 @@ router.get('/', async (c) => {
     if (accion) where.accion = accion;
     if (agenteId) where.agenteId = agenteId;
 
-    const logs = await prisma.auditLog.findMany({
-      where,
+    // Trabajar con InteraccionChat como log de auditoría
+    const logs = await prisma.interaccionChat.findMany({
+      where: { clienteId: p.clienteId },
       orderBy: { createdAt: 'desc' },
       take: parseInt(limit),
       skip: parseInt(offset),
@@ -32,9 +33,8 @@ router.get('/', async (c) => {
 });
 
 router.get('/tokens', async (c) => {
-  const p = auth(c);
+  const p = await auth(c);
   if (!p || p === 401) return;
-
   try {
     const agentes = await prisma.agente.findMany({
       where: { clienteId: p.clienteId },

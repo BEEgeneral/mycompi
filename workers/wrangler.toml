@@ -2,9 +2,8 @@ name = "mycompi-api"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
+account_id = "52335717183f7fa92f98c18186626a78"
+route = "api.mycompi.com"
 
 [env.production]
 name = "mycompi-api"
-
-[env.staging]
-name = "mycompi-api-staging"
