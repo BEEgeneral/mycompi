@@ -1,24 +1,26 @@
 /** Debug route — remove in production */
 import { Hono } from 'hono';
+import type { Env } from '../index.js';
+import { getPrisma } from '../lib/prisma.js';
 
-const router = new Hono();
+const router = new Hono<{ Bindings: Env }>();
 
-router.get('/debug/db', async (c) => {
-  const url = (globalThis as any).__DATABASE_URL__ || '';
+router.get('/db', (c) => {
+  const url = c.env?.DATABASE_URL || '';
   return c.json({ hasUrl: !!url, masked: url ? url.replace(/\/\/.*:.*@/, '//***@') : 'NOT SET' });
 });
 
-router.get('/debug/prisma', async (c) => {
+router.get('/prisma', async (c) => {
   try {
-    const { prisma } = await import('../lib/prisma.js');
-    const count = await prisma.cliente.count();
+    const db = getPrisma(c.env as { DATABASE_URL: string });
+    const count = await db.cliente.count();
     return c.json({ ok: true, clientes: count });
   } catch (err: any) {
     return c.json({ ok: false, error: err?.message || String(err) });
   }
 });
 
-router.get('/debug/neon-conn', async (c) => {
+router.get('/neon-conn', async (c) => {
   try {
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), 8000);
@@ -31,13 +33,30 @@ router.get('/debug/neon-conn', async (c) => {
   }
 });
 
-router.get('/debug/1.1.1.1', async (c) => {
+router.get('/cf', async (c) => {
   try {
     const r = await fetch('https://1.1.1.1/cdn-cgi/trace');
     const text = await r.text();
     return c.json({ ok: true, cf: text.slice(0, 200) });
   } catch (err: any) {
     return c.json({ ok: false, error: err?.message });
+  }
+});
+
+router.get('/neon-direct', async (c) => {
+  // Test PrismaNeonHttp (HTTP) — funciona en edge runtimes
+  try {
+    const { PrismaNeonHttp } = await import('@prisma/adapter-neon');
+    const { PrismaClient } = await import('@prisma/client');
+    const url = c.env?.DATABASE_URL || '';
+    if (!url) return c.json({ ok: false, error: 'no DATABASE_URL env' });
+    const adapter = new PrismaNeonHttp({ url });
+    const db = new PrismaClient({ adapter, log: ['error'] });
+    const count = await db.cliente.count();
+    db.$disconnect().catch(() => {});
+    return c.json({ ok: true, clientes: count });
+  } catch (err: any) {
+    return c.json({ ok: false, error: err?.message || String(err) });
   }
 });
 
