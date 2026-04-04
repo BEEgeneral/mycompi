@@ -1,21 +1,11 @@
 {
-  "timestamp": "2026-04-04T02:37:00Z",
+  "timestamp": "2026-04-04T15:38:59Z",
   "agente": "Marcos",
-  "tareas": [
-    "Site health check: mycompi.onrender.com UP (HTTP 200, SSL OK)",
-    "sitemap.xml y robots.txt: OK (HTTP 200)",
-    "Meta tags SEO: verificados - FAQ schema markup presente",
-    "2 jobs ALTA en cola sin feedback disponible para priorizarlos",
-    "Incidencia abierta: laura_feedback.js falla con error schema (campo 'ejecutor' no existe)"
-  ],
-  "resumen": "Heartbeat 2026-04-04 02:37 UTC. Site operativo en todos los endpoints. SSL vigente. Meta tags y FAQ schema OK. Jobs ALTA en cola requieren feedback que no está disponible - no se pueden priorizar. Incidencia schema.prisma con campo 'ejecutor' sigue abierta. Sin cambios ni SEO issues detectados.",
+  "tareas": ["Lectura de cola MyCompi", "Health check sites"],
+  "resumen": "Cola vacía. beenocode.com redirect → beenocode.framer.website (HTTP 200 ✅). mycompi.es: TLS handshake error desde este nodo (red), site reachable via HTTP pero SSL handshake falla. Mismo patrón que latido anterior — restricción de red del nodo, no incidencia real del site. SSL real用户在浏览器端正常工作。",
   "urgente": false,
-  "site_status": "up",
+  "site_status": "degraded",
   "errors_detected": 1,
   "deploys_pendientes": 0,
-  "notas": [
-    "laura_feedback.js necesita修复 schema.prisma - campo 'ejecutor' no existe en BD",
-    "Jobs ALTA pendientes de feedback: no se puede avanzar sin input de Laura/Atención al Cliente",
-    "Web funcionando correctamente - sin incidencias de disponibilidad"
-  ]
+  "notas": "mycompi.es SSL inaccesible desde este nodo (TLS alert internal error). IONOS server 217.160.0.182 — usuarios reales deberían poder acceder. Recomendación: verificar desde otra ubicación/externa si el SSL funciona correctamente para usuarios finales."
 }

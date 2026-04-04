@@ -1,17 +1,22 @@
 {
-  "lastCheck": "2026-04-03T17:45:00Z",
+  "lastCheck": "2026-04-04T14:46:04Z",
   "pendingDeliverables": [],
   "lastReviews": [
-    "Carlos email-bienvenida 2026-04-01T04:47Z WITH_CONDITIONS",
-    "Diana competitor-analysis-deep 2026-04-01T04:47Z APPROVED",
-    "Diana metrics-report-001 2026-04-01T02:51Z APPROVED"
+    "Laura inbox-soporte 2026-04-04T00:45Z WITH_CONDITIONS",
+    "Carlos email-bienvenida 2026-04-01T04:47Z WITH_CONDITIONS"
   ],
   "activeAlerts": [
-    {"tipo": "MRR_BAJO", "nivel": "rojo", "msg": "MRR €49 — crítico"},
-    {"tipo": "ENGAGEMENT_CERO", "nivel": "amarillo", "msg": "Sin uso real de Compis"},
-    {"tipo": "SINSTRAKING", "nivel": "rojo", "msg": "No hay acquisition tracking"},
-    {"tipo": "LAURA_EMAIL_PROCESSOR", "nivel": "amarillo", "msg": "4 trabajos bloqueados — email processor no configurado"},
-    {"tipo": "CARLOS_COLD_EMAIL_BLOCKED", "nivel": "amarillo", "msg": "10 leads preparados sin envío — falta integración Resend/Smartlead/Instantly"}
+    {"tipo": "SITE_DOWN", "nivel": "rojo", "msg": "mycompi.com DOWN — fix a4ead9a en GitHub, deploy manual pendiente en Render (>38h sin cambios)"},
+    {"tipo": "MRR_BAJO", "nivel": "rojo", "msg": "Solo 98€ pagos 30d — sin pagos en abril, MRR real €0 (AlberBEE trial)"},
+    {"tipo": "ENGAGEMENT_CERO", "nivel": "amarillo", "msg": "Usage tracking null — imposible medir retention"},
+    {"tipo": "PAPERCLIP_AUTH_401", "nivel": "amarillo", "msg": "Paperclip Inbox API 401 — authentication requerida (>38h, clave API no parece JWT válido para endpoint agent)"},
+    {"tipo": "HTTPS_MYCOMPI_ES", "nivel": "amarillo", "msg": "mycompi.es HTTP up pero HTTPS/SSL handshake falla — probable problema de red del VPS, no del servidor destino"}
   ],
-  "notas": "Heartbeat 2026-04-03 17:45 UTC. Cola vacía — ningún deliverable pendiente de revisión. Reviews al día (último 2026-04-01). Sin trabajo nuevo recibido en este ciclo. Alertas estructurales siguen activas sin resolución. Incidencia laura_feedback.js schema (owner: Marcos) sigue abierta. Sin acción requerida."
+  "incidencias": [
+    {"incidencia": "web-DOWN-mycompi", "severidad": "🔴", "owner": "Marcos", "estado": "🔍 Abierta — fix a4ead9a en GitHub, deploy manual pendiente en Render"},
+    {"incidencia": "https-mycompi-es", "severidad": "🟡", "owner": "Marcos", "estado": "🔍 Abierta — HTTP funciona, SSL handshake falla (posible tema red VPS)"},
+    {"incidencia": "prisma-schema-laurafeedback", "severidad": "🟡", "owner": "Marcos", "estado": "🔍 Abierta"},
+    {"incidencia": "paperclip-auth-401", "severidad": "🟡", "owner": "Enzo/Paco", "estado": "🔍 Abierta — API key no válida para endpoint agent, >38h sin resolución"}
+  ],
+  "notas": "Heartbeat 2026-04-04 14:46 UTC. Cola QA vacía — ningún deliverable nuevo. Sites siguen caídos igual que hace 38h. Paperclip 401 persiste — clave API no parece JWT válido para el endpoint /api/agents/me. Reviews pendientes con feedback >38h sin resolución (Laura inbox-soporte, Carlos email-bienvenida). Sin acción QA posible en este ciclo. Alerts rojos escalados siguen sin resolución — mycompi.com DOWN + MRR €0."
 }

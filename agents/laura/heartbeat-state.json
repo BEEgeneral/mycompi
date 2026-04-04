@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-04-03T06:22:00Z",
+  "timestamp": "2026-04-04T01:40:00Z",
   "agente": "Laura",
-  "tareas": ["Revisión cola PostgreSQL", "Revisión bandeja de entrada"],
-  "resumen": "Sin cambios. 4 trabajos bloqueados por falta de email processor. Misma situación que heartbeat anterior. Sin acción nueva disponible.",
+  "tareas": ["Revisar cola PostgreSQL", "Tomar trabajo survey satisfacción mes 1", "Notificar bloqueo email a Paco"],
+  "resumen": "Trabajo survey satisfacción (ID: 3186358b-5a88-4d4d-bd95-f323f29e7747) tomado en PROGRESS. Cliente: AlberBEE (beenocode@gmail.com). Mismo bloqueo que heartbeats anteriores: sin acceso a email processor. 4 trabajos bloqueados por la misma causa. Notificado a Paco. Sin acción adicional hasta tener acceso a correo.",
   "urgente": false,
   "sentiment": "neutral",
   "lastChecks": {
-    "inbox": "2026-04-03T06:22:00Z",
-    "tickets": "2026-04-03T06:22:00Z",
-    "chat": "2026-04-03T06:22:00Z"
+    "inbox": "2026-04-04T01:40:00Z",
+    "tickets": "2026-04-04T01:40:00Z",
+    "chat": "2026-04-04T01:40:00Z"
   },
-  "lastHeartbeat": "2026-04-03T06:22:00Z",
+  "bloqueos_activos": 4,
   "bloqueos": [
     {
       "jobId": "fe8072aa-4831-48ba-af6b-a05d7cd6ddfd",
@@ -30,7 +30,7 @@
     {
       "jobId": "3186358b-5a88-4d4d-bd95-f323f29e7747",
       "tipo": "sin_email_processor",
-      "descripcion": "Mismo bloqueo - necesita acceso a bandeja de entrada."
+      "descripcion": "Mismo bloqueo - necesita acceso a bandeja de entrada. Cliente: AlberBEE, survey satisfacción mes 1."
     }
   ],
   "gap_detected": true,

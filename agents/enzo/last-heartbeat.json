@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-04-04T15:10:00Z",
+  "agente": "Enzo",
+  "tareas": ["web_status_check", "competitor_check", "leads_check", "incidencias_review"],
+  "resumen": "Web MyCompi CAÍDA (HTTP 000). mycompi.com y mycompi.es sin respuesta. Fix Express commit a4ead9a listo en GitHub pero deploy manual en Render pendiente desde 2026-04-04 07:35 UTC. beecoded.com UP. Sin campañas activas. Leads sin update.",
+  "urgente": true,
+  "web_status": "down_000",
+  "web_es_status": "down_000",
+  "beecoded_status": "up_200",
+  "campanas_activas": 0,
+  "leads_nuevos": 0,
+  "competitor_status": "sin_cambios",
+  "incidencia_activa": "HTTPS mycompi.es + deploy Render pendiente"
+}

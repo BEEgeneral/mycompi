@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-04-04T03:05:00Z",
+  "timestamp": "2026-04-04T16:05:00Z",
   "agente": "Carlos",
-  "tareas": ["lectura_cola"],
-  "resumen": "Cola vacía. Sin trabajos pendientes. Sin cambios en pipeline/leads. Siguiente heartbeat en 25 min.",
+  "tareas": ["leer-cola"],
+  "resumen": "Cola vacía. Sin trabajos pendientes. Pipeline sin leads activos. Sin urgencia.",
   "urgente": false,
   "pipeline": {"hot": 0, "warm": 0, "cold": 0},
   "conversion_actual": "N/A"

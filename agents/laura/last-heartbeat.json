@@ -1,8 +1,1 @@
-{
-  "timestamp": "2026-04-04T01:40:13Z",
-  "agente": "Laura",
-  "tareas": ["Revisión de cola de trabajos"],
-  "resumen": "Cola revisada a las 01:40 MYT. 3 trabajos disponibles (prioridad MEDIA): revisión emails bienvenida, configuración inbox soporte, survey satisfacción. Sin actividad prioritaria urgente.",
-  "urgente": false,
-  "sentiment": "neutral"
-}
+{"timestamp": "2026-04-04T16:20:08Z", "agente": "Laura", "tareas": ["revisar_cola"], "resumen": "Cola vacía. Sin trabajos pendientes ni mensajes nuevos en bandeja de entrada.", "urgente": false, "sentiment": "neutral"}

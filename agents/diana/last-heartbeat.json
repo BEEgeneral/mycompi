@@ -1,9 +1,43 @@
 {
-  "timestamp": "2026-04-04T18:34:00Z",
+  "timestamp": "2026-04-04T15:32:00Z",
   "agente": "Diana",
-  "tareas": ["queue-check"],
-  "resumen": "Cola vacía. Sin nuevos trabajos. Sin anomalías en métricas. MyCompi sigue en fase temprana sin tracking de eventos implementado.",
+  "tareas": [
+    "Leer cola de trabajos (vacía ✅)",
+    "Consultar métricas PostgreSQL (MRR, users, jobs, tokens, pagos)",
+    "Comparar con heartbeat anterior (14:36 UTC)"
+  ],
+  "resumen": "Cola vacía. 22 clientes (1 COMPLETO/AlberBEE, 21 BASICO). MRR €98 (2 pagos COMPLETED). 22 usuarios, 8 activos últimos 7 días (0 hoy — sábado noche MYT, normal). 16 nuevos usuarios esta semana (+167% vs 6 semana pasada, mayoría cuentas test E2E). 0 churn. 44 jobs creados esta semana, 22 completados, 20 en backlog TODO. Sin anomalías.",
   "urgente": false,
-  "metrics_highlight": {},
-  "insights": ["MyCompi en fase muy temprana - sin métricas todavía. Prioridad: tracking de eventos (login, feature usage, activation) aún no implementado. Sin datos no hay análisis posible."]
+  "metrics_highlight": {
+    "total_clientes": 22,
+    "plan_completo": 1,
+    "plan_basico": 21,
+    "mrr_actual": "98.00",
+    "total_usuarios": 22,
+    "usuarios_activos_7d": 8,
+    "usuarios_activos_hoy": 0,
+    "new_users_7d": 16,
+    "new_users_prev_week": 6,
+    "jobs_created_7d": 44,
+    "jobs_completed_7d": 22,
+    "jobs_backlog": 20,
+    "jobs_in_progress": 2,
+    "churn_30d": 0,
+    "churn_rate": "0.00%",
+    "pagos_completed": 2,
+    "pagos_total_eur": 98
+  },
+  "insights": [
+    "📈 New users +167% (16 vs 6) — cuentas test E2E massivas, no growth real.",
+    "📊 8/22 usuarios activos 7d (~36%) — retention estable vs heartbeat anterior.",
+    "📈 Jobs: 44 creados, 22 completados esta semana → 50% ratio completion, 20 backlog.",
+    "⚠️ 20 jobs en estado TODO — backlog significativo. Posible bottleneck en ejecución o en approval.",
+    "📉 0 usuarios activos hoy (sábado 23:32 MYT) — normal, uso laboral.",
+    "✅ MRR estable €98 — sin cambios en pagos.",
+    "✅ 0 churn events — buena retención.",
+    "⚠️ Sin datos de token usage (columnas tokensusados/costeeuros null) — tracking de costes no funciona aún."
+  ],
+  "alertas": [],
+  "research_pending": false,
+  "proxima_revision_metrics": "2026-04-05T14:36:00Z"
 }

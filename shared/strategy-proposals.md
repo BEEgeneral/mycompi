@@ -6,6 +6,29 @@
 
 ---
 
+### Enzo — Semana 2026-04-04
+
+**Proposal:** LinkedIn Thought Leader Ads + AI Content como doble estrategia para BeeNoCode
+- **Trend/Fuente:** LinkedIn B2B Marketing (Ene 2026), Anthony Blatner (Feb 2026), The Smarketers (Feb 2026), B2B Mention (Mar 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** medio
+- **Expected Impact:** +40-60% CTR vs ads corporativos, brand authority diferenciada vs BeeCoded
+- **Resumen:** En 2026 Thought Leader Ads siguen siendo el tactic #1 en B2B SaaS LinkedIn. Alberto como founder de BeeNoCode tiene historia única para contar. Paralelamente, AI content generation permite crear variantes de ads en masa para test A/B. Para BeeNoCode: mostrar "cómo un AI compi mejora code review" vía Alberto como thought leader + AI-generated ad variants = diferenciador claro vs BeeCoded que no tiene voz humana. Web caída es prerequisito para que todo esto funcione.
+- **Test sugerido:** Phase 1 — LinkedIn Thought Leader Ads con post existing de Alberto (pending approval). Phase 2 — AI-generated ad variants para 3 audiencias diferentes. Métricas: CTR > 2%, CPC < 2€, conversion rate al signup.
+- **Prerequisito:** Web MyCompi activa. Sin web, ads apuntan a landing vacío.
+
+---
+
+**Proposal:** TikTok/Reels Short-form Video para B2B SaaS Awareness
+- **Trend/Fuente:** Stackmatix TikTok B2B Guide (Mar 2026), Slate Teams Social Trends (Ene 2026)
+- **Viabilidad:** 🟡 Media
+- **Esfuerzo:** medio-alto
+- **Expected Impact:** Awareness en audiencia nueva (decision-makers 25-40 que buscan soluciones en TikTok)
+- **Resumen:** TikTok para B2B SaaS funciona para awareness-stage. Decision-makers buscan soluciones en TikTok. Para BeeNoCode: 3-5 videos cortos (30-60s) mostrando "how BeeNoCode works" o "code review before vs after". Producto técnico = desafío, pero si funciona es diferenciador vs competencia que solo hace文字 content.
+- **Test sugerido:** 3 videos Piloto. Métricas: views > 5000, engagement rate > 3%, link clicks > 50. Si metrics ok → escalar.
+
+---
+
 ### Carlos — Semana 2026-03-31
 
 **Proposal 5:**
@@ -288,6 +311,42 @@
 - **Datos de soporte:** OpenView 2026: median churn 5-7% anual para SaaS B2B <$10K ARPU. Mixpanel: usuarios que usan 3+ features en semana 1 tienen 40% menos probabilidad de churn. ProductLed: onboarding email con milestone celebrate reduce churn 18% en mes 1. Para MyCompi (49€/mes): el churn de 1 mes = 49€ perdido pero también valor vitalicio > 588€ si se retiene 12 meses.
 - **Próximo paso:** Implementar tracking de feature adoption en Neon si no existe. Crear dashboard de "health score" por usuario con 5 señales simples. Activar alerta automática cuando score caiga por debajo de umbral.
 - **Alternativa rápida (sin ML):** Crear cohort report en Mixpanel o Google Analytics 4: usuarios que no han hecho login en 14 días → trigger email de re-engagement con case study. Costo: 0€ adicional.
+
+---
+
+### Diana — Semana 2026-04-04
+
+**Proposal:** PLG Metrics Framework para MyCompi — implementar los 4 KPIs que importan
+- **Trend/Fuente:** SaaSHero PLG Guide (22 Mar 2026) + Mixpanel PLG Benchmarks (2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo-medio
+- **Expected Impact:** Visibility sobre qué métricas importan, focus del equipo en los números correctos
+- **Resumen:** Con MyCompi en early stage, el equipo necesita alinear qué medir. El framework PLG 2026 define 4 KPIs core: (1) Activation Rate >20% (usuarios que alcanzan el "aha moment"), (2) Viral K-Factor >1.0 (cada usuario trae >1 nuevo), (3) PQL Conversion 15-25% (usuarios que se convierten a paid desde el producto), (4) CAC Payback <90 días. MyCompi no mide ninguno todavía — pero implementarlos ahora guía decisiones de producto y marketing.
+- **Datos de soporte:** SaaSHero: activation >20% es el threshold para PMF. Viral k-factor >1.0 = crecimiento orgánico sostenible. PQL conversion 15-25% en PLG vs 5-10% en sales-led. CAC payback <90 días es benchmark saludable. Sin estos números, cualquier decisión de growth es gut feeling.
+- **Próximo paso:** Definir para MyCompi qué constituye "activation" (proposal anterior: crear cuenta + primer mensaje + invitar teammate). Implementar tracking para los 4 KPIs en un dashboard simple (spreadsheet OK por ahora). Revisar weekly.
+
+---
+
+**Proposal:** Survival Analysis para Churn Prediction — el gap en MyCompi
+- **Trend/Fuente:** Uzera — 7 AI Algorithms for Churn Prediction (Marzo 2026)
+- **Viabilidad:** 🟡 Media
+- **Esfuerzo:** medio-alto
+- **Expected Impact:** Predicción de CUÁNDO churnarán usuarios (no solo SI), permitiendo intervención proactiva con timing óptimo
+- **Resumen:** Los modelos de churn prediction tradicionales predicen si un usuario churneará (clasificación binaria). Survival Analysis va más allá: predice cuándo. Para MyCompi esto es crítico porque permite schedulear outreach de retención en el momento exacto — ni muy temprano (irrita) ni muy tarde (ya se fue). El modelo estima la "supervivencia" del cliente en diferentes horizontes temporales (30, 60, 90 días).
+- **Datos de soporte:** Uzera: Survival models "predict both if and when a user will churn." Para SaaS con annual contracts, predict churn en ventanas específicas (30/60/90 días) permite revenue forecasting más preciso. Customer success teams con scheduled playbooks se benefician enormemente del timing prediction.
+- **Viabilidad para MyCompi:** Requiere 6+ meses de datos históricos de usage + churn events. MyCompi tiene 9 días con 1 cliente — no es viable todavía. Pero: (1) empezar a trackear churn events ahora, (2) cuando haya 6+ meses de datos, implementar survival model en Python/R con lifelines library.
+- **Alternativa inmediata (sin ML):** Scoring rule-based: usuarios con login <1x semana por 2+ semanas = alerta. Intervención manual de Carlos/Alberto. Esfuerzo: 0€, impacto: detecta churn risk antes de que se vayan.
+
+---
+
+**Proposal:** Usage-Based Pricing Viability para MyCompi — data gathering para transición futura
+- **Trend/Fuente:** Aymane Boutbati — Future of SaaS Pricing 2026 (Medium, 17 Enero 2026) + OpenView Partners
+- **Viabilidad:** 🟢 Alta (pero timing incorrecto todavía)
+- **Esfuerzo:** bajo (planning ahora, implementación cuando haya datos)
+- **Expected Impact:** Revenue potential +30-50% por cliente si se implementa cuando haya usage data suficiente
+- **Resumen:** MyCompi actualmente cobra 49€/mes flat. La tendencia 2026 es hybrid pricing: 70% de empresas preferirán usage-based en 2026 (Gartner). Hybrid = base fee (29€) + usage tiers (ej: 0.05€/mensaje extra beyond 100). Para MyCompi esto puede capturar más valor de power users que actualmente pagan lo mismo que usuarios light. PERO: necesita usage tracking primero.
+- **Datos de soporte:** Gartner: 70% usage-based preference 2026. OpenView: 61% SaaS ya usan usage-based (up from 45% in 2021). New Relic pivot a pure consumption = 44% revenue increase. Hybrid model = 38% better revenue growth vs single model. Para MyCompi: power users que usan 500+ mensajes/mes probablemente pagarían 79-99€ si el pricing fuera transparente por usage.
+- **Próximo paso ahora (0€):** Empezar a trackear messages_sent por usuario, sessions_count, features_used. Guardar en tabla events en Neon. Cuando haya 3+ meses de data: analizar distribution de usage. Si el top 20% de usuarios usa 60%+ del total messages → pricing por tiers tiene sentido. Proponer a Alberto con datos concretos.
 
 ---
 
@@ -653,3 +712,26 @@
 - **Resumen:** Con solo 1 cliente real (AlberBEE) es prematuro para cohort analysis completa, PERO ahora es el momento de implementar el tracking necesario para que en 30-60 días ya tengas datos. Heap demuestra que 25% mejora en activation = 34% MRR increase. Business of Apps recomienda cohort analysis reviews regulares + activation benchmarks desde día 1.
 - **Datos de soporte:** Heap: +25% activation = +34% MRR. Business of Apps: "high-performing teams implement regular cohort analysis reviews, clear activation benchmarks, hypothesis-driven retention experiments." Para MyCompi con 1 cliente: empezar a trackear time-to-first-message, messages per day, features used en los primeros 7 días.
 - **Próximo paso:** Añadir a la BD: tabla de eventos (user_id, event_name, timestamp, properties). Trackear: registration, first_login, first_message, messages_sent_daily. Crear dashboard simple en spreadsheet o Grafana para empezar a visualizar cohorts.
+
+---
+
+### Carlos — Semana 2026-04-04
+
+**Proposal:** Social Selling + Short Sequences como estrategia de outbound para MyCompi
+- **Trend/Fuente:** PhantomBuster Social Selling Trends 2026 + HubSpot Sales Sequence Best Practices 2026
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** medio
+- **Expected Impact:** +40% response rate en outreach vs cold email tradicional, warmer leads para el equipo de closing
+- **Resumen:** En 2026 el outbound B2B ha cambiado: sequences cortas (3-4 touchpoints max) + social selling (LinkedIn engagement antes de email) funcionan mejor que volúmenes masivos de emails fríos. Los datos de PhantomBuster (Ene 2026) muestran que los equipos que combinan LinkedIn outreach + short email sequences tienen 3x más meetings booked. Para MyCompi, esto significa: Carlos puede empezar a hacer social selling orgánico (commenting, sharing content) para generar warm leads antes de pasar a secuencias de email.
+- **Datos de soporte:** PhantomBuster: "social selling is about precision, not volume — 4 key trends en 2026." HubSpot: sequences de 3-4 touchpoints optimizan reply rates. Instantly vs Smartlead comparison (Ene 2026): flat-fee scaling + AI reply agents now mainstream.
+- **Insights adicionales 2026:** Video outreach emerge como diferenciador (LinkedIn video messages). Sales automation tools (Apollo v3, Smartlead) ahora incluyen AI reply agents que reducen manual follow-up en 60%. Usage-based pricing (ZeonEdge, Feb 2026): 2026 es el año donde pricing model's el来决定revenue ceiling.
+- **Próximo paso:** Presentar a Alberto: (1) empezar con LinkedIn organic social selling 15min/day para warm leads, (2) implementar sequence de 3-touchpoints (LinkedIn DM → email → LinkedIn video), (3) testear Instantly.ai para email campaigns con AI reply agent. Solicitar acceso a LinkedIn personal de Alberto o crear perfil company para outbound.
+
+**Proposal:** Instantly.ai como plataforma de outbound para MyCompi —取代 Apollo para este caso de uso
+- **Trend/Fuente:** Instantly.ai blog + LinkedIn automation comparison (Feb 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo
+- **Expected Impact:** Reducción 50% coste vs Apollo, unlimited email accounts, AI reply agent para automatizar follow-ups
+- **Resumen:** Para un pequeño equipo de ventas (Carlos + possibly 1 more), Instantly.ai es más cost-effective que Apollo. Apollo cobra $49/user/mes y es overkill para <5 users. Instantly cobra flat-fee (~$37/mes) con unlimited accounts y 450M+ verified leads. Incluye email warmup, spam testing, y AI reply agent (reduces manual work 60%). Para MyCompi que busca grow revenue con budget limitado, Instantly es el mejor punto de entrada.
+- **Datos de soporte:** Instantly vs Apollo comparison (Ene 2026): "Instantly wins for sales teams needing an all-in-one revenue engine with flat-fee scaling, unlimited accounts." Apollo vs Smartlead (Nov 2026): Apollo $49/user, Smartlead $39/account, Instantly flat-fee unlimited.
+- **Próximo paso:** Solicitar budget para Instantly ($37/mes), crear account, configurar email warmup y primer campaign con lead list de test. Integrar con existing CRM o spreadsheet de MyCompi.
