@@ -14,6 +14,7 @@ import pagosRouter from './routes/pagos';
 import notificacionesRouter from './routes/notificaciones';
 import adminMetricsRouter from './routes/admin-metrics';
 import stripeWebhookRouter from './routes/stripe-webhook';
+import stripeConfigRouter from './routes/stripe-config';
 import chatRouter from './routes/chat';
 
 export interface Env {
@@ -28,7 +29,6 @@ export interface Env {
   MINIMAX_API_KEY: string;
   AGENT_API_KEY: string;
   OWNER_KEY: string;
-  CHAT_SESSION: DurableObjectNamespace;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -40,6 +40,7 @@ app.get('/health', (c) => c.json({ status: 'ok', ts: Date.now() }));
 app.get('/api/health', (c) => c.json({ status: 'ok', ts: Date.now() }));
 
 app.route('/api/stripe/webhook', stripeWebhookRouter);
+app.route('/api/stripe', stripeConfigRouter);
 app.route('/api/auth', authRouter);
 
 app.route('/api/agentes', agentesRouter);
