@@ -192,6 +192,7 @@ enum TipoNotificacion {
   ALERTA
   ACCION_REQUERIDA
   COMPLETADO
+  ERROR
 }
 
 enum TipoPeticion {
