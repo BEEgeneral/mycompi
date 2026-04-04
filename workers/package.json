@@ -1,0 +1,27 @@
+{
+  "name": "mycompi-workers",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "@hono/zod-validator": "^0.7.6",
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.3",
+    "hono": "^4.7.11",
+    "jose": "^5.10.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260404.1",
+    "@types/bcryptjs": "^2.4.6",
+    "prisma": "^6.19.2",
+    "typescript": "^6.0.2",
+    "wrangler": "^4.8.0"
+  }
+}
