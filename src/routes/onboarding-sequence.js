@@ -11,8 +11,25 @@
  */
 const express = require('express');
 const router = express.Router();
-const { authMiddleware } = require('./auth');
 const prisma = require('../lib/db');
+
+// Inline auth middleware para evitar dependencia circular
+const jwt = require('jsonwebtoken');
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token requerido' });
+  }
+  try {
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.usuarioId = decoded.usuarioId;
+    req.clienteId = decoded.clienteId;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Token inválido o expirado' });
+  }
+};
 const { Resend } = require('resend');
 
 // ─────────────────────────────────────────
