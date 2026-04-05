@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mycompi",
+  "compatibility_date": "2026-04-05",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "admin-panel"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
