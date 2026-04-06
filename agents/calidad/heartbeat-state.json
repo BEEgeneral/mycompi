@@ -1,22 +1,58 @@
 {
-  "lastCheck": "2026-04-04T14:46:04Z",
+  "lastCheck": "2026-04-06T04:16:00Z",
   "pendingDeliverables": [],
   "lastReviews": [
-    "Laura inbox-soporte 2026-04-04T00:45Z WITH_CONDITIONS",
-    "Carlos email-bienvenida 2026-04-01T04:47Z WITH_CONDITIONS"
+    "Laura inbox-soporte 2026-04-04T00:45Z WITH_CONDITIONS (50h+ sin resolver — ESCALATE a Paco)",
+    "Carlos email-bienvenida 2026-04-01T04:47Z WITH_CONDITIONS (5d+ sin resolver — ESCALATE a Paco)",
+    "Elena automation-followup-leads 2026-04-01 PENDING_APPROVAL (5d+ — pendiente Paco)"
   ],
   "activeAlerts": [
-    {"tipo": "SITE_DOWN", "nivel": "rojo", "msg": "mycompi.com DOWN — fix a4ead9a en GitHub, deploy manual pendiente en Render (>38h sin cambios)"},
-    {"tipo": "MRR_BAJO", "nivel": "rojo", "msg": "Solo 98€ pagos 30d — sin pagos en abril, MRR real €0 (AlberBEE trial)"},
-    {"tipo": "ENGAGEMENT_CERO", "nivel": "amarillo", "msg": "Usage tracking null — imposible medir retention"},
-    {"tipo": "PAPERCLIP_AUTH_401", "nivel": "amarillo", "msg": "Paperclip Inbox API 401 — authentication requerida (>38h, clave API no parece JWT válido para endpoint agent)"},
-    {"tipo": "HTTPS_MYCOMPI_ES", "nivel": "amarillo", "msg": "mycompi.es HTTP up pero HTTPS/SSL handshake falla — probable problema de red del VPS, no del servidor destino"}
+    {
+      "tipo": "SITE_OK",
+      "nivel": "verde",
+      "msg": "mycompi.com OK — HTTP 200"
+    },
+    {
+      "tipo": "HTTPS_MYCOMPI_ES",
+      "nivel": "amarillo",
+      "msg": "mycompi.es HTTP OK pero HTTPS/SSL handshake falla — owner: Marcos"
+    },
+    {
+      "tipo": "PAPERCLIP_AUTH_401",
+      "nivel": "amarillo",
+      "msg": "Paperclip Inbox API 401 — authentication requerida (>48h) — owner: Enzo/Paco"
+    },
+    {
+      "tipo": "ITEMS_SIN_RESOLVER",
+      "nivel": "rojo",
+      "msg": "Laura (50h+), Carlos (5d+) con feedback pendiente — requieren intervención Paco"
+    }
   ],
   "incidencias": [
-    {"incidencia": "web-DOWN-mycompi", "severidad": "🔴", "owner": "Marcos", "estado": "🔍 Abierta — fix a4ead9a en GitHub, deploy manual pendiente en Render"},
-    {"incidencia": "https-mycompi-es", "severidad": "🟡", "owner": "Marcos", "estado": "🔍 Abierta — HTTP funciona, SSL handshake falla (posible tema red VPS)"},
-    {"incidencia": "prisma-schema-laurafeedback", "severidad": "🟡", "owner": "Marcos", "estado": "🔍 Abierta"},
-    {"incidencia": "paperclip-auth-401", "severidad": "🟡", "owner": "Enzo/Paco", "estado": "🔍 Abierta — API key no válida para endpoint agent, >38h sin resolución"}
+    {
+      "incidencia": "https-mycompi-es",
+      "severidad": "🟡",
+      "owner": "Marcos",
+      "estado": "🔍 Abierta — HTTP funciona, SSL handshake falla"
+    },
+    {
+      "incidencia": "paperclip-auth-401",
+      "severidad": "🟡",
+      "owner": "Enzo/Paco",
+      "estado": "🔍 Abierta — API key no válida, >48h sin resolución"
+    },
+    {
+      "incidencia": "laura-feedback-unresolved",
+      "severidad": "🟡",
+      "owner": "Laura/Paco",
+      "estado": "🔍 Abierta — 50h+ sin resolver feedback Valeria"
+    },
+    {
+      "incidencia": "carlos-email-bienvenida-unresolved",
+      "severidad": "🟡",
+      "owner": "Carlos/Paco",
+      "estado": "🔍 Abierta — 5d+ sin resolver feedback Valeria"
+    }
   ],
-  "notas": "Heartbeat 2026-04-04 14:46 UTC. Cola QA vacía — ningún deliverable nuevo. Sites siguen caídos igual que hace 38h. Paperclip 401 persiste — clave API no parece JWT válido para el endpoint /api/agents/me. Reviews pendientes con feedback >38h sin resolución (Laura inbox-soporte, Carlos email-bienvenida). Sin acción QA posible en este ciclo. Alerts rojos escalados siguen sin resolución — mycompi.com DOWN + MRR €0."
+  "notas": "Heartbeat 2026-04-06 04:16 UTC. Cola QA vacía. mycompi.com OK. mycompi.es HTTPS sigue caído (Marcos). Paperclip auth 401 sigue abierto (Enzo/Paco). Reviews pendientes de Laura y Carlos siguen sin resolver — todas propagadas a Paco. Sin deliverable nuevo para revisar."
 }

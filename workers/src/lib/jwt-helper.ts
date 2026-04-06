@@ -13,16 +13,12 @@ export interface JWTPayload {
   exp: number;
 }
 
-function getSecret(): Uint8Array {
-  const secret = (globalThis as any).__JWT_SECRET__ || 'fallback-dev-secret';
-  return new TextEncoder().encode(secret);
-}
-
 export async function verifyJWT(c: Context): Promise<JWTPayload | null> {
   const auth = c.req.header('Authorization');
   if (!auth?.startsWith('Bearer ')) return null;
   try {
-    const { payload } = await jwtVerify(auth.slice(7), getSecret());
+    const secret = c.env.JWT_SECRET || 'fallback-dev-secret';
+    const { payload } = await jwtVerify(auth.slice(7), new TextEncoder().encode(secret));
     return payload as unknown as JWTPayload;
   } catch {
     return null;

@@ -15,8 +15,8 @@ async function auth(c: any) {
 
 // GET /api/trabajos
 router.get('/', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const { estado, limite = '50' } = c.req.query();
 
   try {
@@ -35,8 +35,8 @@ router.get('/', async (c) => {
 
 // POST /api/trabajos
 router.post('/', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const body = await c.req.json();
 
   try {
@@ -58,8 +58,8 @@ router.post('/', async (c) => {
 
 // PATCH /api/trabajos/:id
 router.patch('/:id', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const trabajoId = c.req.param('id');
   const body = await c.req.json();
 
@@ -75,8 +75,8 @@ router.patch('/:id', async (c) => {
 
 // POST /api/trabajos/:id/aprobar
 router.post('/:id/aprobar', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const trabajoId = c.req.param('id');
   const body = await c.req.json().catch(() => ({}));
 
@@ -92,8 +92,8 @@ router.post('/:id/aprobar', async (c) => {
 
 // POST /api/trabajos/:id/rechazar
 router.post('/:id/rechazar', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const trabajoId = c.req.param('id');
   const body = await c.req.json().catch(() => ({}));
 

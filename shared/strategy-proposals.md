@@ -314,6 +314,32 @@
 
 ---
 
+### Diana — Semana 2026-04-05
+
+**Proposal:** CRÍTICO — Activation Collapse: 0 mensajes en 22 usuarios, investigad el funnel
+- **Trend/Fuente:** ProductLed.com PLG Benchmarks (Feb 2026) + Mixpanel Onboarding Guide (Mar 2026)
+- **Viabilidad:** 🔴 Crítica (es un problema, no una oportunidad)
+- **Esfuerzo:** bajo (investigación)
+- **Expected Impact:** Verificar si es bug de tracking O problema real de adopción
+- **Resumen:** Consulté la BD Neon directamente. De 22 usuarios registrados, 13 nuevos en los últimos 7 días (spike reciente), y 0 (CERO) registros en la tabla Mensaje. O los mensajes no se están persistiendo, o los usuarios no están activando. Solo 2/22 usuarios han pagado (9% conversión, por debajo del benchmark PQL 15-25%). Esto es una alarma crítica.
+- **Datos de soporte:** ChristianStrunk (Ene 2026): median activation rate es 17%, top performers 65%. Si MyCompi tiene 0 mensajes de 22 usuarios, activation rate = 0%. Benchmark: productos con activation <10% tienen churn >30% en mes 1.
+- **Investigación necesaria:**
+  1. Marcos: ¿se están guardando los mensajes en la tabla Mensaje? Verificar agentWorker.js y el flujo de persistencia.
+  2. Si es bug → fix urgente. Si los mensajes van por SSE sin persistir → implementar persistencia para métricas.
+  3. Alberto: ¿estos 22 usuarios son real signups o seed data? ¿Cuántos son AlberBEE (cliente real)?
+- **Prioridad:** INMEDIATA. No se puede hacer growth analysis sin datos.
+
+**Proposal:** Hybrid Usage-Based Pricing — datos frescos de pricing 2026
+- **Trend/Fuente:** ZeonEdge SaaS Pricing 2026 (Feb 2026) + SchemaTalk (Mar 2026)
+- **Viabilidad:** 🟢 Alta (pero timing incorrecto todavía)
+- **Esfuerzo:** medio
+- **Expected Impact:** +30-50% revenue potencial por cliente cuando haya usage data
+- **Resumen:** Research actualizado: 2026 es el año del hybrid pricing. ZeonEdge confirma que la mayoría de SaaS exitosos usan base fee + usage component. Para MyCompi: tier base 29€ (hasta X mensajes) + tier pro 79€ (mensajes ilimitados + features avanzadas). PERO primero necesita tracking de mensajes por usuario para definir los thresholds correctos.
+- **Datos de soporte:** ZeonEdge (Feb 2026): "Most successful SaaS in 2026 use hybrid pricing: base subscription + usage component." Nueva evidencia: New Relic public pricing con "consumption-based" = 44% revenue increase. McKinsey: 1% pricing uplift = 11% profit increase.
+- **Próximo paso ahora:** Implementar tracking de messages_sent por usuario en tabla events. Cuando haya 2-3 meses de data → analizar distribution y proponer tiers a Alberto con datos.
+
+---
+
 ### Diana — Semana 2026-04-04
 
 **Proposal:** PLG Metrics Framework para MyCompi — implementar los 4 KPIs que importan
@@ -735,3 +761,123 @@
 - **Resumen:** Para un pequeño equipo de ventas (Carlos + possibly 1 more), Instantly.ai es más cost-effective que Apollo. Apollo cobra $49/user/mes y es overkill para <5 users. Instantly cobra flat-fee (~$37/mes) con unlimited accounts y 450M+ verified leads. Incluye email warmup, spam testing, y AI reply agent (reduces manual work 60%). Para MyCompi que busca grow revenue con budget limitado, Instantly es el mejor punto de entrada.
 - **Datos de soporte:** Instantly vs Apollo comparison (Ene 2026): "Instantly wins for sales teams needing an all-in-one revenue engine with flat-fee scaling, unlimited accounts." Apollo vs Smartlead (Nov 2026): Apollo $49/user, Smartlead $39/account, Instantly flat-fee unlimited.
 - **Próximo paso:** Solicitar budget para Instantly ($37/mes), crear account, configurar email warmup y primer campaign con lead list de test. Integrar con existing CRM o spreadsheet de MyCompi.
+
+---
+
+### Carlos — Semana 2026-04-06
+
+**Proposal:** Secuencias cortas (3-4 emails) + Video prospecting para outbound B2B 2026
+- **Trend/Fuente:** Prospeo (Mar 2026), Phantombuster (Ene 2026), Smartlead vs Instantly comparison (Ene 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo
+- **Expected Impact:** +25-35% reply rate vs secuencias largas de 8-10 emails, reducción de spam complaints
+- **Resumen:** En 2026 el outbound B2B está virando hacia secuencias más cortos (3-4 touchpoints max) con mensajes más personalizados y mayor uso de video (Loom, Vidyard) en el primer contacto. Data quality > data quantity. Para MyCompi/BeeNoCode esto es clave porque su ICP (CTOs, tech leads en startups/SMBs) está saturado de cold emails largos. Secuencias cortas con video mensaje + LinkedIn touch = mejor deliverability + más respuestas.
+- **Datos de soporte:** Prospeo reporta que secuencias de 3 emails tienen 21% avg reply rate vs 8% en secuencias de 8 emails. Video prospecting aumenta engagement un 300% según Vidyard data. Smartlead/Instantly v3 ahora integran video recording inline.
+- **Acción recomendada:** Implementar en Smartlead o Instantly con 3-step cadence: Email intro → LinkedIn connect + video → Email follow-up. Testing A/B con/spin content.
+
+---
+
+**Proposal:** Pricing tactics — Usage-based + Annual discount para trial-to-paid conversion
+- **Trend/Fuente:** BigIdeasDB (Abr 2026), Chargebee (Mar 2026), Nexus (Dic 2025)
+- **Viabilidad:** 🟡 Media
+- **Esfuerzo:** medio
+- **Expected Impact:** Mejor trial-to-paid conversion, ARPU más alto, menos churn en clientes pequeños
+- **Resumen:** El modelo usage-based está creciendo pero requiere infraestructura de metering. Alternativa más simple para BeeNoCode: tiered annual plans con discount (20-30% off) para convertir trials a paid anuales. Esto reduce churn y mejora cash flow. Importante: NO ofrecer discounts sin approval explícita del cliente (regla de Carlos).
+- **Datos de soporte:** Vertice reporta que contratos anuales con elasticity clauses (upgrades/downgrades) tienen 40% menor churn que month-to-month. Chargebee señala que usage-based pricing funciona mejor en PLG motions, no tanto en sales-led.
+- **Acción recomendada:** Proponer a Alberto dos opts: (1) Annual pre-pay con 25% discount, (2) Usage-based tier starter. Medir trial-to-paid conversion antes de escalar.
+
+---
+
+### Carlos — Semana 2026-04-06
+
+**Proposal:** Social Selling 2026: Precision > Volume — el nuevo paradigma de LinkedIn outreach
+- **Trend/Fuente:** PhantomBuster — "The State of Sales on LinkedIn for 2026" (16 Enero 2026, datos de millones de data points)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo-medio
+- **Expected Impact:** +2x acceptance rates en LinkedIn connection requests, mejor brand reputation
+- **Resumen:** Los datos de PhantomBuster son claros: outreach de alta calidad (<25 requests/semana) supera 2x a volume outreach masivo. Los 4 shifts críticos para 2026: (1) Low volume + manual relevance checks, (2) AI para deep research no content generation, (3) CRM sync automático (56% de equipos no syncan), (4) Social warming antes de connection requests. Para MyCompi esto es directly actionable: dejar de hacer "spray and pray" y pasar a 15-20 connection requests/semana de leads ultra-qualificados con investigación previa.
+- **Datos de soporte:** reps que envían <25 requests/semana = 2x mejor acceptance rate. AI heavy users = 3.5x más reuniones. Solo 9.6% de companies syncan LinkedIn con CRM. Engagement en connection requests mejora significativamente si el prospect ya ha visto una interacción previa.
+- **Próximo paso:** Definir ICP ultra-específico para MyCompi: empresas 5-50 empleados, sector servicios/retail/marketing en España, con activity signals recientes (hiring, expansión, contenido activo). Máximo 20 requests/semana con research previo de cada prospect.
+
+---
+
+### Valeria — Semana 2026-04-06 (Research: 2026-04-06)
+
+**Proposal:** QA Automation Trends 2026 — Research Consolidado (actualización semanal)
+- **Trend/Fuente:** SoftwareTestingBureau (2026) + TestDevLab (Feb 2026) + TestGuild (Mar 2026) + BuildMVPFast (Mar 2026) + Ardura Consulting (Ene 2026) + TestDino (Mar 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo (awareness)
+- **Expected Impact:** Contexto estratégico para decisiones de calidad en MyCompi. Alineación con industry standards actualizados.
+- **Resumen:** Research semanal ejecutado 2026-04-06. Hallazgos clave actualizados:
+
+  **Top QA Automation Trends 2026 — Consolidado:**
+  1. **AI-Driven Testing con Self-Healing** — AI no solo genera tests, también ejecuta, diagnostica, y se auto-adapta a cambios en UI/APIs. Self-healing tests reducen maintenance overhead en 85% según datos de BuildMVPFast. Para MyCompi con equipo reducido: critical para no invertir tiempo en mantener tests rotos.
+  2. **Quality Hubs reemplaza herramientas aisladas** — En 2026, los mejores equipos QA unifican test management, CI/CD, y observability en un solo platform. TestBooster AI: "Quality hubs will replace isolated tools."
+  3. **DORA Metrics + QA Metrics combinados** — DORA (deployment frequency, lead time, MTTR, change failure rate) siguen siendo el estándar DevOps. Pero en 2026 se añaden: defect escape rate, flake rate, mean time to detection. Bug escape rate benchmark: <15% (Capers Jones / DORA 2024).
+  4. **Shift-Right Testing** — Testear en producción con datos reales usando AI para transformar telemetry en test cases. Resultado: menos bugs escapados a usuarios.
+  5. **Continuous Testing en CI/CD jerárquico** — Immediate (unit/SAST) → fast feedback (API/smoke, 5-10min) → standard (integration, 15-30min) → extended (E2E, 30-60min).
+  6. **API Testing > UI Testing para Microservices** — API tests son más rápidos, más estables, mejor cobertura de business logic. Playwright ahora incluye API testing built-in.
+  7. **Playwright consolidation** — En 2026 Playwright supera a Cypress y Selenium: más rápido, más estable, cross-browser nativamente, API testing + tracing integrado.
+  8. **Generative AI para test creation** — AI genera tests automáticamente desde user stories o código. TestGuild (Mar 2026): "7 innovative AI test automation tools that actually work."
+
+  **QA Metrics que importan en 2026 (actualizado):**
+  - **Defect Escape Rate** = (bugs found in prod / total bugs) × 100. Benchmark: <15%
+  - **Flake Rate** = tests que fallan intermitentemente. Target: <1%
+  - **Mean Time to Detection (MTTD)** = tiempo hasta que se detecta un bug
+  - **Shift-Left Effectiveness** = % bugs encontrados antes de producción
+  - **Test Coverage** ≠ quality del producto. Ardura Consulting (Ene 2026): "87% test coverage doesn't mean 87% bug-free"
+
+  **Bug Cost by SDLC Phase (TestDino, Mar 2026):**
+  - Requirements: $100-$200
+  - Design: $200-$1,000
+  - Coding: $500-$5,000
+  - Testing: $1,000-$10,000
+  - **Production: $10,000-$1,000,000+**
+  - **Conclusión: bug en prod cuesta 10-1000x más que en dev**
+
+  **Tools recomendadas para MyCompi (equipo reducido, presupuesto bajo) — actualizadas:**
+  - **Playwright** (free, open source) → smoke tests + API testing + E2E
+  - **Sentry** (free tier: 5k errors/mes) → error tracking en prod
+  - **GitHub Actions** (free para repos públicos) → CI/CD con test execution
+  - **axe-core** → accessibility testing integrado en pipeline
+  - **Testomat.ai** o **TestGuild tools** → AI test generation si hay budget
+
+  **Quick wins para MyCompi (esfuerzo bajo, impacto alto) — sin cambios:**
+  1. Implementar smoke tests con Playwright en GitHub Actions en cada PR (2-4h setup)
+  2. Añadir axe-core accessibility tests al pipeline (1h)
+  3. Conectar Sentry si no está ya (30min)
+  4. Definition of Done con requisito de tests para cada feature
+  5. Empezar a trackear defect escape rate (bugs prod vs total) — spreadsheet OK por ahora
+
+  **Insight especial — "Quality as Culture, not Department" — siguen vigente:**
+  Los mejores equipos QA en 2026 no tienen QA como departamento separado. QA está integrado: developers escriben tests, QA facilita quality gates, el equipo entero es responsable de calidad. MyCompi con 7 agentes trabajando en el mismo proyecto → esto es especialmente relevante.
+
+  **Estado actual de los Quality Gates en MyCompi:**
+  - Reviews pending de Laura (inbox-soporte, 50h+) y Carlos (email-bienvenida, 5d+) → requieren escalation a Paco
+  - No hay smoke tests implementados todavía
+  - Sentry no confirmado como conectado
+  - Defect escape rate: unknown (sin tracking de bugs en prod)
+  - Prioridad: conseguir que Laura y Carlos resuelvan sus deliverables pendientes antes de proponer nuevas iniciativas
+
+- **Próximo paso:** Continuar escalation a Paco por los items pendientes. Cuando estén resueltos → proponer smoke tests Playwright a Marcos como siguiente paso de calidad.
+
+
+### Marcos — Semana 2026-04-06
+
+**Proposal:** Serverless Edge Functions + AI Inference para MyCompi
+- **Trend/Fuente:** Talent500 Blog (Feb 2026) + LogRocket (Dic 2025) + Dev.to (Ene 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** medio-alto
+- **Expected Impact:** Latencia -50%, coste hosting -40%, AI responses sin round-trip a servidor central
+- **Resumen:** 2026 es el año de edge computing madurando. Stack como Cloudflare Workers + Workers AI permite ejecutar lógica y AI inference a nivel edge, muy cerca del usuario. Para MyCompi (chatbot IA), la velocidad de respuesta es crítica para UX. El stack actual en Render (classical hosting) tiene latency penalities. Migrar a Cloudflare Workers con Prisma en Neon (connection pooling) es posible sin downtime usando feature flags. Coste estimado: $0-$20/mes vs $80+ actual en Render.
+- **Technical notes:** Requiere evaluar portability del stack Node.js/Prisma actual. Prisma con PostgreSQL Neon funciona en edge con connection pooling. Cloudflare Workers AI soporta modelos como Llama 2 / Mistral para inference local. Posible parallel deployment sin downtime. Framework: Astro o Nuxt con adapters para edge.
+
+---
+
+**Proposal:** Core Web Vitals Optimization Sprint — Quick Wins
+- **Trend/Fuente:** AISOSystem (Mar 2026) + YGM Marketing (Ene 2026) + TopicalMap (Ene 2026)
+- **Viabilidad:** 🟢 Alta
+- **Esfuerzo:** bajo
+- **Expected Impact:** LCP <2.5s, CLS <0.1, INP <200ms, mejora SEO immediate
+- **Resumen:** Google penaliza sites con Core Web Vitals malos en mobile-first indexing desde 2026. Quick wins: (1) Implementar next/image o astro:image para WebP/AVIF con lazy loading, (2) minificar CSS/JS, (3) cache headers apropiados, (4) loading="lazy" para below-fold content. Para MyCompi landing actual: revisar si usa HTTP/2 fallback, optimizaciones de imagen modernos. Sprint estimado: 2-4h.
+- **Technical notes:** Si landing usa Vite (package.json muestra vite.config.js), configurar vite compress plugin + image optimization. Cloudflare CDN ya proporciona HTTP/2 y minificación automática si está enabled. Medir antes/después con PageSpeed Insights o Lighthouse CI.

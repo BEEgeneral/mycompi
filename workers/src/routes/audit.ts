@@ -12,8 +12,8 @@ async function auth(c: any) {
 }
 
 router.get('/', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const { limit = '100', offset = '0', accion, agenteId } = c.req.query();
 
   try {
@@ -33,8 +33,8 @@ router.get('/', async (c) => {
 });
 
 router.get('/tokens', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   try {
     const agentes = await prisma.agente.findMany({
       where: { clienteId: p.clienteId },

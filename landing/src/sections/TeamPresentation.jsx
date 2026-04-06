@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import directorFoto from '../assets/agents/director.jpg'
-import enzoFoto from '../assets/agents/enzo.jpg'
-import carlosFoto from '../assets/agents/carlos.jpg'
-import lauraFoto from '../assets/agents/laura.jpg'
-import elenaFoto from '../assets/agents/elena.jpg'
-import dianaFoto from '../assets/agents/diana.jpg'
+import directorFoto from '../assets/agents/director_new.jpg'
+import enzoFoto from '../assets/agents/enzo_new.jpg'
+import carlosFoto from '../assets/agents/carlos_new.jpg'
+import lauraFoto from '../assets/agents/laura_new.jpg'
+import elenaFoto from '../assets/agents/elena_new.jpg'
+import dianaFoto from '../assets/agents/diana_new.jpg'
+import marcosFoto from '../assets/agents/marcos_new.jpg'
+import pelayoFoto from '../assets/agents/pelayo.jpg'
 
 const equipo = [
   {
@@ -23,8 +25,23 @@ const equipo = [
     tareaEjemplo: 'Cada lunes te envía un resumen de lo que hizo cada profesional durante la semana.',
   },
   {
+    id: 'pelayo',
+    nombre: 'Pelayo',
+    emoji: '📋',
+    rol: 'Asistente Ejecutivo',
+    color: 'from-slate-500 to-slate-600',
+    foto: pelayoFoto,
+    funciones: [
+      'Coordina tu agenda y optimiza tu tiempo',
+      'Gestiona y prioriza tus emails',
+      'Prepara reuniones, viajes y documentation',
+      'Anticipa necesidades y organiza prioridades',
+    ],
+    tareaEjemplo: 'Tienes 5 emails importantes. Pelayo los resume, te propone respuestas y agenda las 2 reuniones que necesitas antes del mediodía.',
+  },
+  {
     id: 'marketing',
-    nombre: 'Enzo Herrera',
+    nombre: 'Enzo',
     emoji: '📊',
     rol: 'Marketing',
     color: 'from-blue-500 to-blue-600',
@@ -39,7 +56,7 @@ const equipo = [
   },
   {
     id: 'ventas',
-    nombre: 'Carlos Mendoza',
+    nombre: 'Carlos',
     emoji: '💼',
     rol: 'Ventas',
     color: 'from-green-500 to-emerald-600',
@@ -54,7 +71,7 @@ const equipo = [
   },
   {
     id: 'atencion',
-    nombre: 'Laura Montes',
+    nombre: 'Laura',
     emoji: '💬',
     rol: 'Atención al Cliente',
     color: 'from-pink-500 to-rose-600',
@@ -69,7 +86,7 @@ const equipo = [
   },
   {
     id: 'operaciones',
-    nombre: 'Elena Ortega',
+    nombre: 'Elena',
     emoji: '⚙️',
     rol: 'Operaciones',
     color: 'from-orange-500 to-amber-600',
@@ -84,7 +101,7 @@ const equipo = [
   },
   {
     id: 'data',
-    nombre: 'Diana Palau',
+    nombre: 'Diana',
     emoji: '📈',
     rol: 'Data & Growth',
     color: 'from-purple-500 to-violet-600',
@@ -96,6 +113,21 @@ const equipo = [
       'Construye dashboards con métricas clave',
     ],
     tareaEjemplo: 'Descubre que los clientes que compran los martes tienen un ticket 40% mayor. Te lo comunica y propone una acción.',
+  },
+  {
+    id: 'tech',
+    nombre: 'Marcos',
+    emoji: '⚡',
+    rol: 'Tech & Development',
+    color: 'from-cyan-500 to-cyan-600',
+    foto: marcosFoto,
+    funciones: [
+      'Desarrolla y mantiene tu web y app',
+      'Integra herramientas y automatizaciones',
+      'Gestiona tu infraestructura cloud',
+      'Implementa mejoras técnicas de rendimiento',
+    ],
+    tareaEjemplo: 'Tu web está caída. Marcos lo detecta, identifica el problema y la recupera en 10 minutos.',
   },
 ]
 
@@ -159,6 +191,11 @@ export default function TeamPresentation() {
 
   const toggle = (id) => setActiveId(a => a === id ? null : id)
 
+  // Director es el primer elemento, asistente es el segundo, resto son el grid
+  const director = equipo[0]
+  const asistente = equipo[1]
+  const profesionales = equipo.slice(2)
+
   return (
     <section id="equipo" className="py-16 md:py-[100px] px-6 bg-brand-cream border-t border-brand-pastel">
       <div className="max-w-[1100px] mx-auto">
@@ -174,42 +211,62 @@ export default function TeamPresentation() {
           </p>
         </div>
 
-        {/* Director banner */}
-        <div className="mb-10">
-          <div className="relative overflow-hidden bg-brand-dark rounded-[2rem] p-8">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/10 rounded-full -translate-y-1/2 translate-x-1/4" />
-            <div className="relative flex items-center gap-6">
+        {/* Director + Asistente banner */}
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Director */}
+          <div className="relative overflow-hidden bg-brand-dark rounded-[2rem] p-6">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-brand-yellow/10 rounded-full -translate-y-1/2 translate-x-1/4" />
+            <div className="relative flex items-center gap-4">
               <img
-                src={equipo[0].foto}
-                alt={equipo[0].nombre}
-                className="w-20 h-20 rounded-full object-cover shadow-2xl flex-shrink-0 ring-4 ring-brand-yellow/30"
+                src={director.foto}
+                alt={director.nombre}
+                className="w-16 h-16 rounded-full object-cover shadow-2xl flex-shrink-0 ring-4 ring-brand-yellow/30"
               />
-              <div className="flex-1">
-                <div className="text-lg font-extrabold text-white">{equipo[0].nombre}</div>
-                <div className="text-xs font-semibold text-brand-yellow uppercase tracking-wider mt-0.5">{equipo[0].rol}</div>
-                <div className="text-sm text-white/70 mt-2 leading-relaxed">{equipo[0].funciones[0]}</div>
+              <div className="flex-1 min-w-0">
+                <div className="font-extrabold text-white text-base">{director.nombre}</div>
+                <div className="text-xs font-semibold text-brand-yellow uppercase tracking-wider mt-0.5">{director.rol}</div>
+                <div className="text-xs text-white/60 mt-1 leading-relaxed line-clamp-2">{director.funciones[0]}</div>
               </div>
-              <div className="hidden md:flex items-center gap-3">
-                <div className="flex -space-x-3">
-                  {equipo.slice(1).map(a => (
-                    a.foto ? (
-                      <img key={a.id} src={a.foto} alt={a.nombre} className="w-10 h-10 rounded-full object-cover border-2 border-brand-dark shadow-lg" title={a.nombre} />
-                    ) : (
-                      <div key={a.id} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-brand-dark flex items-center justify-center text-lg shadow-lg" title={a.nombre}>
-                        {a.emoji}
-                      </div>
-                    )
-                  ))}
-                </div>
-                <div className="text-xs text-white/50 max-w-[120px]">Coordina a {equipo.length - 1} profesionales</div>
+            </div>
+          </div>
+
+          {/* Asistente Ejecutivo */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-slate-600 to-slate-700 rounded-[2rem] p-6">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-brand-yellow/10 rounded-full -translate-y-1/2 translate-x-1/4" />
+            <div className="relative flex items-center gap-4">
+              <img
+                src={asistente.foto}
+                alt={asistente.nombre}
+                className="w-16 h-16 rounded-full object-cover shadow-2xl flex-shrink-0 ring-4 ring-white/20"
+              />
+              <div className="flex-1 min-w-0">
+                <div className="font-extrabold text-white text-base">{asistente.nombre}</div>
+                <div className="text-xs font-semibold text-brand-yellow uppercase tracking-wider mt-0.5">{asistente.rol}</div>
+                <div className="text-xs text-white/60 mt-1 leading-relaxed line-clamp-2">{asistente.funciones[0]}</div>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Mini-avatars del equipo */}
+        <div className="flex items-center justify-center gap-4 mb-10">
+          <div className="flex -space-x-3">
+            {profesionales.map(a => (
+              a.foto ? (
+                <img key={a.id} src={a.foto} alt={a.nombre} className="w-10 h-10 rounded-full object-cover border-2 border-brand-cream shadow-lg" title={`${a.nombre} — ${a.rol}`} />
+              ) : (
+                <div key={a.id} className="w-10 h-10 rounded-full bg-gradient-to-br border-2 border-brand-cream flex items-center justify-center text-base shadow-lg" title={`${a.nombre} — ${a.rol}`}>
+                  {a.emoji}
+                </div>
+              )
+            ))}
+          </div>
+          <div className="text-xs text-brand-secondary font-medium">{profesionales.length} profesionales especializados</div>
+        </div>
+
         {/* Grid de profesionales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {equipo.slice(1).map(agent => (
+          {profesionales.map(agent => (
             <AgentCard
               key={agent.id}
               agent={agent}

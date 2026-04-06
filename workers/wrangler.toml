@@ -1,19 +1,14 @@
-name = "mycompi-api"
+name = "mycompi"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 account_id = "52335717183f7fa92f98c18186626a78"
 
-# ─────────────────────────────────────────
-# DEVELOPMENT
-# Deploy local → npx wrangler deploy
-# El Custom Domain (api.mycompi.com) se configura desde el dashboard:
-# Workers & Pages → mycompi-api → Triggers → Custom Domains
-# ─────────────────────────────────────────
+[build]
+bundle = true
+
+[vars]
+FRONTEND_URL = "https://mycompi.com"
 
 [env.production]
-name = "mycompi-api"
-
-[env.dev]
-name = "mycompi-api-dev"
-workers_dev = true
+name = "mycompi"

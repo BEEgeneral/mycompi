@@ -7,29 +7,23 @@ import { verifyJWT } from '../lib/jwt-helper';
 
 const router = new Hono();
 
-async function auth(c: any) {
-  const p = await verifyJWT(c);
-  if (!p) return c.json({ error: 'Unauthorized' }, 401);
-  return p;
-}
-
 // GET /api/agentes
 router.get('/', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   try {
     const agentes = await prisma.agente.findMany({
       where: { clienteId: p.clienteId },
       orderBy: { createdAt: 'desc' },
     });
     return c.json({ agentes });
-  } catch (err) { return c.json({ error: 'Error' }, 500); }
+  } catch (err) { console.error('GET /api/agentes error:', err); return c.json({ error: 'Error', detail: String(err) }, 500); }
 });
 
 // POST /api/agentes
 router.post('/', async (c) => {
   const p = await auth(c);
-  if (!p || p === 401) return;
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const body = await c.req.json();
 
   // Generar workerId y email automáticos
@@ -59,7 +53,7 @@ router.post('/', async (c) => {
 // GET /api/agentes/:id
 router.get('/:id', async (c) => {
   const p = await auth(c);
-  if (!p || p === 401) return;
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const agenteId = c.req.param('id');
   try {
     const agente = await prisma.agente.findFirst({ where: { id: agenteId, clienteId: p.clienteId } });
@@ -71,7 +65,7 @@ router.get('/:id', async (c) => {
 // PATCH /api/agentes/:id
 router.patch('/:id', async (c) => {
   const p = await auth(c);
-  if (!p || p === 401) return;
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const agenteId = c.req.param('id');
   const body = await c.req.json();
   try {
@@ -87,7 +81,7 @@ router.patch('/:id', async (c) => {
 // DELETE /api/agentes/:id
 router.delete('/:id', async (c) => {
   const p = await auth(c);
-  if (!p || p === 401) return;
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const agenteId = c.req.param('id');
   try {
     const deleted = await prisma.agente.deleteMany({ where: { id: agenteId, clienteId: p.clienteId } });

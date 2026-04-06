@@ -12,8 +12,8 @@ async function auth(c: any) {
 }
 
 router.get('/', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   try {
     return c.json({ approvals: await prisma.trabajo.findMany({
       where: { clienteId: p.clienteId, requiereAprobacion: true, estado: 'TODO' },
@@ -24,8 +24,8 @@ router.get('/', async (c) => {
 });
 
 router.get('/:id/approvals', async (c) => {
-  const p = await auth(c);
-  if (!p || p === 401) return;
+  const p = await verifyJWT(c);
+  if (!p) return c.json({ error: 'Unauthorized' }, 401);
   const trabajoId = c.req.param('id');
   try {
     const trabajo = await prisma.trabajo.findFirst({ where: { id: trabajoId, clienteId: p.clienteId } });
