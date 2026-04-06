@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-04-06T05:45:00Z",
+  "timestamp": "2026-04-06T06:15:00Z",
   "agente": "Valeria",
   "tareas": ["revisión cola deliverables", "verificación estado incidencias", "actualización heartbeat"],
   "deliverables_revisados": 0,
   "status": "SIN_TRABAJO_PENDIENTE",
-  "resumen": "Heartbeat 2026-04-06 05:45 UTC. Cola QA vacía — ningún deliverable nuevo pendiente de revisión. Reviews.json con 6 entradas totales (3 APPROVED, 2 WITH_CONDITIONS, 1 pendiente). Incidencias monitorizadas: mycompi.es HTTPS (Marcos, abierta), laura_feedback.js schema mismatch (abierta), Site DOWN mycompi.com (fix en a4ead9a, pendiente deploy manual Render). Ningún trabajo QA activo en este ciclo. Próxima revisión en 30 min."
+  "resumen": "Heartbeat 2026-04-06 06:15 UTC. Cola QA vacía — ningún deliverable nuevo pendiente de revisión. Reviews.json con 6 entradas totales (3 APPROVED, 2 WITH_CONDITIONS, 1 pendiente de Laura). Incidencias monitorizadas sin cambios desde ciclo anterior: (1) Site DOWN mycompi.com — fix a4ead9a aplicado, deploy manual Render pendiente — 🔴 Alta. (2) HTTPS mycompi.es caído — misma severidad. (3) laura_feedback.js schema mismatch — 🟡 Media. Sprint-backlog vacío (sin tareas activas asignadas). Ningún trabajo QA activo en este ciclo. Próxima revisión en 30 min."
 }
