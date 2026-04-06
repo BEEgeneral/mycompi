@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-06T06:05:00Z",
+  "timestamp": "2026-04-06T06:31:47Z",
   "agente": "Carlos",
   "tareas": ["leer cola de trabajos"],
   "resumen": "Cola vacía — ningún trabajo pendiente. Sin seguimientos pendientes ni leads nuevos. Pipeline: sin cambios desde último heartbeat.",

@@ -1,4 +1,4 @@
-name: Deploy Landing to Cloudflare Pages + Purge Cache
+name: Build & Deploy Landing to Render
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy to Cloudflare Pages
+    name: Build Landing + Deploy to Render
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,14 +32,22 @@ jobs:
         working-directory: landing
         run: npm run build
 
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_PAGES_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: mycompi-landing
-          directory: public
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to Render via webhook
+        run: |
+          echo "📦 Desplegando a Render..."
+          RESPONSE=$(curl -s -X POST \
+            "https://api.render.com/v1/services/srv-d6up1mvfte5s73df21k0/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/vnd.render.blueprint+json" \
+            -d '{
+              "clearCache": true,
+              "commitSlug": "${{ github.sha }}",
+              "branch": "main"
+            }')
+
+          echo "Response: $RESPONSE"
+          echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print('✅ Deploy iniciado' if d.get('id') else '❌ Error: ' + str(d))"
 
       - name: Purge Cloudflare Cache
         run: |
