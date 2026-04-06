@@ -40,14 +40,16 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             -H "Accept: application/vnd.render.blueprint+json" \
-            -d '{
-              "clearCache": true,
-              "commitSlug": "${{ github.sha }}",
-              "branch": "main"
-            }')
+            -d '{}')
 
           echo "Response: $RESPONSE"
-          echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print('✅ Deploy iniciado' if d.get('id') else '❌ Error: ' + str(d))"
+          DEPLOY_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null)
+          if [ -n "$DEPLOY_ID" ]; then
+            echo "✅ Deploy iniciado: $DEPLOY_ID"
+          else
+            echo "❌ Error en deploy: $RESPONSE"
+            exit 1
+          fi
 
       - name: Purge Cloudflare Cache
         run: |
