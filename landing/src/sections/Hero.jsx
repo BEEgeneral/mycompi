@@ -55,24 +55,6 @@ export default function Hero() {
             alt="Panel de MyCompi — tu equipo en acción"
             className="rounded-[3rem] w-full block"
           />
-          {/* Floating proof */}
-          <div className="absolute bottom-4 left-4 bg-white border border-brand-pastel rounded-2xl px-4 py-3 shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2">
-                {[
-                  require('../assets/agents/proof1.jpg'),
-                  require('../assets/agents/proof2.jpg'),
-                  require('../assets/agents/proof3.jpg'),
-                ].map((src, i) => (
-                  <img key={i} src={src} className="w-7 h-7 rounded-full object-cover border-2 border-white" alt="" />
-                ))}
-              </div>
-              <div className="text-xs">
-                <div className="font-bold text-brand-dark">+150 empresas activas</div>
-                <div className="text-brand-muted">automatizando con MyCompi</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
