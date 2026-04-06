@@ -1,4 +1,10 @@
 import { useState } from 'react'
+import directorFoto from '../assets/agents/director.jpg'
+import enzoFoto from '../assets/agents/enzo.jpg'
+import carlosFoto from '../assets/agents/carlos.jpg'
+import lauraFoto from '../assets/agents/laura.jpg'
+import elenaFoto from '../assets/agents/elena.jpg'
+import dianaFoto from '../assets/agents/diana.jpg'
 
 const equipo = [
   {
@@ -7,7 +13,7 @@ const equipo = [
     emoji: '🎯',
     rol: 'Director',
     color: 'from-brand-dark to-brand-dark/80',
-    foto: require('../assets/agents/director.jpg'),
+    foto: directorFoto,
     funciones: [
       'Coordina todo tu equipo de profesionales',
       'Toma decisiones estratégicas contigo',
@@ -22,7 +28,7 @@ const equipo = [
     emoji: '📊',
     rol: 'Marketing',
     color: 'from-blue-500 to-blue-600',
-    foto: require('../assets/agents/enzo.jpg'),
+    foto: enzoFoto,
     funciones: [
       'Crea contenido para redes sociales y blog',
       'Gestiona campañas de publicidad (Meta, Google Ads)',
@@ -37,7 +43,7 @@ const equipo = [
     emoji: '💼',
     rol: 'Ventas',
     color: 'from-green-500 to-emerald-600',
-    foto: require('../assets/agents/carlos.jpg'),
+    foto: carlosFoto,
     funciones: [
       'Captura y qualifica leads nuevos',
       'Hace seguimiento automático de prospects',
@@ -52,7 +58,7 @@ const equipo = [
     emoji: '💬',
     rol: 'Atención al Cliente',
     color: 'from-pink-500 to-rose-600',
-    foto: require('../assets/agents/laura.jpg'),
+    foto: lauraFoto,
     funciones: [
       'Responde dudas de tus clientes al instante',
       'Gestiona quejas y escala cuando es necesario',
@@ -67,7 +73,7 @@ const equipo = [
     emoji: '⚙️',
     rol: 'Operaciones',
     color: 'from-orange-500 to-amber-600',
-    foto: require('../assets/agents/elena.jpg'),
+    foto: elenaFoto,
     funciones: [
       'Automatiza procesos repetitivos de tu negocio',
       'Conecta herramientas que no hablan entre sí',
@@ -82,7 +88,7 @@ const equipo = [
     emoji: '📈',
     rol: 'Data & Growth',
     color: 'from-purple-500 to-violet-600',
-    foto: require('../assets/agents/diana.jpg'),
+    foto: dianaFoto,
     funciones: [
       'Analiza datos de tu negocio para encontrar oportunidades',
       'Identifica patrones de comportamiento de clientes',
