@@ -1,8 +1,0 @@
-{
-  "date": "2026-04-06",
-  "host": "ep-mute-mud-agxfgf1q-pooler.c-2.eu-central-1.aws.neon.tech",
-  "dbname": "neondb",
-  "port": "5432",
-  "sizeMB": 0.24,
-  "createdAt": "2026-04-06T00:02:51.515Z"
-}

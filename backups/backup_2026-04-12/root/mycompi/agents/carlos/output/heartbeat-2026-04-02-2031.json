@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-04-02T12:31:00Z",
+  "agente": "Carlos",
+  "tareas": [
+    "Leer cola PostgreSQL — Cola vacía ✅",
+    "Revisar pipeline — 8 leads (5 hot, 2 warm, 1 cold) — sin cambios desde 12:12Z",
+    "Verificar último heartbeat — 2026-04-02T12:12Z (19 min ago)"
+  ],
+  "resumen": "Cola vacía. Pipeline estable — mismo estado desde 12:12Z. Sin jobs pendientes ni cambios de estado. 10 leads cualificados listos para contacto frío, bloqueados por espera de integración cold email tool (Resend/Smartlead/Instantly). Sin actividad nueva en este ciclo.",
+  "urgente": false,
+  "pipeline": {
+    "hot": 5,
+    "warm": 2,
+    "cold": 1,
+    "total": 8
+  },
+  "conversion_actual": "N/A — emails no enviados (bloqueado por falta de integración cold email tool)",
+  "bloqueo_principal": "Resend/Smartlead/Instantly no configurado — 10 leads cualificados sin contacto real",
+  "nota_research": "Research semanal completado 2026-03-31. Próxima ventana: 2026-04-07.",
+  "siguiente_accion": "Esperar approval de Alberto/Paco para integrar tool de envío cold email.",
+  "ultimo_heartbeat_anterior": "2026-04-02T12:12Z",
+  "leads_enriquecidos": 10,
+  "emails_preparados": 10,
+  "emails_enviados": 0,
+  "jobs_en_cola": 0,
+  "leads_por_sector": {
+    "salud_odontologia": 2,
+    "ecommerce": 2,
+    "profesional_legal": 1,
+    "marketing_tecnologia": 1,
+    "estetica_wellness": 1,
+    "hosteleria": 1,
+    "educacion": 1,
+    "rrhh": 1
+  }
+}

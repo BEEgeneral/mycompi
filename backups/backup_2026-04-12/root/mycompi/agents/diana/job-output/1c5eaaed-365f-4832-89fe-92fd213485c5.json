@@ -1,0 +1,139 @@
+{
+  "trabajoId": "1c5eaaed-365f-4832-89fe-92fd213485c5",
+  "titulo": "Análisis competitivo: 3-5 competidores directos",
+  "fecha": "2026-04-01T07:39:00Z",
+  "tags": ["#semana-2 #dia-4 #competencia #research"],
+  "resumenEjecutivo": "Análisis profundo de 5 competidores directos de MyCompi en el mercado español de agentes IA para atención al cliente. MyCompi se diferencia por precio único (€49/mes flat), equipo de 7 agentes especializados, y target PYMES españolas — vs competencia internacional con pricing por agente y enfoque enterprise.",
+  "competidores": [
+    {
+      "nombre": "Freshdesk (Freshworks)",
+      "pais": "India / USA",
+      "web": "freshdesk.com",
+      "pricing": "Desde $15/agent/mes (Plan Forward) hasta $69/agent/mes (Advanced). Freddy AI Agent desde $79/mes adicional.",
+      "pricingAnual": "Desde ~$13/mes por agente con descuento anual",
+      "propuestaValor": "Plataforma de ticketing todo-en-uno con Freddy AI Agent para resolución autónoma. Enfoque omnichannel (email, chat, phone, social).",
+      "canales": "G2, Capterra, LinkedIn, Google Ads (keywords 'helpdesk software', 'AI agent')",
+      "puntosFuertes": "Ecosistema maduro (20M+ usuarios), integraciones 1000+, pricing predecible, trial gratuito 21 días",
+      "puntosDebiles": "No es 'equipo de agentes' — es plataforma de tickets con AI añadida. Setup inicial complejo. El pricing por agente se multiplica rápido.",
+      "posicion": "SMB → Mid-Market → Enterprise",
+      "diferenciadorVsMyCompi": "Freddy AI Agent resolve tickets pero no ejecuta tareas multidisciplinary. MyCompi ofrece 7 roles especializados en 1 precio.",
+      "tamanoEmpresa": "5.000+ empleados, empresa cotizada NASDAQ",
+      "publicoObjetivo": "Empresas de 10-500 empleados que ya tienen equipo de soporte",
+      "metricasPublicas": "20M+ agentes únicos, NPS ~50, 93% uptime SLA",
+      "trending": "2025-2026: Focus en Agentic AI con Freddy (resuelve 89% tickets sin humanos)",
+      "impacto": "Alta competencia en keyword 'AI helpdesk' pero no en 'equipo IA completo'"
+    },
+    {
+      "nombre": "Zendesk",
+      "pais": "USA",
+      "web": "zendesk.com",
+      "pricing": "$19/agent/mes (Suite Team) → $115+/agent/mes (Suite Enterprise). Fin AI Agent desde $99/mes. Pricing real: $200-400+/mes para 3-5 agentes.",
+      "pricingAnual": "Descuentos por volumen anuales, min 3 agentes",
+      "propuestaValor": "Suite de atención al cliente enterprise con Agent Copilot, Fin AI Agent (resolución autónoma), y 700+ integraciones.",
+      "canales": "G2 (lider en category), Salesforce AppExchange, LinkedIn Ads enterprise, partnerships con consultoras",
+      "puntosFuertes": "Marca #1 en customer service software, 700+ integraciones, datasets enormes para training, enterprise trust",
+      "puntosDebiles": "Pricing opaque y costoso — $200-400+/mes real para PYMES. Legacy UI. Complejidad excesiva. 6-18 meses implementation típica.",
+      "posicion": "Mid-Market → Enterprise (Fortune 500)",
+      "diferenciadorVsMyCompi": "4-8x más caro. MyCompi es simple, flat, sin complejidad — mejor para PYMES 5-50 empleados que no quieren enterprise.",
+      "tamanoEmpresa": "6.000+ empleados, NYSE:ZEN",
+      "publicoObjetivo": "Empresas medianas y grandes que necesitan plataforma de soporte escalable",
+      "metricasPublicas": "160.000+ clientes, 87% Fortune 100 usan Zendesk, NPS ~60",
+      "trending": "2026: Pivot fuerte a AI-first con Fin (resuelve 90%+ queries). Bundle con Sunshine Conversations para messaging.",
+      "impacto": "Alta brand awareness pero inaccesible para target MyCompi (PYMES 5-50)"
+    },
+    {
+      "nombre": "Intercom",
+      "pais": "USA",
+      "web": "intercom.com",
+      "pricing": "$74/agent/mes (Starter) → $195/agent/mes (Professional). Fin AI Agent desde $99/mes adicional. Total: $173-294+/mes por 1-2 agentes.",
+      "pricingAnual": "Descuentos por compromiso anual (tipicamente 20%)",
+      "propuestaValor": "Plataforma de customer messaging con Fin AI Agent — resolución autónoma de conversaciones, help center, newsletters, product tours.",
+      "canales": "Content marketing (blog #1 en customer service), Product Hunt, LinkedIn, partnerships con agencies",
+      "puntosFuertes": "Best-in-class product messaging UI, Fin AI muy posicionado, onboarding excelente, brand premium",
+      "puntosDebiles": "Pricing costoso para equipos pequeños. No es 'equipo' — 1 Fin AI agent. Requiere setup de help center para maximizar.",
+      "posicion": "SMB → Mid-Market",
+      "diferenciadorVsMyCompi": "Intercom ofrece 1 Fin agent. MyCompi ofrece 7 roles especializados por €49 todo incluido.",
+      "tamanoEmpresa": "1.500+ empleados, última valoración $1.1B+ (Series I)",
+      "publicoObjetivo": "Startups y scale-ups SaaS que priorizan product-led growth",
+      "metricasPublicas": "35.000+ clientes, 500M+ conversaciones/año, NPS ~70",
+      "trending": "2026: Fin 2.0 con mejorada reasoning, Custom Actions (ejecuta tareas en apps externas), Resolution Bartender para analytics",
+      "impacto": "Competidor directo en messaging AI pero pricing 3-6x de MyCompi"
+    },
+    {
+      "nombre": "eesel.ai",
+      "pais": "Europa (España?)",
+      "web": "eesel.ai",
+      "pricing": "~$39-99/mes flat para equipos (basado en features, no agentes)",
+      "pricingAnual": "Descuento anual disponible",
+      "propuestaValor": "AI Support Agent + Knowledge Base + Content Generation en 1 producto. Agente único pero multitasking.",
+      "canales": "Product Hunt (launch exitoso), LinkedIn, G2, blog de AI agents",
+      "puntosFuertes": "Pricing simple y flat (vs por agente), no-code setup, knowledge base sin training, multilingual",
+      "puntosDebiles": "Solo 1 agente (no 'equipo'). Menos especializado que MyCompi con 7 roles distintos. Sin diferenciación clara de pricing.",
+      "posicion": "SMB (1-50 empleados)",
+      "diferenciadorVsMyCompi": "eesel tiene 1 agente generalista. MyCompi tiene 7 agentes especializados (Marketing, Ventas, Data, etc) por precio similar.",
+      "tamanoEmpresa": "Seed/Series A, ~20-50 empleados estimado",
+      "publicoObjetivo": "Pequeñas empresas y startups que buscan AI support sin complejidad",
+      "metricasPublicas": "4.000+ equipos activos (según web), launch en PH top 10 2024",
+      "trending": "2025-2026: eesel正在 expanding a más canales (WhatsApp, Slack) y features de generación de contenido",
+      "impacto": "Competidor más similar en pricing flat y target SMB. Diferenciador: MyCompi = equipo, eesel = agente único."
+    },
+    {
+      "nombre": "Crisp",
+      "pais": "Francia / Europa",
+      "web": "crisp.chat",
+      "pricing": "Desde €59/mes (Chatbot only) hasta €499/mes (All channels). Crisp MagicChat (AI) desde €89/mes adicional.",
+      "pricingAnual": "Descuento 20% anual",
+      "propuestaValor": "Plataforma de messaging multicanal (Chat, Email, Bot, Video) con AI (Crisp Magic) para ecommerce y SaaS.",
+      "canales": "Shopify app store, WordPress plugin ecosystem, Product Hunt, G2, LinkedIn",
+      "puntosFuertes": "Fuerte en ecommerce (Shopify, WooCommerce), pricing razonable, chat+email+bot en 1, setup rápido",
+      "puntosDebiles": "Enfoque ecommerce muy marcado — menos relevante para B2B services. AI menos avanzada que Fin/Zendesk.",
+      "posicion": "SMB ecommerce → B2B SaaS",
+      "diferenciadorVsMyCompi": "Crisp está enfocado en ecommerce. MyCompi está enfocado en B2B services PYMES — mercados distintos.",
+      "tamanoEmpresa": "150+ empleados, Series B €45M (2021)",
+      "publicoObjetivo": "Ecommerce y retail online (Europa + USA)",
+      "metricasPublicas": "500.000+ negocios usan Crisp, 60M conversaciones/mês, NPS ~55",
+      "trending": "2026: Integración AI más profunda con MagicChat, expansión a más idiomas",
+      "impacto": "Competencia media — target diferente (ecommerce vs B2B services)"
+    }
+  ],
+  "comparativaResumen": {
+    "pricing": {
+      "masBarato": "eesel.ai (~$39-99/mes flat)",
+      "masCaro": "Zendesk ($200-400+/mes real)",
+      "mycompi": "€49/mes flat — competitivo con eesel, 4-8x más barato que Zendesk/Intercom"
+    },
+    "numeroAgentes": {
+      "eesel": "1 agente generalista",
+      "freshdesk": "1 Freddy AI Agent",
+      "intercom": "1 Fin AI Agent",
+      "zendesk": "1 Fin AI Agent",
+      "mycompi": "7 agentes especializados — ventaja única"
+    },
+    "target": {
+      "mycompi": "PYMES españolas 5-50 empleados (nicho menos competido)",
+      "zendesk": "Enterprise → Mid-Market",
+      "intercom": "Startups → Mid-Market SaaS",
+      "freshdesk": "SMB → Mid-Market",
+      "eesel": "Micro → SMB (1-50)"
+    },
+    "complejidadSetup": {
+      "baja": "eesel, MyCompi",
+      "media": "Crisp, Freshdesk",
+      "alta": "Zendesk, Intercom"
+    }
+  },
+  "insightsClave": [
+    "MyCompi tiene el pricing más competitivo del mercado cuando se considera el número de agentes (7 vs 1)",
+    "El diferenciador real no es 'AI agent' sino 'equipo de IA' — ningún competidor ofrece 7 roles especializados por €49/mes",
+    "Zendesk/Intercom son inalcanzables para PYMES de 5-50 empleados — MyCompi tiene el mercado objetivo correcto",
+    "eesel.ai es el competidor más similar en pricing flat y simplicidad — pero ofrece 1 agente vs 7 de MyCompi",
+    "El messaging de MyCompi debería ser: '7 profesionales IA por €49/mes' vs 'soporte con AI'"
+  ],
+  "recomendaciones": [
+    "Positioning: MyCompi NO compite con Zendesk — compite con 'tener 7 empleados virtuales por €49/mes'",
+    "Pricing comparison page: Crear página 'MyCompi vs Zendesk vs Intercom' mostrando 5-10x ahorro",
+    "Social proof urgente: 0 reviews en G2/Capterra es gap crítico vs Freshdesk/Zendesk que tienen 1000s",
+    "Case study primer cliente: Documentar resultados (aunque sean pequeños) para usar en ventas"
+  ],
+  "siguientePaso": "Integrar este análisis en la estrategia de contenidos y ventas: crear página de comparación, ajustar messaging en landing."
+}

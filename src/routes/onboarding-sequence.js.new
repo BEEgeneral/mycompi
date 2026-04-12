@@ -1,0 +1,11 @@
+/**
+ * onboarding-sequence.js — Email onboarding sequence para nuevos clientes
+ */
+const express = require('express');
+const router = express.Router();
+const prisma = require('../lib/db');
+const { Resend } = require('resend');
+
+// ─────────────────────────────────────────
+// TABLA: Secuencia de onboarding por email
+// ─────────────────────────────────────────

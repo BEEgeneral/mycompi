@@ -1,0 +1,8 @@
+services:
+  mycompi:
+    build: .
+    container_name: mycompi-app
+    network_mode: host
+    env_file:
+      - .env
+    restart: unless-stopped

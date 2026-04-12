@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-04-06T06:32:00Z",
+  "agente": "Diana",
+  "tareas": ["lectura-cola", "revision-metricas", "check-dashboards"],
+  "resumen": "Cola vacía. Sin trabajos pendientes. Métricas estables: MRR €1.029, 22 clientes activos, 8 usuarios activos (7d), 0 churn (30d), 22 nuevos usuarios (30d). No hay anomalías. Sin nuevos datos de interacción (chat/emails = 0, todavía sin uso real de agentes por clientes).",
+  "urgente": false,
+  "metrics_highlight": {
+    "mrr": 1029,
+    "total_clientes": 22,
+    "clientes_activos": 22,
+    "usuarios_activos_7d": 8,
+    "nuevos_usuarios_30d": 22,
+    "churned_30d": 0,
+    "churn_rate": "0%",
+    "plans": { "BASICO": 21, "COMPLETO": 1 }
+  },
+  "insights": [
+    "Cola vacía — ningún trabajo pendiente",
+    "MRR €1.029 stable (21 clientes BASICO €49 + 1 COMPLETO)",
+    "0% churn — ningún cliente dado de baja en 30 días",
+    "22 nuevos usuarios en 30d = todos los usuarios son nuevos (producto en launch early stage)",
+    "Solo 8/22 usuarios activos en 7d — 36% activation rate, necesita mejora",
+    "0 interacciones chat y 0 emails — clientes no están usando los agentes todavía",
+    "Sin anomalías en métricas"
+  ]
+}
