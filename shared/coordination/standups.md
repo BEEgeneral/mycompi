@@ -1,4 +1,48 @@
 
+## 2026-04-13 | LUNES
+
+### 🎯 Paco
+- **HOY:** Coordinar 8 agente(s). Score salud: 100/100. Revenue: €1078/mes.
+- **BLOQUEADO:** ninguno
+- **SIGUIENTE:** Supervisar pipeline, preparar briefing para Alberto.
+
+### 📊 Laura
+- **HOY:** Health check 22 cliente(s). 22 trabajos pendientes. 0 approvals pendientes.
+- **BLOQUEADO:** ninguno
+- **SIGUIENTE:** Seguimiento a clientes fríos, outreach proactivo.
+
+### 📣 Enzo
+- **HOY:** Content calendar semanal. 3 ideas para LinkedIn/post/email. Competitive monitoring.
+- **BLOQUEADO:** ninguno
+- **SIGUIENTE:** Publicación scheduled, engagement analysis.
+
+### 💰 Carlos
+- **HOY:** Lead intelligence. Upsell candidates detection. Pricing review.
+- **BLOQUEADO:** ninguno
+- **SIGUIENTE:** Outreach a candidatos upsell, follow-up stalled.
+
+### ⚙️ Elena
+- **HOY:** Workflow efficiency audit. Heartbeat agents check. Token budget analysis.
+- **BLOQUEADO:** ninguno
+- **SIGUIENTE:** Automatizaciones rápidas, optimizar flujos lentos.
+
+### 📈 Diana
+- **HOY:** Business Health Score: 100/100. Revenue tracking: €1078/mes. Cost analysis.
+- **BLOQUEADO:** ninguno
+- **SIGUIENTE:** Forecast actualizado, alertas budget.
+
+### 🔧 Marcos
+- **HOY:** Uptime check. Jobs queue: 22 pendientes. API errors check.
+- **BLOQUEADO:** ninguno
+- **SIGUIENTE:** Resolver cuellos de botella, tech debt si lo hay.
+
+### ✅ Valeria
+- **HOY:** QA Gate: 0 deliverable(s) por revisar antes de entrega.
+- **BLOQUEADO:** Sin deliverables pendientes de QA
+- **SIGUIENTE:** Auditar calidad output semanal, reportar a Paco.
+
+---
+
 ## 2026-04-10 | VIERNES
 
 ### Paco

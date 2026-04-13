@@ -1,10 +1,10 @@
-# 📝 Memory Summary — 2026-04-10
+# 📝 Memory Summary — 2026-04-13
 
 ## Palace (MemPalace-style)
 - **Wings:** 0
 - **Rooms:** 0  
 - **Drawers:** 0 (memorias verbatim guardadas)
-- **Diaries activos:** 8 agentes × 39 entries totales
+- **Diaries activos:** 8 agentes × 47 entries totales
 
 ## Knowledge Graph
 - Entidades y relaciones agente↔cliente↔trabajo guardadas con validez temporal
